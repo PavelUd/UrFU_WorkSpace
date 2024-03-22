@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrFU_WorkSpace", "UrFU_WorkSpace\UrFU_WorkSpace.csproj", "{1B19D3E3-9DF9-4286-9E02-C823B2617454}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrFU_WorkSpace", "UrFU_WorkSpace\UrFU_WorkSpace.csproj", "{1B19D3E3-9DF9-4286-9E02-C823B2617454}"
+	ProjectSection(ProjectDependencies) = postProject
+		{26AEF66E-D0DC-4B7B-A620-C8658E215661} = {26AEF66E-D0DC-4B7B-A620-C8658E215661}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrFU_WorkSpace_API", "UrFU_WorkSpace_API\UrFU_WorkSpace_API.csproj", "{26AEF66E-D0DC-4B7B-A620-C8658E215661}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +20,12 @@ Global
 		{1B19D3E3-9DF9-4286-9E02-C823B2617454}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B19D3E3-9DF9-4286-9E02-C823B2617454}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B19D3E3-9DF9-4286-9E02-C823B2617454}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26AEF66E-D0DC-4B7B-A620-C8658E215661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26AEF66E-D0DC-4B7B-A620-C8658E215661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26AEF66E-D0DC-4B7B-A620-C8658E215661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26AEF66E-D0DC-4B7B-A620-C8658E215661}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
