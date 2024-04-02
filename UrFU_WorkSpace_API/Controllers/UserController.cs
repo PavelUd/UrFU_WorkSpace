@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Repository;
 
 namespace UrFU_WorkSpace_API.Controllers;
 
-[Route("api/Users")]
+[Route("api/users")]
 [ApiController]
 public class UserController : Controller
 {
@@ -29,11 +26,11 @@ public class UserController : Controller
             return Ok(users);
         }
         
-        [HttpGet("{UserId}")]
+        [HttpGet("{userId}")]
         [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult GetUser(int UserId)
+        public IActionResult GetUser(int userId)
         {
-            var user = _userRepository.GetUser(UserId);
+            var user = _userRepository.GetUser(userId);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

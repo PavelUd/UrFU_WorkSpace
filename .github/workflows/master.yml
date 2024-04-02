@@ -1,0 +1,18 @@
+name: Deploy to Hosting
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Hosting
+        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+        with:
+          ftp-server: ftp://ftp79.hostland.ru/
+          ftp-username: host1869824
+          ftp-password: cFg4lLaiVy
+          local-dir: host1869824.hostland.pro/htdocs/www
