@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,4 +30,10 @@ public class User
     [MaxLength(100)]
     [Column("login")]
     public string LoginText { get; set; }
+    
+    [Required]
+    [MaxLength(20)]
+    [PasswordPropertyText]
+    [Column("password")]
+    public string Password { get; set; }
 }

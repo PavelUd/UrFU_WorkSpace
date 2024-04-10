@@ -36,4 +36,36 @@ public class UserController : Controller
 
             return Ok(user);
         }
+
+        
+        [HttpPost("register")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCategory([FromBody] User userCreate)
+        {
+            if (userCreate == null)
+                return BadRequest(ModelState);
+
+            var user = _userRepository
+                .GetAllUsers()
+                .FirstOrDefault(user => user.Email.Trim().ToUpper() == userCreate.Email.TrimEnd().ToUpper() 
+                          || user.LoginText.Trim().ToUpper() == userCreate.LoginText.TrimEnd().ToUpper());
+
+            if(user != null)
+            {
+                ModelState.AddModelError("", "Такой пользователь уже существует");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if(!_userRepository.CreateUser(userCreate))
+            {
+                ModelState.AddModelError("", "Что-то пошло не так");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Пользователь успешно зарегестрирован");
+        }
 }
