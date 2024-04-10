@@ -1,35 +1,21 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using UrFU_WorkSpace_API;
 using UrFU_WorkSpace_API.Context;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Repository;
 
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
-builder.Services.AddControllers().AddJsonOptions(x =>
-    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-builder.Services.AddDbContext<UrfuWorkSpaceContext>(options => 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("Connection")));
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public static void Main(string[] args)
+    {
+        CreateHostBuilder(args).Build().Run();
+    }
+        
+    private static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
 }
-
-app.UseAuthentication();
-app.UseRouting();
-app.UseAuthorization();
-app.UseHttpsRedirection();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
-
-app.Run();
