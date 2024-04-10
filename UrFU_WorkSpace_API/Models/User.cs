@@ -29,7 +29,7 @@ public class User
     [Required]
     [MaxLength(100)]
     [Column("login")]
-    public string LoginText { get; set; }
+    public string Login { get; set; }
     
     [Required]
     [MaxLength(20)]

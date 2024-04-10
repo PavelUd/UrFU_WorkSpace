@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Context;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Repository;
+using UrFU_WorkSpace_API.Services;
+
 namespace UrFU_WorkSpace_API;
 
 public class Startup
@@ -18,9 +20,11 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
         services.AddControllers().AddJsonOptions(x =>
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+        
         services.AddDbContext<UrfuWorkSpaceContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("Connection")));
     }

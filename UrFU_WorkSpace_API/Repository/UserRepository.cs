@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
         return _context.Users.Find(userId);
     }
 
-    public bool CreateUser(User user)
+    public bool AddUser(User user)
     {
         _context.Users.Add(user);
         return Save();
