@@ -5,14 +5,19 @@ on:
       - master
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+  prepare-environment:
+    runs-on: self-hosted
     steps:
-      - name: Deploy to Hosting
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
-        with:
-          ftp-server: ftp://ftp79.hostland.ru/
-          ftp-username: host1869824
-          ftp-password: cFg4lLaiVy
-          local-dir: host1869824.hostland.pro/htdocs/www
+      - name: Stop and remove containers, networks
+        run: docker compose down
+      - name: Remove unused data
+        run: docker system prune -a -f
+  deploy:
+    runs-on: self-hosted
+    needs: prepare-environment
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: docker compose
+        run: docker compose up
+
