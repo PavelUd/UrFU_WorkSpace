@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Repository;
 
 namespace UrFU_WorkSpace_API.Controllers;
 
-[Route("api/Users")]
+[Route("api/users")]
 [ApiController]
 public class UserController : Controller
 {
@@ -29,14 +26,46 @@ public class UserController : Controller
             return Ok(users);
         }
         
-        [HttpGet("{UserId}")]
+        [HttpGet("{userId}")]
         [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult GetUser(int UserId)
+        public IActionResult GetUser(int userId)
         {
-            var user = _userRepository.GetUser(UserId);
+            var user = _userRepository.GetUser(userId);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(user);
+        }
+
+        
+        [HttpPost("register")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCategory([FromBody] User userCreate)
+        {
+            if (userCreate == null)
+                return BadRequest(ModelState);
+
+            var user = _userRepository
+                .GetAllUsers()
+                .FirstOrDefault(user => user.Email.Trim().ToUpper() == userCreate.Email.TrimEnd().ToUpper() 
+                          || user.LoginText.Trim().ToUpper() == userCreate.LoginText.TrimEnd().ToUpper());
+
+            if(user != null)
+            {
+                ModelState.AddModelError("", "Такой пользователь уже существует");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if(!_userRepository.CreateUser(userCreate))
+            {
+                ModelState.AddModelError("", "Что-то пошло не так");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Пользователь успешно зарегестрирован");
         }
 }

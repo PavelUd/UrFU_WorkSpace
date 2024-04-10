@@ -1,8 +1,26 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Workspace>
+
+@{
+    ViewData["Title"] = "Коворкинги";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div class="text-center">
+    <h1 class="display-4">Коворкинги</h1>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">@Html.DisplayNameFor(model => model.WorkspaceId)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.Description)</th>
+        </tr>
+        </thead>
+         <tbody>
+                @foreach (var workspace in Model)
+                {
+                    <tr scope="row">
+                        <td>@workspace.WorkspaceId</td>
+                        <td>@workspace.Description</td>
+                    </tr>
+                }
+          </tbody>
+        </table>

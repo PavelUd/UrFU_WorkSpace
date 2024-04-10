@@ -16,6 +16,17 @@ public class UserRepository : IUserRepository
         return _context.Users.Find(userId);
     }
 
+    public bool CreateUser(User user)
+    {
+        _context.Users.Add(user);
+        return Save();
+    }
+    public bool Save()
+    {
+        var saved = _context.SaveChanges();
+        return saved > 0 ? true : false;
+    }
+
     public IEnumerable<User> GetAllUsers()
     {
         return _context.Users;
