@@ -23,14 +23,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        var workspaces = new List<Workspace>();
-        var responseMessage = _client.GetAsync(_client.BaseAddress + "/workspaces").Result;
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            var data = responseMessage.Content.ReadAsStringAsync().Result;
-            workspaces = JsonConvert.DeserializeObject<List<Workspace>>(data);
-        }
-        return View(workspaces);
+        return View();
     }
 
     public IActionResult Privacy()
