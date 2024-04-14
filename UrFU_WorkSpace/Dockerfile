@@ -3,16 +3,16 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["UrFU_WorkSpace.csproj", "UrFU_WorkSpace/"]
+COPY ["UrFU_WorkSpace.csproj", "UrFU_WorkSpace.csproj"]
 RUN dotnet restore "UrFU_WorkSpace.csproj"
 COPY . .
-WORKDIR "/src/UrFU_WorkSpace"
-RUN dotnet build "UrFU_WorkSpace.csproj" -c Release -o /app/build
+WORKDIR "/src"
+RUN dotnet build "UrFU_WorkSpace.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "UrFU_WorkSpace.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "UrFU_WorkSpace.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "UrFU_WorkSpace.dll"]
