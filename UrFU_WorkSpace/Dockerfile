@@ -1,13 +1,20 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-COPY . ./
-RUN dotnet restore
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["UrFU_WorkSpace/UrFU_WorkSpace.csproj", "UrFU_WorkSpace/"]
+RUN dotnet restore "UrFU_WorkSpace/UrFU_WorkSpace.csproj"
+COPY . .
+WORKDIR "/src/UrFU_WorkSpace"
+RUN dotnet build "UrFU_WorkSpace.csproj" -c Release -o /app/build
 
-COPY . ./
-RUN dotnet publish -c Release -o output
+FROM build AS publish
+RUN dotnet publish "UrFU_WorkSpace.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM base AS final
 WORKDIR /app
-COPY --from=builder /app/output .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "UrFU_WorkSpace.dll"]
