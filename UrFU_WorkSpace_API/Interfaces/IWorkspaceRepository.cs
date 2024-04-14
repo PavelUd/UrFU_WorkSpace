@@ -6,4 +6,5 @@ public interface IWorkspaceRepository
 { 
     public Workspace GetWorkspace(int workspaceId);
     public IEnumerable<Workspace> GetWorkspaces();
+    public IEnumerable<WorkspaceImage> GetWorkspaceImages(int workspaceId);
 }

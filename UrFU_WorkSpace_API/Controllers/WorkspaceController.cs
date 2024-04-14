@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
 
@@ -11,15 +13,19 @@ public class WorkspaceController : Controller
 {
     private readonly IWorkspaceRepository workspaceRepository;
     
-    public WorkspaceController(IWorkspaceRepository workspaceRepository)
+    public WorkspaceController(IWorkspaceRepository workspaceRepository, IMapper mapper)
     {
         this.workspaceRepository = workspaceRepository;
+        this.mapper = mapper;
     }
+
+    public IMapper mapper { get; set; }
+
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<Workspace>))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceDTO>))]
     public IActionResult GetWorkspaces()
-    {
-        var workspaces = workspaceRepository.GetWorkspaces();
+    { 
+        var workspaces = mapper.Map<IEnumerable<Workspace>, IEnumerable<WorkspaceDTO>>(workspaceRepository.GetWorkspaces());
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 

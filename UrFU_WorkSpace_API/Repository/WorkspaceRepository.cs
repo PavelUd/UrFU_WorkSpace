@@ -16,6 +16,11 @@ public class WorkspaceRepository : IWorkspaceRepository
     {
         return Context.Workspaces.Find(workspaceId);
     }
+    
+    public IEnumerable<WorkspaceImage> GetWorkspaceImages(int workspaceId)
+    {
+        return Context.WorkspaceImages.Where(image => image.IdWorkspace == workspaceId); 
+    }
 
     public IEnumerable<Workspace> GetWorkspaces()
     {
