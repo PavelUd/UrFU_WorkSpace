@@ -27,7 +27,6 @@ public class UserService : IUserService
             .FirstOrDefault(x => (x.Login == authenticate.Login || x.Email == authenticate.Email) && x.Password == authenticate.Password);
         
         var token = _configuration.GenerateJwtToken(user);
-        
         return new AuthenticateResponse(user, token);
     }
 
@@ -41,7 +40,6 @@ public class UserService : IUserService
             Email = user.Email,
             Password = user.Password
         });
-            
         return response;
     }
     

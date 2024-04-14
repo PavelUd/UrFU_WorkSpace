@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
@@ -19,6 +20,7 @@ public class UserController : Controller
         }
         
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public IActionResult GetUsers()
         {
@@ -28,7 +30,6 @@ public class UserController : Controller
 
             return Ok(users);
         }
-        
         [HttpGet("{userId}")]
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult GetUser(int userId)

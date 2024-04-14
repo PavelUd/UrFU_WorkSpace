@@ -36,4 +36,8 @@ public class User
     [PasswordPropertyText]
     [Column("password")]
     public string Password { get; set; }
+    
+    [Column("access_level")]
+    public int AccessLevel { get; set; }
+    
 }
