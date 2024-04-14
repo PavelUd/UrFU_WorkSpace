@@ -21,6 +21,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
+        services.AddAutoMapper(typeof(Startup));
         services.AddSwaggerGen();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
