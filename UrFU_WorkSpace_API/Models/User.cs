@@ -29,11 +29,15 @@ public class User
     [Required]
     [MaxLength(100)]
     [Column("login")]
-    public string LoginText { get; set; }
+    public string Login { get; set; }
     
     [Required]
     [MaxLength(20)]
     [PasswordPropertyText]
     [Column("password")]
     public string Password { get; set; }
+    
+    [Column("access_level")]
+    public int AccessLevel { get; set; }
+    
 }
