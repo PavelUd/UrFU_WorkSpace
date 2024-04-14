@@ -7,6 +7,7 @@ using UrFU_WorkSpace_API.Repository;
 using UrFU_WorkSpace_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using UrFU_WorkSpace_API.Helpers;
 
 namespace UrFU_WorkSpace_API;
 
@@ -21,11 +22,11 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
-        services.AddAutoMapper(typeof(Startup));
         services.AddSwaggerGen();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+        services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles(services.BuildServiceProvider().GetService<IWorkspaceRepository>())));
         services.AddAuthentication(x =>
         {
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

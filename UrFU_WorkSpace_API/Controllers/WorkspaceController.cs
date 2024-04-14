@@ -22,16 +22,10 @@ public class WorkspaceController : Controller
     public IMapper mapper { get; set; }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<Workspace>))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceDTO>))]
     public IActionResult GetWorkspaces()
-    {
-        var cnf = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<Workspace, WorkspaceDTO>().BeforeMap((src, dest)
-                => dest.Images = workspaceRepository.GetWorkspaceImages(src.WorkspaceId));
-        });
-        var mp = new Mapper(cnf);
-        var workspaces = mp.Map<IEnumerable<Workspace>, IEnumerable<WorkspaceDTO>>(workspaceRepository.GetWorkspaces());
+    { 
+        var workspaces = mapper.Map<IEnumerable<Workspace>, IEnumerable<WorkspaceDTO>>(workspaceRepository.GetWorkspaces());
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
