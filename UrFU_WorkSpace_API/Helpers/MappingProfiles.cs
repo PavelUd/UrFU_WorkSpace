@@ -13,6 +13,6 @@ public class MappingProfiles : Profile
     {
         _workspaceRepository = workspaceRepository;
         CreateMap<Workspace, WorkspaceDTO>().BeforeMap((src, dest)
-            => dest.Images = _workspaceRepository.GetWorkspaceImages(src.WorkspaceId));
+            => dest.Images = _workspaceRepository.GetWorkspaceImages(src.IdWorkspace));
     }
 }
