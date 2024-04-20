@@ -12,14 +12,13 @@ namespace UrFU_WorkSpace_API.Controllers;
 public class WorkspaceController : Controller
 {
     private readonly IWorkspaceRepository workspaceRepository;
+    public IMapper mapper { get; set; }
     
     public WorkspaceController(IWorkspaceRepository workspaceRepository, IMapper mapper)
     {
         this.workspaceRepository = workspaceRepository;
         this.mapper = mapper;
     }
-
-    public IMapper mapper { get; set; }
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceDTO>))]
