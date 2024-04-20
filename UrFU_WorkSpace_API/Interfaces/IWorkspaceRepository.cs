@@ -4,7 +4,7 @@ namespace UrFU_WorkSpace_API.Interfaces;
 
 public interface IWorkspaceRepository
 { 
-    public Workspace GetWorkspace(int workspaceId);
+    public Workspace GetWorkspaceById(int workspaceId);
     public IEnumerable<Workspace> GetWorkspaces();
     public IEnumerable<WorkspaceImage> GetWorkspaceImages(int workspaceId);
 }

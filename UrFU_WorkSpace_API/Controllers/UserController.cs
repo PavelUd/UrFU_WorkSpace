@@ -20,7 +20,6 @@ public class UserController : Controller
         }
         
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public IActionResult GetUsers()
         {
@@ -30,11 +29,11 @@ public class UserController : Controller
 
             return Ok(users);
         }
-        [HttpGet("{userId}")]
+        [HttpGet("{idUser}")]
         [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult GetUser(int userId)
+        public IActionResult GetUser(int idUser)
         {
-            var user = _userRepository.GetUser(userId);
+            var user = _userRepository.GetUser(idUser);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 

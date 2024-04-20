@@ -7,7 +7,7 @@ public class Workspace
 {
     [Key]
     [Column("workspace_id")]
-    public int WorkspaceId { get; set; }
+    public int IdWorkspace { get; set; }
 
     [Required]
     [Column("description")]
@@ -27,5 +27,5 @@ public class Workspace
     
     [Required]
     [Column("creator_id")]
-    public int CreatorId { get; set; }
+    public int IdCreator { get; set; }
 }

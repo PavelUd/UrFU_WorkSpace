@@ -12,6 +12,7 @@ namespace UrFU_WorkSpace_API.Controllers;
 public class WorkspaceController : Controller
 {
     private readonly IWorkspaceRepository workspaceRepository;
+    public IMapper mapper { get; set; }
     
     public WorkspaceController(IWorkspaceRepository workspaceRepository, IMapper mapper)
     {
@@ -19,13 +20,22 @@ public class WorkspaceController : Controller
         this.mapper = mapper;
     }
 
-    public IMapper mapper { get; set; }
-
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceDTO>))]
     public IActionResult GetWorkspaces()
     { 
         var workspaces = mapper.Map<IEnumerable<Workspace>, IEnumerable<WorkspaceDTO>>(workspaceRepository.GetWorkspaces());
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Ok(workspaces);
+    }
+    
+    [HttpGet("{idWorkspace}")]
+    [ProducesResponseType(200, Type = typeof(WorkspaceDTO))]
+    public IActionResult GetWorkspaceById(int idWorkspace)
+    { 
+        var workspaces = mapper.Map<Workspace, WorkspaceDTO>(workspaceRepository.GetWorkspaceById(idWorkspace));
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
