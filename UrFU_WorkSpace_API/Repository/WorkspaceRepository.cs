@@ -12,7 +12,7 @@ public class WorkspaceRepository : IWorkspaceRepository
         Context = context;
     }
     
-    public Workspace GetWorkspace(int workspaceId)
+    public Workspace GetWorkspaceById(int workspaceId)
     {
         return Context.Workspaces.Find(workspaceId);
     }

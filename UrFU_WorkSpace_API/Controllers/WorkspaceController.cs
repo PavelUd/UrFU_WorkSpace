@@ -30,4 +30,15 @@ public class WorkspaceController : Controller
 
         return Ok(workspaces);
     }
+    
+    [HttpGet("{idWorkspace}")]
+    [ProducesResponseType(200, Type = typeof(WorkspaceDTO))]
+    public IActionResult GetWorkspaceById(int idWorkspace)
+    { 
+        var workspaces = mapper.Map<Workspace, WorkspaceDTO>(workspaceRepository.GetWorkspaceById(idWorkspace));
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Ok(workspaces);
+    }
 }
