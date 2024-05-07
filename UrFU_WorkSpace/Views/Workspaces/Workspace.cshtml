@@ -1,0 +1,124 @@
+@model UrFU_WorkSpace.Models.Workspace
+
+@{
+    ViewBag.Title = Model.Name;
+}
+
+<main class="main">
+    <section class="coworks">
+        <div style="padding: 20px; ">
+          <form class="col-md-5" style="margin:10rem 0 1rem -1rem ">
+            <label>Дата</label>
+            <input class="form-control" name="date" type="date"/>
+            <label>Дата</label>
+            <input class="form-control" name="date" type="time"/>
+            <label>Дата</label>
+            <input class="form-control" name="date" type="time"/>
+            <input class="form-control" id ="mySavedModel"  name="map" type="text"/>
+            <button type = "submit" class="btn btn-info">Отправить</button>
+          </form>
+          <div id="myDiagramDiv" style="width:100%; height:400px"></div>
+        </div>
+    </section>
+    <script id="code">
+      function init() {
+        
+        const $ = go.GraphObject.make;
+    
+        myDiagram =
+          new go.Diagram("myDiagramDiv",
+            {
+              fixedBounds: new go.Rect(0, 0, 500, 300),  
+              allowHorizontalScroll: false, 
+              allowVerticalScroll: false,
+              allowZoom: false,
+              "animationManager.isEnabled": false,
+              "undoManager.isEnabled": true,
+          
+            });
+        myDiagram.isReadOnly = true;
+        // the background Part showing the fixed bounds of the diagram contents
+        myDiagram.add(
+          $(go.Part,
+            { layerName: "Grid", position: myDiagram.fixedBounds.position },
+            $(go.Shape, { fill: "oldlace", strokeWidth: 0, desiredSize: myDiagram.fixedBounds.size })
+          ));
+    
+        // This function is the Node.dragComputation, to limit the movement of the parts.
+        function stayInFixedArea(part, pt, gridpt) {
+          var diagram = part.diagram;
+          if (diagram === null) return pt;
+          // compute the document area without padding
+          var v = diagram.documentBounds.copy().subtractMargin(diagram.padding);
+          // get the bounds of the part being dragged
+          var bnd = part.actualBounds;
+          var loc = part.location;
+          // now limit the location appropriately
+          var l = v.x + (loc.x - bnd.x);
+          var r = v.right - (bnd.right - loc.x);
+          var t = v.y + (loc.y - bnd.y);
+          var b = v.bottom - (bnd.bottom - loc.y);
+          if (l <= gridpt.x && gridpt.x <= r && t <= gridpt.y && gridpt.y <= b) return gridpt;
+          var p = gridpt.copy();
+          if (diagram.toolManager.draggingTool.isGridSnapEnabled) {
+            // find a location that is inside V but also keeps the part's bounds within V
+            var cw = diagram.grid.gridCellSize.width;
+            if (cw > 0) {
+              while (p.x > r) p.x -= cw;
+              while (p.x < l) p.x += cw;
+            }
+            var ch = diagram.grid.gridCellSize.height;
+            if (ch > 0) {
+              while (p.y > b) p.y -= ch;
+              while (p.y < t) p.y += ch;
+            }
+            return p;
+          } else {
+            p.x = Math.max(l, Math.min(p.x, r));
+            p.y = Math.max(t, Math.min(p.y, b));
+            return p;
+          }
+        }
+      var prevNode = null;
+        var prevColor = null;
+        myDiagram.nodeTemplate =
+          $(go.Node, "Auto",
+            { dragComputation: stayInFixedArea },
+                  {
+                    click: function(e, node) {
+                      var shape = node.findObject("SHAPE");
+                      if (shape !== null) {
+                        if(prevNode){
+                          prevNode.findObject("SHAPE").fill = prevColor;
+                          myDiagram.model.setDataProperty(prevNode.data, "color", prevColor);
+                        }
+                        prevColor = shape.fill;
+                        prevNode= node;
+                        shape.fill = "red";
+                        myDiagram.model.setDataProperty(node.data, "color","red");
+                      }
+                    
+                       document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+                    }
+                  },
+            new go.Binding("desiredSize", "size", go.Size.parse),
+            new go.Binding("position", "pos", go.Point.parse).makeTwoWay(go.Point.stringify),
+            // temporarily put selected nodes in Foreground layer
+            new go.Binding("layerName", "isSelected", s => s ? "Foreground" : "").ofObject(),
+            $(go.Shape, "Rectangle",
+              {name: "SHAPE", strokeWidth: 0 },  // avoid extra thickness from the stroke
+              new go.Binding("fill", "color")),
+            $(go.TextBlock,
+              new go.Binding("text", "color"))
+          );
+    
+        myDiagram.model = new go.GraphLinksModel([
+          { "key": "Alpha", "pos": "0 0", "size": "50 50", "color": "lightblue" },
+          { "key": "Beta", "pos": "276 19", "size": "100 100", "color": "orange" },
+          { "key": "Gamma", "pos": "44 214", "size": "100 50", "color": "lightgreen" },
+          { "key": "Delta", "pos": "239 171", "size": "50 100", "color": "red" }
+        ]);
+      }
+      window.addEventListener('DOMContentLoaded', init);
+    </script>
+</main>

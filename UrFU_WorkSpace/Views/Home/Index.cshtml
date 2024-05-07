@@ -1,105 +1,69 @@
-﻿<div class="container">
-    <header class="header">
-      <img class="header__logo" src="img/Logo.png" alt="Лого">
-      <nav class="nav">
-        <ul class="nav__list list-reset">
-          <li class="nav__elem">
-            <a href="#" class="nav__link">Контакты</a>
-          </li>
-        </ul>
-        <button class="btn-reset btn nav__btn">
-          <img src="../img/account.svg" alt="Лк">
-          Личный кабинет
-        </button>
-      </nav>
-    </header>
-    <main class="main">
-      <section class="hero">
-        <article class="banner">
-          Выбирайте, сравнивайте и бронируйте пространства для учёбы,  встреч и мероприятий онлайн.
-          <button class="btn-reset btn banner__btn">
-            <a href="#coworks">Перейти к просмотру коворкингов</a>
-          </button>
-        </article>
-      </section>
+﻿@model IEnumerable<Workspace>
 
-      <section class="coworks">
-        <h2 id="coworks" class="section__title">
-          Коворкинги
-        </h2>
-        <article class="cowork">
-          <div class="cowork-photo__container">
-            <img class="cowork__photo" src="./img/first-cowork.jpeg" alt="Фото коворкинга">
-            <span class="cowork__rating">5.0</span>
-          </div>
-          <div class="cowork__about">
-            <div class="cowork__title">
-              <div class="cowork__placement">
-                <h3 class="cowork__institute">
-                  ИРИТ-РТФ
-                </h3>
-                <span class="cowork__name">
-                  Р-044
-                </span>
-              </div>
-              <span class="cowork__address">
-                Ул. Мира, 32
+@{
+    ViewData["Title"] = "Коворкинги";
+}
+<main class="main">
+  <section class="hero">
+    <article class="banner">
+      Выбирайте, сравнивайте и бронируйте пространства для учёбы, встреч и мероприятий онлайн.
+      <button class="btn-reset btn banner__btn">
+        <a href="#coworks">Перейти к просмотру коворкингов</a>
+      </button>
+    </article>
+  </section>
+    
+  <section class="coworks">
+    @foreach (var workspace in Model)
+    {
+      <h2 id="coworks" class="section__title">
+        Коворкинги
+      </h2>
+      <article class="cowork">
+        <div class="cowork-photo__container">
+          <img class="cowork__photo" src="@workspace.Images.First().Url" alt="Фото коворкинга">
+          <span class="cowork__rating">@workspace.Rating</span>
+        </div>
+        <div class="cowork__about">
+          <div class="cowork__title">
+            <div class="cowork__placement">
+              <h3 class="cowork__institute">
+                @workspace.Institute
+              </h3>
+              <span class="cowork__name">
+                @workspace.Name
               </span>
             </div>
-            
-            <div class="cowork__description">
-              – это удобные столы, мягкие диваны, много подушек. Это первый коворкинг, в котором расположена точка питания. Здесь студенты могут не только подготовиться к учебным занятиям, но и вкусно перекусить, пообедать.
-            </div>
-            <button class="btn-reset btn cowork__btn">
-              Забронировать
-            </button>
+            <span class="cowork__address">
+              @workspace.Address
+            </span>
           </div>
-        </article>
 
-        <article class="cowork">
-          <div class="cowork-photo__container">
-            <img class="cowork__photo" src="./img/second-cowork.jpeg" alt="Фото коворкинга">
-            <span class="cowork__rating">5.0</span>
+          <div class="cowork__description">
+            @workspace.Description
           </div>
-          <div class="cowork__about">
-            <div class="cowork__title">
-              <div class="cowork__placement">
-                <h3 class="cowork__institute">
-                  ИРИТ-РТФ
-                </h3>
-                <span class="cowork__name">
-                  Радиоточка
-                </span>
-              </div>
-              <span class="cowork__address">
-                Ул. Мира, 32
-              </span>
-            </div>
-            <div class="cowork__description">
-              – это удобные столы, мягкие диваны, много подушек. Это первый коворкинг, в котором расположена точка питания. Здесь студенты могут не только подготовиться к учебным занятиям, но и вкусно перекусить, пообедать.
-            </div>
-            <button class="btn-reset btn cowork__btn">
-              Забронировать
-            </button>
-          </div>
-        </article>
-      </section>
-
-      <div class="cookie__container">
-        <article class="cookie__message">
-          <span class="cookie__text">
-            Мы используем куки, как и любой сайт в интернете
-          </span>
-          <button class="btn-reset btn__cookie">
-            ОК
+          <button class="btn-reset btn cowork__btn">
+            Забронировать
           </button>
-        </article>
-      </div>
-      
-      <div class="chat">
-        <img src="./img/chat.png" alt="Чат">
-      </div>
+        </div>
+      </article>
+    }
+  </section>
 
-      
-    </main>
+  <div class="cookie__container">
+    <article class="cookie__message">
+      <span class="cookie__text">
+        Мы используем куки, как и любой сайт в интернете
+      </span>
+      <button class="btn-reset btn__cookie">
+        ОК
+      </button>
+    </article>
   </div>
+
+  <div class="chat">
+    <img src="./img/chat.png" alt="Чат">
+  </div>
+
+
+</main>

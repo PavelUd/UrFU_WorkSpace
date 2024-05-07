@@ -27,7 +27,7 @@ public class UserService : IUserService
             .FirstOrDefault(x => (x.Login == authenticate.Login || x.Email == authenticate.Email) && x.Password == authenticate.Password);
         
         var token = _configuration.GenerateJwtToken(user);
-        return new AuthenticateResponse(user, token);
+        return new AuthenticateResponse(token);
     }
 
     public async Task<AuthenticateResponse> Register(User user)
