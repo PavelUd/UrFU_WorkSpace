@@ -12,9 +12,11 @@ public class UserController : Controller
 {
         private readonly IUserService _userService;
         private readonly IUserRepository _userRepository;
+        private readonly IReservationRepository _reservationRepository;
 
-        public UserController(IUserRepository userRepository, IUserService userService)
+        public UserController(IUserRepository userRepository,IReservationRepository reservationRepository, IUserService userService)
         {
+            _reservationRepository = reservationRepository;
             _userRepository = userRepository;
             _userService = userService;
         }
@@ -32,6 +34,17 @@ public class UserController : Controller
         [HttpGet("{idUser}")]
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult GetUser(int idUser)
+        {
+            var user = _userRepository.GetUser(idUser);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(user);
+        }
+        
+        [HttpPatch("{idUser}")]
+        [ProducesResponseType(200, Type = typeof(User))]
+        public IActionResult UpdateUser(int idUser)
         {
             var user = _userRepository.GetUser(idUser);
             if (!ModelState.IsValid)
@@ -78,5 +91,16 @@ public class UserController : Controller
             }
 
             return Ok(response);
+        }
+        
+        [HttpGet("{userId}/reservations")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
+        public IActionResult GetUserReservations(int userId)
+        { 
+            var reservations = _reservationRepository.GetUserReservations(userId);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(reservations);
         }
 }
