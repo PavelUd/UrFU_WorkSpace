@@ -24,8 +24,11 @@ public class UserService : IUserService
     {
         var user = _userRepository
             .GetAllUsers()
-            .FirstOrDefault(x => (x.Login == authenticate.Login || x.Email == authenticate.Email) && x.Password == authenticate.Password);
-        
+            .FirstOrDefault(x => (x.Login == authenticate.Login) && x.Password == authenticate.Password);
+        if (user == null)
+        {
+            return new AuthenticateResponse("");
+        }
         var token = _configuration.GenerateJwtToken(user);
         return new AuthenticateResponse(token);
     }
@@ -37,16 +40,17 @@ public class UserService : IUserService
         var response = Authenticate(new AuthenticateRequest
         {
             Login = user.Login,
-            Email = user.Email,
             Password = user.Password
         });
         return response;
     }
     
-    public bool IsUserExists(User user)
+    public bool IsUserExists(UserCheckRequest user)
     {
         return  _userRepository.GetAllUsers()
             .Any(u => u.Email.Trim().ToUpper() == user.Email.TrimEnd().ToUpper() 
                       || u.Login.Trim().ToUpper() == user.Login.TrimEnd().ToUpper());
     }
+    
+    
 }

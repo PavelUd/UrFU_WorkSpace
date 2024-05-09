@@ -14,7 +14,10 @@ public static class UserHelper
             var key = Encoding.ASCII.GetBytes(configuration["Secret"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("Id", user.IdUser.ToString()),  
+                Subject = new ClaimsIdentity(new[] { new Claim("Id", user.IdUser.ToString()),
+                    new Claim("Login", user.Login),
+                    new Claim("Email", user.Email),
+                    new Claim("FirstName", user.FirstName),
                     new Claim("AccessLevel", user.AccessLevel.ToString())}),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(

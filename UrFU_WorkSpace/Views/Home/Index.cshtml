@@ -13,7 +13,7 @@
     </article>
   </section>
     
-  <section class="coworks">
+  <section class="coworks" id = "coworks">
     @foreach (var workspace in Model)
     {
       <h2 id="coworks" class="section__title">
@@ -42,9 +42,9 @@
           <div class="cowork__description">
             @workspace.Description
           </div>
-          <button class="btn-reset btn cowork__btn">
+          <a class="btn-reset btn cowork__btn" href="/workspaces/@workspace.IdWorkspace">
             Забронировать
-          </button>
+          </a>
         </div>
       </article>
     }

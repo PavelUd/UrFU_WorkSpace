@@ -1,5 +1,5 @@
 html {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 *,
@@ -17,7 +17,7 @@ img {
   max-width: 100%;
 }
 
-body { 
+body {
   font-family: 'font', sans-serif;
 }
 
@@ -130,6 +130,7 @@ body {
   position: fixed;
   right: 50px;
   bottom: 20px;
+  cursor: pointer;
   background: var(--color-blue);
   border-radius: 50px;
   padding: 16px;
@@ -139,12 +140,22 @@ body {
 
 /*header*/
 
-.header{
+.header-outer{
   display: flex;
-  position: fixed;
+  position: sticky;
   background-color: var(--color-white);
-  padding: 18px 18px;
+  height: 100px;
+  padding: 18px 43px;
   z-index: 1000;
+  top: -20px;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  position: sticky;
+  top: 0;
 }
 
 .nav{
@@ -152,8 +163,13 @@ body {
 }
 
 .header__logo{
-  margin-right: 775px;
+  max-width: 200px;
+  max-height: 65px;
+  cursor: pointer;
+  margin-right: 2000px;
 }
+
+
 
 .nav__link{
   color: rgb(31, 8, 165);
@@ -336,8 +352,8 @@ body {
 
 .cowork__photo{
   display: inline-block;
-  min-width: 660px; 
-  min-height: 450px; 
+  min-width: 660px;
+  min-height: 450px;
   border-radius: 31px;
   box-shadow: inset 0px -50px 50px -31px rgba(0, 0, 0, 0.25);
 }
@@ -377,4 +393,91 @@ body {
   font-weight: 500;
   line-height: 25px;
   text-decoration-line: underline;
+}
+
+
+/* REGISTER */
+
+.register{
+  display: flex;
+  flex-direction: column;
+  max-width: 360px;
+  flex-wrap: wrap;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+  margin-top: 10px;
+  padding: 20px;
+}
+
+
+.register__title-wrapper{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.register__title{
+  color: rgb(0, 0, 0);
+  font-weight: 500;
+}
+
+.close-img{
+  cursor: pointer;
+  max-width: 20px;
+  max-height: 20px;
+  margin-left: 20px;
+}
+
+.register__list{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.register__input{
+  border: 1px solid rgb(221, 221, 221);
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+  padding: 15px 0 13px 10px;
+  height: 50px;
+  width: 320px;
+}
+
+.register__elem::placeholder{
+  color: rgb(221, 221, 221);
+  font-size: 16px;
+}
+
+.register__error{
+  /* display: none; */
+  color: rgb(168, 7, 7);
+}
+
+.register__btn{
+  margin: 18px 0 18px 0;
+  padding: 12px 100px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+}
+
+.register__question{
+  color: var(--color-black);
+  margin-bottom: 40px;
+}
+
+.register__link{
+  color: var(--color-blue);
+}
+
+
+/* register confirm */
+
+.register-confirm__message{
+  color: rgb(0, 0, 0);
+  font-weight: 400;
+  font-size: 16px;
 }

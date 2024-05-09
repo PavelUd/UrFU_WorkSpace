@@ -4,7 +4,7 @@ namespace UrFU_WorkSpace.Models;
 
 public class Workspace
 {
-    public int WorkspaceId { get; set; }
+    public int IdWorkspace { get; set; }
     public string Name { get; set; }
     
     public string Description { get; set; }

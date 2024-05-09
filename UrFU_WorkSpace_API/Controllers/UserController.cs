@@ -59,12 +59,6 @@ public class UserController : Controller
         [ProducesResponseType(400)]
         public IActionResult RegisterUser([FromBody] User userCreate)
         {
-            if(_userService.IsUserExists(userCreate))
-            {
-                ModelState.AddModelError("", "Такой пользователь уже существует");
-                return StatusCode(422, ModelState);
-            }
-            
             if (userCreate == null || !ModelState.IsValid)
                 return BadRequest(ModelState);
             
@@ -78,12 +72,23 @@ public class UserController : Controller
 
             return Ok(response);
         }
+
+        [HttpPost("check-user-existence")]
+        [ProducesResponseType(200)]
+        public IActionResult CheckUserExistence([FromBody] UserCheckRequest user)
+        {
+            return Ok(!_userService.IsUserExists(user));
+        }
+
         [HttpPost("login")]
         [ProducesResponseType(200)]
         public IActionResult LoginUser([FromBody] AuthenticateRequest model)
         {
             var response = _userService.Authenticate(model);
-            
+            if (response.Token == "")
+            {
+                return BadRequest();
+            }
             if(response == null)
             {
                 ModelState.AddModelError("", "Что-то пошло не так");
