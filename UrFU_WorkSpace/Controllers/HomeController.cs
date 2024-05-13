@@ -10,11 +10,17 @@ using User = UrFU_WorkSpace.Models.User;
 using Workspace = UrFU_WorkSpace.Models.Workspace;
 
 namespace UrFU_WorkSpace.Controllers;
-public class HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+public class HomeController
     : Controller
 {
     private readonly Uri _baseAddress = new Uri("https://localhost:7077/api");
-    private readonly ILogger<HomeController> _logger = logger;
+    private readonly ILogger<HomeController> _logger;
+
+    public HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+    {
+        _logger = logger;
+
+    }
 
     public IActionResult Index()
     {
