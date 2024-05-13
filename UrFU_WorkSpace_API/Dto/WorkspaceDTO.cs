@@ -5,7 +5,8 @@ namespace UrFU_WorkSpace_API.Dto;
 
 public class WorkspaceDTO
 {
-    public int WorkspaceId { get; set; }
+    public int IdWorkspace { get; set; }
+    
     public string Name { get; set; }
     
     public string Description { get; set; }

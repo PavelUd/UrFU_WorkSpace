@@ -1,6 +1,8 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json.Serialization;
+using UrFU_WorkSpace_API.Helpers;
 
 namespace UrFU_WorkSpace_API.Models;
 [Table("workspace_reservations")]
@@ -19,13 +21,16 @@ public class Reservation
         [Column("workspace_id")]
         public int IdWorkspace { get; set; }
         
+        [DataType(DataType.Time)]
         [Column("time_start")]
-        public TimeSpan TimeStart { get; set; }
+        public DateTime TimeStart { get; set; }
         
+        [DataType(DataType.Time)]
         [Column("time_end")] 
-        public TimeSpan TimeEnd { get; set; }
+        public DateTime TimeEnd { get; set; }
         
+        [DataType(DataType.Date)]
         [Column("date")]
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
         
 }

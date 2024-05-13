@@ -8,6 +8,7 @@ using UrFU_WorkSpace_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using UrFU_WorkSpace_API.Helpers;
+using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API;
 
@@ -48,7 +49,9 @@ public class Startup
         
         
         services.AddControllers().AddJsonOptions(x =>
-            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+        {
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        });
         
         services.AddDbContext<UrfuWorkSpaceContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("Connection")));

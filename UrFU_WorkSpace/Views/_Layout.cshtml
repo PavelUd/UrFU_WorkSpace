@@ -1,38 +1,51 @@
-﻿<!DOCTYPE html>
-<html lang="ru">
+﻿@using UrFU_WorkSpace.Helpers
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="~/css/normalize.css">
   <link rel="stylesheet" href="~/css/style.css">
-  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="~/css/site.css">
   <title>Co-working</title>
 </head>
 <body class="page">
+<nav class="navbar navbar-light sticky-top" style="background-color: white">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="~/img/Logo.png" alt="Лого" class="d-inline-block align-text-top">
+    </a>
+    <div style="display: inline-flex">
+      <span class="navbar-text">
+        <a href="#" class="nav__link">Контакты</a>
+      </span>
+      @{
+        int code;
+        var jwtToken = Context.Session.GetString("JwtToken");
+        if (jwtToken == null)
+        {
+          <button id="lk" class="btn-reset btn nav__btn" style="margin-right: 5rem" data-bs-toggle="modal" data-bs-target="#loginModal">
+            Войти
+          </button>
+        }
+        else
+        {
+          <div style=" margin-right: 5rem" class="btn-reset btn nav__btn">
+            <img src="~/img/account.svg" alt="Лк">
+            @JwtTokenDecoder.GetUserName(jwtToken)
+          </div>
+        }
+      }
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <header class="header">
-    <img class="header__logo" src="~/img/Logo.png" alt="Лого">
-    <nav class="nav">
-      <ul class="nav__list list-reset">
-        <li class="nav__elem">
-          <a href="#" class="nav__link">Контакты</a>
-        </li>
-      </ul>
-      <button id="lk" class="btn-reset btn nav__btn" data-bs-toggle="modal" data-bs-target="#loginModal">
-        <img src="~/img/account.svg" alt="Лк">
-        Личный кабинет
-      </button>
-    </nav>
-  </header>
   @RenderBody()
   
-  <script src="~/lib/jquery/dist/jquery.min.js"></script>
-  <script src="~/lib/gojs/go.js"></script>
-  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="~/js/site.js" asp-append-version="true"></script>
-  @await RenderSectionAsync("Scripts", required: false)
   <footer class="footer">
-    <img class="footer__logo" src="./img/logo-footer.png" alt="Логотип">
+    <img class="footer__logo" src="~/img/logo-footer.png" alt="Логотип">
     <div class="footer__description">
       <h2 class="section__title footer__title">
         Контакты
@@ -43,102 +56,103 @@
     </div>
   </footer>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
     <div class="modal-content">
       <div style="margin:2rem auto 0;">
-        <h4 style="color: #1a1e21; margin: auto" id="exampleModalLabel">Регистация</h4>
+        <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px;" id="registerModalLabel">Регистрация</h4>
       </div>
       <div class="modal-body">
-        <form asp-action="Register">
+        <form id = "registerForm">
           <div style="margin: 1rem">
-            <input class="form-control" name="first-name" placeholder="Имя"/>
-          </div>
-          <div style="margin: 1rem">
-            <input class="form-control" name="second-name" placeholder="Фамилия"/>
+            <input class="register__input form-control" name="first-name" placeholder="Имя" required/>
           </div>
           <div style="margin: 1rem">
-            <input class="form-control" name="login" placeholder="Логин"/>
+            <input class="register__input form-control" name="second-name" placeholder="Фамилия" required/>
           </div>
           <div style="margin: 1rem">
-           <input class="form-control" type="email" id="email" name="email" placeholder="Электронная почта УрФУ" />
+            <input class="register__input form-control" id="login" name="login" placeholder="Логин" required/>
           </div>
           <div style="margin: 1rem">
-            <input class="form-control" name="password" placeholder="Введите пароль"/>
+            <input class="register__input form-control" type="email" id="email" name="email" placeholder="Электронная почта УрФУ" required/>
           </div>
           <div style="margin: 1rem">
-            <input class="form-control" placeholder="Введите пароль повторно"/>
+            <input class="register__input form-control" name="password" placeholder="Введите пароль" required/>
           </div>
-          <div style="margin: 1rem"> 
-            <button type="submit" class="btn btn-info">Продолжить</button>
+          <div style="margin: 1rem">
+            <input class="register__input form-control" placeholder="Введите пароль повторно" required/>
           </div>
-        </form>
+          
+          <div style="margin: 1rem">
+            <input class="register__input form-control" id="code" name="code" hidden="true"/>
+          </div>
+          <div style="color: red;text-align: center; font-size: small" id="error-message"></div>
+          <div style="margin:3rem 1rem 1rem 1rem">
+            <button class="btn register__btn" type="submit">Продолжить</button>
+          </div>
+        </form> 
       </div>
     </div>
   </div>
 </div>
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
     <div class="modal-content">
-      <div style="margin:2rem auto 0;">
-        <h4 style="color: #1a1e21; margin: auto" id="loginModalLabel">Вход</h4>
+      <div style="margin:2rem auto 2rem;">
+        <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="loginModalLabel">Войдите или <br>Зарегестриуйтесь</h4>
       </div>
-      <div class="modal-body">
-        <form asp-action="Login">
-          <div style="margin: 1rem">
-            <input class="form-control" name="login" placeholder="Логин"/>
+      <div class="modal-body" style="margin: auto">
+        <form>
+          <div style="padding: 7px">
+            <input class="register__input form-control form-control-lg" name="login" placeholder="Логин" required/>
           </div>
-          <div style="margin: 1rem">
-            <input class="form-control" type="email" id="email" name="email" placeholder="Электронная почта УрФУ" />
+          <div  style="padding: 7px">
+            <input class="register__input form-control form-control-lg" name="password" placeholder="Пароль" required/>
           </div>
-          <div style="margin: 1rem">
-            <input class="form-control" name="password" placeholder="Введите пароль"/>
-          </div>
-          <div style="margin: 1rem"> 
-            <button type="submit" class="btn btn-info">Войти</button>
+          <div style="color: red;padding: 7px; font-size: medium" id="login-error-message"></div>
+          <div style="margin:3rem 1rem 1rem 1rem"> 
+            <button type="submit" style="padding: 5px;height: 75%; width: 100%" class="btn form-control-lg">Войти</button>
           </div>
         </form>
+        
+        <div class="register__question" style="text-align: center; padding-top: 10px">Нет аккаунта? 
+          <a data-bs-toggle="modal" href="#" data-bs-target="#registerModal">Зарегестрируйтесь</a>
+          </div>
       </div>
+      
     </div>
   </div>
 </div>
 
-<script>
-  document.querySelector('#loginModal form').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const login = formData.get('login');
-    const email = formData.get('email');
-    const password = formData.get('password');
-
-    fetch('https://localhost:7057/Home/Login/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: `login=${encodeURIComponent(login)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
-    })
-   .then(response => {
-      if (response.ok) {
-        return response.text();
-      } else {
-        throw new Error('Response error');
-      }
-    })
-   .then(jwtToken => {
-      if (jwtToken) {
-        $('#lk').replaceWith('<span style="color: #1a1e21">' + jwtToken + '</span>');
-        $('#loginModal').modal('hide');
-      } else {
-        $('#loginModal').modal('hide');
-      }
-    })
-   .catch(error => {
-      console.error(error);
-      $('#loginModal').modal('hide');
-    });
-  });
-</script>
+<div class="modal fade" id="verifyCodeModal" tabindex="-1" aria-labelledby="verifyCodeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
+    <div class="modal-content">
+      <div style="margin:2rem auto 0;">
+        <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="verifyCodeModalLabel">Подтвердите почту</h4>
+      </div>
+      <div class="modal-body" style="margin:1rem auto">
+        <div class="register-confirm__message" style="text-align: center">
+          Мы отправили Вам 6-ти значный код на <span style="font-weight: bold" id ="verifyEmail"></span>. Введите его в поле ниже
+        </div>
+        <form>
+          <div style="margin-top: 1rem;">
+            <input class="form-control form-control-lg" name="code" style="padding: 10px" placeholder="Код подтверждения с Email"/>
+            <span style="font-size: small; color: darkgray; padding: 10px">Отправить код еще раз</span>
+          </div>
+          <div style="margin:2rem 10px 10px 0"> 
+            <button type="submit" style="padding: 5px;height: 75%; width: 100%" class="btn form-control-lg" required>Подтвердить почту</button>
+          </div>
+        </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/lib/gojs/go.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  <script src="~/js/authentication-scripts.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

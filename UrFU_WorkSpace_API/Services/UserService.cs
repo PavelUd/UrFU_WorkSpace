@@ -22,31 +22,40 @@ public class UserService : IUserService
 
     public AuthenticateResponse Authenticate(AuthenticateRequest authenticate)
     {
-        var user = _userRepository
-            .GetAllUsers()
-            .FirstOrDefault(x => (x.Login == authenticate.Login || x.Email == authenticate.Email) && x.Password == authenticate.Password);
-        
+
+        var users = _userRepository.FindAll();
+        var user = users
+            .FirstOrDefault(x => (x.Login == authenticate.Login) && x.Password == authenticate.Password);
+        if (user == null)
+        {
+            return new AuthenticateResponse("");
+        }
         var token = _configuration.GenerateJwtToken(user);
         return new AuthenticateResponse(token);
     }
 
     public async Task<AuthenticateResponse> Register(User user)
     {
-        _userRepository.AddUser(user);
-
+        _userRepository.Create(user);
+       var isSaved = _userRepository.Save();
+       if (!isSaved)
+       {
+           return  new AuthenticateResponse("");
+       }
         var response = Authenticate(new AuthenticateRequest
         {
             Login = user.Login,
-            Email = user.Email,
             Password = user.Password
         });
         return response;
     }
     
-    public bool IsUserExists(User user)
+    public bool IsUserExists(UserCheckRequest user)
     {
-        return  _userRepository.GetAllUsers()
+        return  _userRepository.FindAll()
             .Any(u => u.Email.Trim().ToUpper() == user.Email.TrimEnd().ToUpper() 
                       || u.Login.Trim().ToUpper() == user.Login.TrimEnd().ToUpper());
     }
+    
+    
 }

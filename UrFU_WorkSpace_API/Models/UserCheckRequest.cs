@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UrFU_WorkSpace_API.Models;
 
-public class AuthenticateRequest
+public class UserCheckRequest
 {
     [Required]
-    public string Login { get; set; }
-    
+    public string Email { get; set; }
+
     [Required]
-    public string Password { get; set; }
+    public string Login { get; set; }
 }
