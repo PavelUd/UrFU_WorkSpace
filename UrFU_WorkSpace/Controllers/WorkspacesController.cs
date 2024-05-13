@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 
 namespace UrFU_WorkSpace.Controllers;
@@ -12,7 +13,6 @@ public class WorkspacesController : Controller
 
     public WorkspacesController(ILogger<HomeController> logger)
     {
-        _client = new HttpClient();
         _client.BaseAddress = baseAdress;
         _logger = logger;
     }
@@ -20,7 +20,7 @@ public class WorkspacesController : Controller
     public IActionResult GetWorkspace(int idWorkspace)
     {
         var workspace = new Workspace();
-        var responseMessage = _client.GetAsync(_client.BaseAddress + $"/workspaces/{idWorkspace}").Result;
+        var responseMessage = HttpRequestSender.SentGetRequest(_client.BaseAddress + $"/workspaces/{idWorkspace}").Result;
         if (responseMessage.IsSuccessStatusCode)
         {
             var data = responseMessage.Content.ReadAsStringAsync().Result;
