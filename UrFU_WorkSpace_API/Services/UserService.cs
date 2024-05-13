@@ -22,8 +22,9 @@ public class UserService : IUserService
 
     public AuthenticateResponse Authenticate(AuthenticateRequest authenticate)
     {
-        var user = _userRepository
-            .GetAllUsers()
+
+        var users = _userRepository.FindAll();
+        var user = users
             .FirstOrDefault(x => (x.Login == authenticate.Login) && x.Password == authenticate.Password);
         if (user == null)
         {
@@ -35,8 +36,12 @@ public class UserService : IUserService
 
     public async Task<AuthenticateResponse> Register(User user)
     {
-        _userRepository.AddUser(user);
-
+        _userRepository.Create(user);
+       var isSaved = _userRepository.Save();
+       if (!isSaved)
+       {
+           return  new AuthenticateResponse("");
+       }
         var response = Authenticate(new AuthenticateRequest
         {
             Login = user.Login,
@@ -47,7 +52,7 @@ public class UserService : IUserService
     
     public bool IsUserExists(UserCheckRequest user)
     {
-        return  _userRepository.GetAllUsers()
+        return  _userRepository.FindAll()
             .Any(u => u.Email.Trim().ToUpper() == user.Email.TrimEnd().ToUpper() 
                       || u.Login.Trim().ToUpper() == user.Login.TrimEnd().ToUpper());
     }

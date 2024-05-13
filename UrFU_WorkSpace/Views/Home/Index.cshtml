@@ -13,12 +13,12 @@
     </article>
   </section>
     
-  <section class="coworks" id = "coworks">
+  <section class="coworks" id="coworks">
+     <h2 id="coworks" class="section__title">
+            Коворкинги
+          </h2>
     @foreach (var workspace in Model)
     {
-      <h2 id="coworks" class="section__title">
-        Коворкинги
-      </h2>
       <article class="cowork">
         <div class="cowork-photo__container">
           <img class="cowork__photo" src="@workspace.Images.First().Url" alt="Фото коворкинга">

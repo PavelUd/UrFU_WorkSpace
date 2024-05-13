@@ -2,9 +2,7 @@ using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Interfaces;
 
-public interface IWorkspaceRepository
+public interface IWorkspaceRepository : IBaseRepository<Workspace>
 { 
-    public Workspace GetWorkspaceById(int workspaceId);
-    public IEnumerable<Workspace> GetWorkspaces();
     public IEnumerable<WorkspaceImage> GetWorkspaceImages(int workspaceId);
 }

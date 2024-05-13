@@ -12,11 +12,9 @@ public class UserController : Controller
 {
         private readonly IUserService _userService;
         private readonly IUserRepository _userRepository;
-        private readonly IReservationRepository _reservationRepository;
 
-        public UserController(IUserRepository userRepository,IReservationRepository reservationRepository, IUserService userService)
-        {
-            _reservationRepository = reservationRepository;
+        public UserController(IUserRepository userRepository, IUserService userService)
+        { 
             _userRepository = userRepository;
             _userService = userService;
         }
@@ -25,7 +23,7 @@ public class UserController : Controller
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public IActionResult GetUsers()
         {
-            var users = _userRepository.GetAllUsers();
+            var users = _userRepository.FindAll();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -35,18 +33,7 @@ public class UserController : Controller
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult GetUser(int idUser)
         {
-            var user = _userRepository.GetUser(idUser);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(user);
-        }
-        
-        [HttpPatch("{idUser}")]
-        [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult UpdateUser(int idUser)
-        {
-            var user = _userRepository.GetUser(idUser);
+            var user = _userRepository.FindByCondition(x => x.IdUser == idUser);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -59,12 +46,9 @@ public class UserController : Controller
         [ProducesResponseType(400)]
         public IActionResult RegisterUser([FromBody] User userCreate)
         {
-            if (userCreate == null || !ModelState.IsValid)
-                return BadRequest(ModelState);
+          var response = _userService.Register(userCreate);
             
-            var response = _userService.Register(userCreate);
-            
-            if(response == null)
+            if(response == null || response.Result.Token == "")
             {
                 ModelState.AddModelError("", "Что-то пошло не так");
                 return StatusCode(500, ModelState);
@@ -96,16 +80,5 @@ public class UserController : Controller
             }
 
             return Ok(response);
-        }
-        
-        [HttpGet("{userId}/reservations")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
-        public IActionResult GetUserReservations(int userId)
-        { 
-            var reservations = _reservationRepository.GetUserReservations(userId);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            return Ok(reservations);
         }
 }

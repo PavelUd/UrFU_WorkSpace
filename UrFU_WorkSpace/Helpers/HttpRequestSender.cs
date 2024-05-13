@@ -8,6 +8,7 @@ public class HttpRequestSender
     
     private static HttpClient _client = new HttpClient();
     
+    
     public static async Task<HttpResponseMessage> SendPostRequest(Dictionary<string, object> data, string route)
     {
         var json = JsonConvert.SerializeObject(data, Formatting.None);
