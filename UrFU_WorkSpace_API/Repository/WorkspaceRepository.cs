@@ -10,4 +10,9 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
     {
         return _context.WorkspaceImages.Where(image => image.IdWorkspace == workspaceId); 
     }
+
+   public IEnumerable<WorkspaceObject> GetWorkspaceObjects(int workspaceId)
+   {
+       return _context.WorkspaceObjects.Where(obj => obj.IdWorkspace == workspaceId); 
+   }
 }
