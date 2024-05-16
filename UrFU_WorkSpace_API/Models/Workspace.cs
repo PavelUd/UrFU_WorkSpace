@@ -6,7 +6,7 @@ namespace UrFU_WorkSpace_API.Models;
 [Table("workspaces")]
 public class Workspace
 {
-    [Key] [Column("workspace_id")] public int IdWorkspace { get; set; }
+    [Key] [Column("workspace_id")] public int Id { get; set; }
     
     [Required] [Column("name")] public string Name { get; set; }
 

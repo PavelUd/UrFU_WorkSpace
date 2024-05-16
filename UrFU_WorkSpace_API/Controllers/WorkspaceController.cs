@@ -35,7 +35,7 @@ public class WorkspaceController : Controller
     [ProducesResponseType(200, Type = typeof(WorkspaceDTO))]
     public IActionResult GetWorkspaceById(int idWorkspace)
     {
-        var workspace = workspaceRepository.FindByCondition(x => x.IdWorkspace == idWorkspace).FirstOrDefault();
+        var workspace = workspaceRepository.FindByCondition(x => x.Id == idWorkspace).FirstOrDefault();
         if (workspace == null)
         {
             return NotFound(ModelState);
