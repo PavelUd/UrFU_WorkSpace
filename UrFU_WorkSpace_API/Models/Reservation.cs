@@ -20,17 +20,16 @@ public class Reservation
         
         [Column("workspace_id")]
         public int IdWorkspace { get; set; }
-        
-        [DataType(DataType.Time)]
+        [JsonConverter(typeof(TimeOnlyJsonConverter))]
         [Column("time_start")]
-        public DateTime TimeStart { get; set; }
+        public TimeOnly TimeStart { get; set; }
         
-        [DataType(DataType.Time)]
+        [JsonConverter(typeof(TimeOnlyJsonConverter))]
         [Column("time_end")] 
-        public DateTime TimeEnd { get; set; }
+        public TimeOnly TimeEnd { get; set; }
         
-        [DataType(DataType.Date)]
+        [JsonConverter(typeof(DateOnlyJsonConverter))]
         [Column("date")]
-        public DateTime Date { get; set; }
+        public DateOnly Date { get; set; }
         
 }

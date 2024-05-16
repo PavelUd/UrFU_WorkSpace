@@ -23,7 +23,9 @@ public class ReservationController : Controller
     [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
     public IActionResult GetReservations(int? idUser, int? idWorkspace, DateTime date)
     {
-        IEnumerable<Reservation> reservations = reservationRepository.FindByCondition(r => r.Date == date.Date);
+        IEnumerable<Reservation> reservations = date != DateTime.MinValue 
+            ? reservationRepository.FindByCondition(r => r.Date == new DateOnly(date.Year, date.Month, date.Day)) 
+            : reservationRepository.FindAll();
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

@@ -46,4 +46,12 @@ public class WorkspaceController : Controller
 
         return Ok(workspaces);
     }
+
+    [HttpGet("{idWorkspace}/objects")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceObject>))]
+    public IActionResult GetWorkspaceObjects(int idWorkspace)
+    {
+        var objects = workspaceRepository.GetWorkspaceObjects(idWorkspace);
+        return Ok(objects);
+    }
 }

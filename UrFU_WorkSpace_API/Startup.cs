@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ public class Startup
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles(services.BuildServiceProvider().GetService<IWorkspaceRepository>())));
         services.AddAuthentication(x =>
         {
+            
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(x =>
@@ -50,6 +52,8 @@ public class Startup
         
         services.AddControllers().AddJsonOptions(x =>
         {
+            x.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+            x.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
         

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace UrFU_WorkSpace.Helpers;
 
-public class HttpRequestSender
+public static class HttpRequestSender
 {
     
     //private static HttpClient _client = new HttpClient();
@@ -12,10 +12,7 @@ public class HttpRequestSender
     {
         var handler = new HttpClientHandler();
         handler.ServerCertificateCustomValidationCallback +=
-            (sender, certificate, chain, errors) =>
-            {
-                return true;
-            };
+            (sender, certificate, chain, errors) => true;
         return new HttpClient(handler);
     }
 
