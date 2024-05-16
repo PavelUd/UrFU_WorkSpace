@@ -30,5 +30,6 @@ public partial class UrfuWorkSpaceContext : DbContext
     
     public DbSet<WorkspaceImage> WorkspaceImages { get; set; }
     public DbSet<Workspace> Workspaces { get; set; }
+    public DbSet<WorkspaceWeekday> OperationMode { get; set; }
     public DbSet<WorkspaceObject> WorkspaceObjects { get; set; }
 }

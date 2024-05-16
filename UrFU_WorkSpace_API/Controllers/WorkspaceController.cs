@@ -52,6 +52,31 @@ public class WorkspaceController : Controller
     public IActionResult GetWorkspaceObjects(int idWorkspace)
     {
         var objects = workspaceRepository.GetWorkspaceObjects(idWorkspace);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         return Ok(objects);
+    }
+    
+    [HttpGet("{idWorkspace}/amenities")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceAmenity>))]
+    public IActionResult GetWorkspaceAmenities(int idWorkspace)
+    {
+        var amenities = workspaceRepository.GetWorkspaceAmenities(idWorkspace);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        return Ok(amenities);
+    }
+    
+    [HttpGet("{idWorkspace}/operation-mode")]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceWeekday>))]
+    public IActionResult GetWorkspaceOperationMode(int idWorkspace)
+    {
+        var amenities = workspaceRepository.GetWorkspaceOperationMode(idWorkspace);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        return Ok(amenities);
     }
 }
