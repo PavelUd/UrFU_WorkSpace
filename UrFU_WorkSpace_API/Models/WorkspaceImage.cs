@@ -8,7 +8,7 @@ public class WorkspaceImage
 {
     [Key]
     [Column("id_image")] 
-    public int IdImage { get; set; }
+    public int Id { get; set; }
 
     [Column("url")]
     public string Url { get; set; }

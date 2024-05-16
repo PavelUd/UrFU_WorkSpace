@@ -25,6 +25,9 @@ public partial class UrfuWorkSpaceContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<AmenityDetail> AmenityDetails { get; set; }
+    public DbSet<WorkspaceAmenity> WorkspaceAmenities { get; set; }
+    
     public DbSet<WorkspaceImage> WorkspaceImages { get; set; }
     public DbSet<Workspace> Workspaces { get; set; }
 }

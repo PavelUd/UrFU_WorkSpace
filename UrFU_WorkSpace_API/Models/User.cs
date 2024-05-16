@@ -8,7 +8,7 @@ namespace UrFU_WorkSpace_API.Models;
 public class User
 {
     [Key][Column("user_id")]
-    public int IdUser { get; set; }
+    public int Id { get; set; }
 
     [Required]
     [MaxLength(50)]

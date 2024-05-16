@@ -33,7 +33,7 @@ public class UserController : Controller
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult GetUser(int idUser)
         {
-            var user = _userRepository.FindByCondition(x => x.IdUser == idUser);
+            var user = _userRepository.FindByCondition(x => x.Id == idUser);
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
