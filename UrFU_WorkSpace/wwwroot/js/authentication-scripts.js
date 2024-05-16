@@ -7,7 +7,7 @@ document.querySelector('#loginModal form').addEventListener('submit', function(e
         password : formData.get('password')
     }).then(Name => {
         if (Name) {
-            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="img/account.svg" alt="Лк">' + Name + '</div>');
+            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="~img/account.svg" alt="Лк">' + Name + '</div>');
             $('#loginModal').modal('hide');
         }
     })
