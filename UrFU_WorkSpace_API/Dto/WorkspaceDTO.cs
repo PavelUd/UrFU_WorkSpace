@@ -21,5 +21,8 @@ public class WorkspaceDTO
     
     public int CreatorId { get; set; }
     public IEnumerable<WorkspaceImage> Images { get; set; }
+    public IEnumerable<WorkspaceObject> Objects { get; set; }
+    public IEnumerable<WorkspaceWeekday> OperationMode { get; set; }
+    
     public IEnumerable<WorkspaceAmenity> Amenities { get; set; }
 }

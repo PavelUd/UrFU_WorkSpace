@@ -4,22 +4,290 @@
     ViewBag.Title = Model.Name;
 }
 
-<main class="main">
-    <section class="coworks">
-        <div style="padding: 20px; ">
-          <form class="col-md-5" style="margin:10rem 0 1rem -1rem ">
-            <label>Дата</label>
-            <input class="form-control" name="date" type="date"/>
-            <label>Дата</label>
-            <input class="form-control" name="date" type="time"/>
-            <label>Дата</label>
-            <input class="form-control" name="date" type="time"/>
-            <input class="form-control" id ="mySavedModel"  name="map" type="text"/>
-            <button type = "submit" class="btn btn-info">Отправить</button>
-          </form>
-          <div id="myDiagramDiv" style="width:100%; height:400px"></div>
+<main class="book">
+      <section class="book__hero">
+        <h2 class="section__title">
+          ИРИТ-РТФ
+          <span class="blue">
+            Радиоточка
+          </span>
+        </h2>
+        <span class="cowork__address">
+          Ул. Мира, 32
+        </span>
+
+        <div class="gallery">
+          <figure class="gallery__item gallery__item--1">
+            <img src="~/img/radio-point1.png" class="gallery__img" alt="Image 1">
+          </figure>
+          <figure class="gallery__item gallery__item--2">
+            <img src="~/img/radio-point2.png" class="gallery__img" alt="Image 2">
+          </figure>
+          <figure class="gallery__item gallery__item--3">
+            <img src="~/img/radio-point3.png" class="gallery__img" alt="Image 3">
+          </figure>
+          <figure class="gallery__item gallery__item--4">
+            <img src="~/img/radio-point4.png" class="gallery__img" alt="Image 4">
+          </figure>
+          <figure class="gallery__item gallery__item--5">
+            <img src="~/img/radio-point5.png" class="gallery__img" alt="Image 5">
+          </figure>
         </div>
-    </section>
+      </section>
+
+      <section class="book__about">
+        <h2 class="section__title">
+          О пространстве
+        </h2>
+        <div class="about__text">
+          Это первый коворкинг в УрФУ, в котором расположена точка питания. Пространство коворкинга предста-вляет собой два небольших помещения: в одном студенты могут подготовиться к учебным занятиям, про-вести мероприятие, а во втором -  вкусно перекусить, пообедать
+        </div>
+      </section>
+
+      <section class="book__comfort">
+        <h2 class="section__title"> 
+          Удобства для Вас
+        </h2>
+        <div class="comfort__container">
+          <ul class="list-reset comfort__list">
+            <li class="comfort__elem">
+              <img src="~/img/Wi-fi.png" alt="Wi-Fi" class="comfort__img">
+              <span class="comfort__text">
+                Доступ к Wi-Fi
+              </span>
+            </li>
+            <li class="comfort__elem">
+              <img src="~/img/FREE.png" alt="free" class="comfort__img">
+              <span class="comfort__text">
+                Бесплатное бронирование
+              </span>
+            </li>
+            <li class="comfort__elem">
+              <img src="~/img/sofa.png" alt="Диван" class="comfort__img">
+              <span class="comfort__text">
+                Комфортная обстановка
+              </span>
+            </li>
+            <li class="comfort__elem">
+              <img src="~/img/microwave.png" alt="Микроволновка" class="comfort__img">
+              <span class="comfort__text">
+                Микроволновка
+              </span>
+            </li>
+            <li class="comfort__elem">
+              <img src="~/img/desk.png" alt="Доска" class="comfort__img">
+              <span class="comfort__text">
+                Маркерная доска
+              </span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="book__location">
+        <div class="location__container">
+          <h2 class="section__title">
+            Расположение
+          </h2>
+          <div class="location__wrapper">
+            <img src="~/img/map.png" alt="Карта" class="location__img">
+            <button class="btn-reset btn open-modal__btn">
+              Забронировать место
+            </button>
+          </div>
+          
+        </div>
+
+        <div class="location__container">
+          <h2 class="section__title location__title">
+            Контакты коворкинга
+          </h2>
+
+          <div class="location__wrapper--2">
+            <div class="location__text">
+              <div>
+                <span class="location--beauty">Адрес:</span> г. Екатеринбург, Кировский район Втузгородок м-н,  ул. Мира, 32, левое крыло, 1 этаж.
+              </div>
+              <div class="location__text--wrap">
+                <span class="location--beauty">Соцсети:</span>
+                 <a href="№" class="location__link">
+                  <img src="~/img/vk.png" alt="Вк" class="location__link--img">
+                </a>
+              </div>
+            </div>
+            <h2 class="section__title">
+              Режим работы
+            </h2>
+            <ul class="list-reset location__list">
+              <li class="location__elem">
+                <span class="location__day">Пн</span>
+                <span class="location__time">09:00 - 19:00</span>
+              </li>
+              <li class="location__elem">
+                <span class="location__day">Вт</span>
+                <span class="location__time">09:00 - 19:00</span>
+              </li>
+              <li class="location__elem">
+                <span class="location__day">Ср</span>
+                <span class="location__time">09:00 - 19:00</span>
+              </li>
+              <li class="location__elem">
+                <span class="location__day">Чт</span>
+                <span class="location__time">09:00 - 19:00</span>
+              </li>
+              <li class="location__elem">
+                <span class="location__day">Пт</span>
+                <span class="location__time">09:00 - 19:00</span>
+              </li>
+              <li class="location__elem">
+                <span class="location__day">Сб</span>
+                <span class="location__time">Выходной</span>
+              </li>
+              <li class="location__elem">
+                <span class="location__day">Вс</span>
+                <span class="location__time">Выходной</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="reviews">
+        <div class="reviews__head">
+          <h2 class="section__title review__title">
+            Отзывы о пространстве
+          </h2>
+          <button class="btn-reset btn review__btn"> 
+            Написать отзыв
+          </button>
+        </div>
+
+        <div class="review__wrapper">
+          <div class="review__head">
+            <span class="review__author">
+              Имя посетителя
+            </span>
+            <span class="review__date">
+              01.01.24
+            </span>
+            <ul class="list-reset review__stars">
+              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+            </ul>
+          </div>
+          <span class="review__text">
+            Текст отзыва текст отзыва текст отзыва
+          </span>
+        </div>
+      </section>
+
+      <div class="modal__wrapper hidden">
+        <div class="book__modal">
+          <h2 class="modal__title">
+            Дата и длительность посещения
+          </h2>
+          <div class="modal__input">
+            <label for="book__date" class="date__text">Выберите дату</label>
+            <input type="date" name="Date" id="book__date" class="book__date">
+          </div>
+          <div class="modal__time">
+            <ul class="list-reset time__list">
+              <li class="time__elem">
+                <input type="checkbox" id="time__1" class="time__checkbox">
+                <label for="time__1" class="checkbox__text">09:00-10:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__2" class="time__checkbox">
+                <label for="time__2" class="checkbox__text">10:00-11:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__3" class="time__checkbox">
+                <label for="time__3" class="checkbox__text">11:00-12:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__4" class="time__checkbox">
+                <label for="time__4" class="checkbox__text">12:00-13:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__5" class="time__checkbox">
+                <label for="time__5" class="checkbox__text">13:00-14:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__6" class="time__checkbox">
+                <label for="time__6" class="checkbox__text">14:00-15:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__7" class="time__checkbox">
+                <label for="time__7" class="checkbox__text">15:00-16:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__8" class="time__checkbox">
+                <label for="time__8" class="checkbox__text">16:00-17:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__9" class="time__checkbox">
+                <label for="time__9" class="checkbox__text">18:00-19:00</label>
+              </li>
+              <li class="time__elem">
+                <input type="checkbox" id="time__10" class="time__checkbox">
+                <label for="time__10" class="checkbox__text">19:00-20:00</label>
+              </li>
+            </ul>
+         </div>
+          <span class="selected-time">
+            Выбрано: 
+            <span class="selected-date__value"></span>
+            <span class="selected-time__value"></span>
+          </span>
+          <div class="modal__navigator">
+            <button class="btn-reset btn btn__back">
+              Вернуться
+            </button>
+            <button class="btn-reset btn btn__next">
+              Продолжить
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal__wrapper hidden">
+        <div class="book__modal">
+          <h2 class="modal__title">
+            Бронирование места
+          </h2>
+        
+          <div class="modal__navigator">
+            <button class="btn-reset btn btn__back">
+              Вернуться
+            </button>
+            <button class="btn-reset btn btn__next">
+              Продолжить
+            </button>
+          </div>
+      </div>
+      </div>
+
+      <div class="modal__wrapper hidden">
+        <div class="book__modal">
+          <h2 class="modal__title">
+            Подтвердите бронирование
+          </h2>
+        
+          <div class="modal__navigator">
+            <button class="btn-reset btn btn__back">
+              Вернуться
+            </button>
+            <button class="btn-reset btn btn__next">
+              Продолжить
+            </button>
+          </div>
+      </div>
+      </div>
+
+    </main>
     <script id="code">
       function init() {
         
@@ -121,4 +389,3 @@
       }
       window.addEventListener('DOMContentLoaded', init);
     </script>
-</main>

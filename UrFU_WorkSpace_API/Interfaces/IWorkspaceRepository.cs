@@ -9,4 +9,5 @@ public interface IWorkspaceRepository : IBaseRepository<Workspace>
     public IEnumerable<WorkspaceObject> GetWorkspaceObjects(int workspaceId);
 
     public IEnumerable<WorkspaceAmenity> GetWorkspaceAmenities(int workspaceId);
+    public IEnumerable<WorkspaceWeekday> GetWorkspaceOperationMode(int workspaceId);
 }

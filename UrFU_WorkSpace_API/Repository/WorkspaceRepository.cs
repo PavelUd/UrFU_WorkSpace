@@ -13,9 +13,10 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
 
    public IEnumerable<WorkspaceObject> GetWorkspaceObjects(int workspaceId)
    {
-       return _context.WorkspaceObjects.Where(obj => obj.IdWorkspace == workspaceId); 
+       return _context.WorkspaceObjects.Where(obj => obj.IdWorkspace == workspaceId);
+   }
 
-   
+
    public IEnumerable<WorkspaceAmenity> GetWorkspaceAmenities(int workspaceId)
    {
        return _context.WorkspaceAmenities
@@ -27,5 +28,10 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
                IdWorkspace = x.Amenity.IdWorkspace,
                Detail = x.Detail
            }).Where(x => x.IdWorkspace == workspaceId); 
+   }
+
+   public IEnumerable<WorkspaceWeekday> GetWorkspaceOperationMode(int workspaceId)
+   {
+       return _context.OperationMode.Where(om => om.IdWorkspace == workspaceId);
    }
 }
