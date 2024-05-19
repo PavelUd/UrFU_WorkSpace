@@ -26,12 +26,14 @@ public class HomeController
     {
         var workspaces = new List<Workspace>();
         var responseMessage = HttpRequestSender.SentGetRequest(_baseAddress + "/workspaces");
+        var settings = new JsonSerializerSettings();
+        settings.Converters.Add(new TimeOnlyJsonConverter());
         if (!responseMessage.Result.IsSuccessStatusCode)
         {
             return View(workspaces);
         }
         var data = responseMessage.Result.Content.ReadAsStringAsync().Result;
-        workspaces = JsonConvert.DeserializeObject<List<Workspace>>(data);
+        workspaces = JsonConvert.DeserializeObject<List<Workspace>>(data, settings);
         return View(workspaces);
     }
 

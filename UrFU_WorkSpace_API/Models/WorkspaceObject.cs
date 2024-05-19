@@ -14,4 +14,12 @@ public class WorkspaceObject
     
     [Column("id_workspace")]
     public int IdWorkspace { get; set; }
+    [Column("pos_x")]
+    public double X { get; set; }
+    [Column("pos_y")]
+    public double  Y { get; set; }
+    [Column("height")]
+    public int Height { get; set; }
+    [Column("width")]
+    public int Width { get; set; }
 }

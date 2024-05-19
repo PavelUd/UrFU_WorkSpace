@@ -5,7 +5,7 @@ namespace UrFU_WorkSpace_API.Dto;
 
 public class WorkspaceDTO
 {
-    public int IdWorkspace { get; set; }
+    public int Id { get; set; }
     
     public string Name { get; set; }
     
@@ -19,7 +19,7 @@ public class WorkspaceDTO
     
     public int Privacy { get; set; }
     
-    public int CreatorId { get; set; }
+    public int IdCreator { get; set; }
     public IEnumerable<WorkspaceImage> Images { get; set; }
     public IEnumerable<WorkspaceObject> Objects { get; set; }
     public IEnumerable<WorkspaceWeekday> OperationMode { get; set; }
