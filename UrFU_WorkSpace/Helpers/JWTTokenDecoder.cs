@@ -17,4 +17,10 @@ public static class JwtTokenDecoder
         return info["Login"];
     }
     
+    public static string GetUserId(string token)
+    {
+        var info = Decode(token);
+        return info["Id"];
+    }
+    
 }

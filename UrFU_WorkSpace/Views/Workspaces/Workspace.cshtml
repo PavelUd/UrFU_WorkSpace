@@ -1,3 +1,5 @@
+@using System.Net.Mime
+@using UrFU_WorkSpace.Helpers
 @model UrFU_WorkSpace.Models.Workspace
 
 @{
@@ -7,31 +9,21 @@
 <main class="book">
       <section class="book__hero">
         <h2 class="section__title">
-          ИРИТ-РТФ
+          @Model.Institute
           <span class="blue">
-            Радиоточка
+            @Model.Name
           </span>
         </h2>
         <span class="cowork__address">
-          Ул. Мира, 32
+          @Model.Address
         </span>
 
         <div class="gallery">
-          <figure class="gallery__item gallery__item--1">
-            <img src="~/img/radio-point1.png" class="gallery__img" alt="Image 1">
-          </figure>
-          <figure class="gallery__item gallery__item--2">
-            <img src="~/img/radio-point2.png" class="gallery__img" alt="Image 2">
-          </figure>
-          <figure class="gallery__item gallery__item--3">
-            <img src="~/img/radio-point3.png" class="gallery__img" alt="Image 3">
-          </figure>
-          <figure class="gallery__item gallery__item--4">
-            <img src="~/img/radio-point4.png" class="gallery__img" alt="Image 4">
-          </figure>
-          <figure class="gallery__item gallery__item--5">
-            <img src="~/img/radio-point5.png" class="gallery__img" alt="Image 5">
-          </figure>
+          @foreach (var image in Model.Images){
+              <figure class="gallery__item gallery__item--@image.Id">
+                <img src="@image.Url"  class="gallery__img" alt="@image.Id">
+              </figure>
+          }
         </div>
       </section>
 
@@ -40,7 +32,7 @@
           О пространстве
         </h2>
         <div class="about__text">
-          Это первый коворкинг в УрФУ, в котором расположена точка питания. Пространство коворкинга предста-вляет собой два небольших помещения: в одном студенты могут подготовиться к учебным занятиям, про-вести мероприятие, а во втором -  вкусно перекусить, пообедать
+          @Model.Description
         </div>
       </section>
 
@@ -50,36 +42,15 @@
         </h2>
         <div class="comfort__container">
           <ul class="list-reset comfort__list">
-            <li class="comfort__elem">
-              <img src="~/img/Wi-fi.png" alt="Wi-Fi" class="comfort__img">
-              <span class="comfort__text">
-                Доступ к Wi-Fi
-              </span>
-            </li>
-            <li class="comfort__elem">
-              <img src="~/img/FREE.png" alt="free" class="comfort__img">
-              <span class="comfort__text">
-                Бесплатное бронирование
-              </span>
-            </li>
-            <li class="comfort__elem">
-              <img src="~/img/sofa.png" alt="Диван" class="comfort__img">
-              <span class="comfort__text">
-                Комфортная обстановка
-              </span>
-            </li>
-            <li class="comfort__elem">
-              <img src="~/img/microwave.png" alt="Микроволновка" class="comfort__img">
-              <span class="comfort__text">
-                Микроволновка
-              </span>
-            </li>
-            <li class="comfort__elem">
-              <img src="~/img/desk.png" alt="Доска" class="comfort__img">
-              <span class="comfort__text">
-                Маркерная доска
-              </span>
-            </li>
+            @foreach (var amenity in Model.Amenities)
+            {
+              <li class="comfort__elem">
+                <img src="@amenity.Detail.Icon" alt="Wi-Fi" class="comfort__img">
+                <span class="comfort__text">
+                  @amenity.Detail.Name
+                </span>
+              </li>
+            }
           </ul>
         </div>
       </section>
@@ -91,7 +62,7 @@
           </h2>
           <div class="location__wrapper">
             <img src="~/img/map.png" alt="Карта" class="location__img">
-            <button class="btn-reset btn open-modal__btn">
+            <button class="btn-reset btn open-modal__btn" id ="book-btn">
               Забронировать место
             </button>
           </div>
@@ -119,34 +90,28 @@
               Режим работы
             </h2>
             <ul class="list-reset location__list">
-              <li class="location__elem">
-                <span class="location__day">Пн</span>
-                <span class="location__time">09:00 - 19:00</span>
-              </li>
-              <li class="location__elem">
-                <span class="location__day">Вт</span>
-                <span class="location__time">09:00 - 19:00</span>
-              </li>
-              <li class="location__elem">
-                <span class="location__day">Ср</span>
-                <span class="location__time">09:00 - 19:00</span>
-              </li>
-              <li class="location__elem">
-                <span class="location__day">Чт</span>
-                <span class="location__time">09:00 - 19:00</span>
-              </li>
-              <li class="location__elem">
-                <span class="location__day">Пт</span>
-                <span class="location__time">09:00 - 19:00</span>
-              </li>
-              <li class="location__elem">
-                <span class="location__day">Сб</span>
-                <span class="location__time">Выходной</span>
-              </li>
-              <li class="location__elem">
-                <span class="location__day">Вс</span>
-                <span class="location__time">Выходной</span>
-              </li>
+              @{
+                var dict = new Dictionary<int, string>()
+                {
+                  {1,"Пн"},
+                  {2,"Вт"},
+                  {3,"Ср"},
+                  {4,"Чт"},
+                  {5,"Пт"},
+                  {6,"Сб"},
+                  {7,"Вс"},
+                };
+                var t = Model.OperationMode.ToArray();
+                Array.Sort(t, (x, y) => x.WeekDayNumber.CompareTo(y.WeekDayNumber));
+                foreach (var weekday in t)
+
+                {
+                  <li class="location__elem">
+                    <span class="location__day">@dict[weekday.WeekDayNumber]</span>
+                    <span class="location__time">@weekday.TimeStart - @weekday.TimeEnd</span>
+                  </li>
+                }
+              }
             </ul>
           </div>
         </div>
@@ -183,74 +148,39 @@
           </span>
         </div>
       </section>
-
       <div class="modal__wrapper hidden">
         <div class="book__modal">
           <h2 class="modal__title">
             Дата и длительность посещения
           </h2>
-          <div class="modal__input">
+          <div>
             <label for="book__date" class="date__text">Выберите дату</label>
-            <input type="date" name="Date" id="book__date" class="book__date">
+            <input type = "date" id="date" name = "date" value="2024-05-18"/>
+            <select name = "timeType" id= "timeType">
+              <option value="lel" selected="">lel</option>
+              <option value="lol">lol</option>
+              <option value="lil">lil</option>
+            </select>
+            <input name = "objectType" id="objectType" value="lel">
           </div>
           <div class="modal__time">
             <ul class="list-reset time__list">
-              <li class="time__elem">
-                <input type="checkbox" id="time__1" class="time__checkbox">
-                <label for="time__1" class="checkbox__text">09:00-10:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__2" class="time__checkbox">
-                <label for="time__2" class="checkbox__text">10:00-11:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__3" class="time__checkbox">
-                <label for="time__3" class="checkbox__text">11:00-12:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__4" class="time__checkbox">
-                <label for="time__4" class="checkbox__text">12:00-13:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__5" class="time__checkbox">
-                <label for="time__5" class="checkbox__text">13:00-14:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__6" class="time__checkbox">
-                <label for="time__6" class="checkbox__text">14:00-15:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__7" class="time__checkbox">
-                <label for="time__7" class="checkbox__text">15:00-16:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__8" class="time__checkbox">
-                <label for="time__8" class="checkbox__text">16:00-17:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__9" class="time__checkbox">
-                <label for="time__9" class="checkbox__text">18:00-19:00</label>
-              </li>
-              <li class="time__elem">
-                <input type="checkbox" id="time__10" class="time__checkbox">
-                <label for="time__10" class="checkbox__text">19:00-20:00</label>
-              </li>
             </ul>
          </div>
           <span class="selected-time">
             Выбрано: 
             <span class="selected-date__value"></span>
-            <span class="selected-time__value"></span>
+            <span class="selected-time__value" id = "selected-time__value"></span>
           </span>
           <div class="modal__navigator">
             <button class="btn-reset btn btn__back">
               Вернуться
             </button>
-            <button class="btn-reset btn btn__next">
-              Продолжить
-            </button>
+              <button class="btn-reset btn btn__next" id ="btn-next">
+                Продолжить
+              </button>
+              </div>
           </div>
-        </div>
       </div>
 
       <div class="modal__wrapper hidden">
@@ -258,12 +188,13 @@
           <h2 class="modal__title">
             Бронирование места
           </h2>
-        
+          <div id="myDiagramDiv" style="width:100%; height:400px"></div>
+          <input value="" hidden="" id="selected-object"/>
           <div class="modal__navigator">
             <button class="btn-reset btn btn__back">
               Вернуться
             </button>
-            <button class="btn-reset btn btn__next">
+            <button class="btn-reset btn btn__next" id="reservation-button">
               Продолжить
             </button>
           </div>
@@ -277,18 +208,15 @@
           </h2>
         
           <div class="modal__navigator">
-            <button class="btn-reset btn btn__back">
-              Вернуться
-            </button>
+            <span style="color: black" id="book-result"></span>
             <button class="btn-reset btn btn__next">
               Продолжить
             </button>
           </div>
       </div>
       </div>
-
     </main>
-    <script id="code">
+<script id="code">
       function init() {
         
         const $ = go.GraphObject.make;
@@ -355,19 +283,22 @@
                   {
                     click: function(e, node) {
                       var shape = node.findObject("SHAPE");
-                      if (shape !== null) {
+                      if (shape == null || node.data.isReserve){
+                          return;
+                      }
+                      
                         if(prevNode){
                           prevNode.findObject("SHAPE").fill = prevColor;
                           myDiagram.model.setDataProperty(prevNode.data, "color", prevColor);
                         }
+                        
                         prevColor = shape.fill;
                         prevNode= node;
-                        shape.fill = "red";
-                        myDiagram.model.setDataProperty(node.data, "color","red");
-                      }
-                    
-                       document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-                    }
+                        shape.fill = "green";
+                        myDiagram.model.setDataProperty(node.data, "color","green");
+                        console.log(node.data)
+                       document.getElementById("selected-object").value = node.data.key;
+                      },
                   },
             new go.Binding("desiredSize", "size", go.Size.parse),
             new go.Binding("position", "pos", go.Point.parse).makeTwoWay(go.Point.stringify),
@@ -381,11 +312,130 @@
           );
     
         myDiagram.model = new go.GraphLinksModel([
-          { "key": "Alpha", "pos": "0 0", "size": "50 50", "color": "lightblue" },
-          { "key": "Beta", "pos": "276 19", "size": "100 100", "color": "orange" },
-          { "key": "Gamma", "pos": "44 214", "size": "100 50", "color": "lightgreen" },
-          { "key": "Delta", "pos": "239 171", "size": "50 100", "color": "red" }
+          { "key": "1", "pos": "0 0", "size": "50 50", "color": "lightblue" },
+          { "key": "2", "pos": "276 19", "size": "100 100", "color": "orange" },
+          { "key": "3", "pos": "44 214", "size": "100 50", "color": "lightgreen" },
+          { "key": "4", "pos": "239 171", "size": "50 100", "color": "red" }
         ]);
       }
       window.addEventListener('DOMContentLoaded', init);
+      </script>
+<script>
+      const gg = (evt) => {
+      
+          evt.preventDefault();
+          const date = document.getElementById("date").value;
+          const timeType = document.getElementById("timeType").value;
+          const objectType = document.getElementById("objectType").value;
+          console.log(date,  timeType, objectType)
+          
+          $.post('/workspaces/@Model.Id/get-time-slots', {
+              date : date,
+              timeType: timeType,
+              objectType: objectType
+          })
+              .then(code => {
+                var doc = document.querySelector(".time__list");
+                doc.innerHTML = ""
+                      let c = JSON.parse(code);
+                      for (let i = 0; i < c.length; i++){
+                        const newParagraph = document.createElement("li");
+                        newParagraph.classList.add('time__elem');
+                       
+                        const checkbox = document.createElement('input');
+                        checkbox.classList.add("time__checkbox");
+                        checkbox.value = `${c[i]['TimeStart']}-${c[i]['TimeEnd']}`;
+                        checkbox.id = `time__${i + 1}`;
+                        newParagraph.addEventListener('click', () => {
+                           document.getElementById('selected-time__value').textContent =`${c[i]['TimeStart']}-${c[i]['TimeEnd']}`;
+                           document.getElementById('selected-time__value').value =`${c[i]['TimeStart']}-${c[i]['TimeEnd']}`;
+                        });
+                        const label = document.createElement('label');
+                        label.for = `time__${i + 1}`;
+                        label.classList.add('checkbox__text');
+                        label.textContent = `${c[i]['TimeStart']}-${c[i]['TimeEnd']}`
+                        label.style.color = c[i]['IsDisable'] ? "white" : "black";
+                        newParagraph.appendChild(checkbox);
+                        newParagraph.appendChild(label);
+                        
+                        doc.appendChild(newParagraph);
+                        }
+                  }
+              ).catch(error => {
+              console.error(error);
+          });
+      }
+      document.querySelector('#book-btn').addEventListener('click', gg);
+      document.querySelector('#date').addEventListener('change', gg);
+      document.querySelector('#timeType').addEventListener('change', gg);
+      document.querySelector('#objectType').addEventListener('change', gg);
+   
     </script>
+
+<script>
+const hjj = (evt) => {
+      
+          evt.preventDefault();
+          const date = document.getElementById("date").value;
+          const objectType = document.getElementById("objectType").value;
+          const time= document.getElementById('selected-time__value').value.split('-')
+          
+          $.post('/workspaces/@Model.Id/workspace-objects', {
+              date : date,
+              objectType: objectType,
+              timeEnd: time[0],
+              timeStart: time[1],
+          })
+              .then(code => {
+                let c = JSON.parse(code);
+                gh(c);
+                  }
+              ).catch(error => {
+                console.log(error)
+          });
+      }
+const gh = (objects) => {
+  var myDiagramDiv = document.getElementById('myDiagramDiv');
+  var myDiagram = go.Diagram.fromDiv(myDiagramDiv)
+  console.log("ss");
+  console.log(myDiagram, myDiagram.model);
+  let arr = [];
+  objects.forEach(obj => {
+    let color = obj['IsReserve'] ? "red" : "lightblue";
+    arr.push({ "key": obj['IdObject'], "pos": `${obj['X']} ${obj['Y']}`,"isReserve" : obj['IsReserve'],  "size": `${obj['Height']} ${obj['Width']}`, "color": color })
+  }
+  )
+  myDiagram.model = new go.GraphLinksModel(arr);
+  }
+  document.querySelector('#btn-next').addEventListener('click', hjj);
+</script>
+<script>
+const hgghhghg = (evt) => {
+      
+          evt.preventDefault();
+          const date = document.getElementById("date").value;
+          const selectedObject = document.getElementById("selected-object").value;
+          const time= document.getElementById('selected-time__value').value.split('-')
+          console.log(selectedObject,time[0],time[1],date)
+          @{
+            var jwtToken = Context.Session.GetString("JwtToken");
+          }
+          console.log(@JwtTokenDecoder.GetUserId(jwtToken))
+          $.post('/workspaces/@Model.Id/reserve', { 
+              idObject: selectedObject,
+              idUSer: @JwtTokenDecoder.GetUserId(jwtToken),
+              timeStart: time[0],
+              timeEnd: time[1],
+              date : date,
+          })
+              .then(code => {
+                document.querySelector("#book-result").textContent = "Бронирование успешно завершено";
+                }
+              ).catch(error => {
+                document.querySelector("#book-result").textContent = "Что-то пошло не так";
+                console.log(error)
+          });
+      }
+      console.log( document.querySelector('#reservation-button'));
+      document.querySelector('#reservation-button').addEventListener('click', hgghhghg);
+</script>
