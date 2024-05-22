@@ -3,7 +3,8 @@
 @model UrFU_WorkSpace.Models.Workspace
 
 @{
-    ViewBag.Title = Model.Name;
+  ViewBag.Title = Model.Name;
+  
 }
 
 <main class="book">
@@ -62,9 +63,9 @@
           </h2>
           <div class="location__wrapper">
             <img src="~/img/map.png" alt="Карта" class="location__img">
-            <button class="btn-reset btn open-modal__btn" id ="book-btn">
+             <button class="btn btn-reset" id ="book-btn">
               Забронировать место
-            </button>
+              </button>
           </div>
           
         </div>
@@ -148,71 +149,76 @@
           </span>
         </div>
       </section>
-      <div class="modal__wrapper hidden">
-        <div class="book__modal">
-          <h2 class="modal__title">
-            Дата и длительность посещения
-          </h2>
-          <div>
-            <label for="book__date" class="date__text">Выберите дату</label>
-            <input type = "date" id="date" name = "date" value="2024-05-18"/>
-            <select name = "timeType" id= "timeType">
-              <option value="lel" selected="">lel</option>
-              <option value="lol">lol</option>
-              <option value="lil">lil</option>
-            </select>
-            <input name = "objectType" id="objectType" value="lel">
+      <div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="border-radius: 10px;">
+          <div class="modal-content">
+            <div style="margin:2rem auto 2rem;">
+              <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="bookModalLabel">Дата и длительность посещения</h4>
+            </div>
+            <div class="modal-body" style="margin: auto">
+              <div style="display: flex; flex-direction: row; align-items: center;">
+                <label for="book__date" class="date__text">Выберите дату</label>
+                <input class="form-control-sm" type="date" id="date" name="date" value="2024-05-18"/>
+                <select class="form-select form-select-sm" name="timeType" id="timeType">
+                  <option value="lel" selected="">lel</option>
+                  <option value="lol">lol</option>
+                  <option value="lil">lil</option>
+                </select>
+                <select class="form-select form-select-sm" name="objectType" id="objectType" value="lel">
+                  <option value="lel" selected="">lel</option>
+                  <option value="lol">lol</option>
+                  <option value="lil">lil</option>
+                </select>
+                <input id="idWorkspace" name="idWorkspace" value="@Model.Id" hidden/>
+              </div>
+              <div class="modal__time">
+                <ul class="list-reset time__list">
+                </ul>
+              </div>
+              <span class="selected-time">
+                Выбрано:
+                <span style="color: black; font-size: small" id="selected-date__value"></span>
+                <span style="color: black; font-size: small" class="selected-time__value" id="selected-time__value"></span>
+              </span>
+              <div class="modal__navigator">
+                <button class="btn-reset btn btn__next" id="btn-next">
+                  Продолжить
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="modal__time">
-            <ul class="list-reset time__list">
-            </ul>
-         </div>
-          <span class="selected-time">
-            Выбрано: 
-            <span class="selected-date__value"></span>
-            <span class="selected-time__value" id = "selected-time__value"></span>
-          </span>
-          <div class="modal__navigator">
-            <button class="btn-reset btn btn__back">
-              Вернуться
-            </button>
-              <button class="btn-reset btn btn__next" id ="btn-next">
+        </div>
+      </div>
+
+      <div class="modal fade" id="selectWorkplaceModal" tabindex="-1" aria-labelledby="selectWorkplaceModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="border-radius: 10px;">
+        <div class="modal-content">
+          <div style="margin:2rem auto 2rem;">
+            <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="selectWorkplaceModalLabel">Бронирование места</h4>
+          </div>
+          <div class="modal-body" style="margin: auto">
+            <div id="myDiagramDiv" style="width:100%; height:400px"></div>
+            <input value="" hidden="" id="selected-object"/>
+            <div class="modal__navigator">
+              <button id = "btn-back" class="btn-reset btn btn__back">
+                Вернуться
+              </button>
+              <button class="btn-reset btn btn__next" id="reservation-button" >
                 Продолжить
               </button>
-              </div>
+            </div>
           </div>
-      </div>
-
-      <div class="modal__wrapper hidden">
-        <div class="book__modal">
-          <h2 class="modal__title">
-            Бронирование места
-          </h2>
-          <div id="myDiagramDiv" style="width:100%; height:400px"></div>
-          <input value="" hidden="" id="selected-object"/>
-          <div class="modal__navigator">
-            <button class="btn-reset btn btn__back">
-              Вернуться
-            </button>
-            <button class="btn-reset btn btn__next" id="reservation-button">
-              Продолжить
-            </button>
-          </div>
+        </div>
       </div>
       </div>
 
-      <div class="modal__wrapper hidden">
-        <div class="book__modal">
-          <h2 class="modal__title">
-            Подтвердите бронирование
-          </h2>
-        
-          <div class="modal__navigator">
-            <span style="color: black" id="book-result"></span>
-            <button class="btn-reset btn btn__next">
-              Продолжить
-            </button>
+      <div class="modal fade" id="bookResultModal" tabindex="-1" aria-labelledby="bookResultModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="border-radius: 10px;">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div id="book-result" style="color: black"></div>
           </div>
+        </div>
       </div>
       </div>
     </main>
@@ -320,122 +326,3 @@
       }
       window.addEventListener('DOMContentLoaded', init);
       </script>
-<script>
-      const gg = (evt) => {
-      
-          evt.preventDefault();
-          const date = document.getElementById("date").value;
-          const timeType = document.getElementById("timeType").value;
-          const objectType = document.getElementById("objectType").value;
-          console.log(date,  timeType, objectType)
-          
-          $.post('/workspaces/@Model.Id/get-time-slots', {
-              date : date,
-              timeType: timeType,
-              objectType: objectType
-          })
-              .then(code => {
-                var doc = document.querySelector(".time__list");
-                doc.innerHTML = ""
-                      let c = JSON.parse(code);
-                      for (let i = 0; i < c.length; i++){
-                        const newParagraph = document.createElement("li");
-                        newParagraph.classList.add('time__elem');
-                       
-                        const checkbox = document.createElement('input');
-                        checkbox.classList.add("time__checkbox");
-                        checkbox.value = `${c[i]['TimeStart']}-${c[i]['TimeEnd']}`;
-                        checkbox.id = `time__${i + 1}`;
-                        newParagraph.addEventListener('click', () => {
-                           document.getElementById('selected-time__value').textContent =`${c[i]['TimeStart']}-${c[i]['TimeEnd']}`;
-                           document.getElementById('selected-time__value').value =`${c[i]['TimeStart']}-${c[i]['TimeEnd']}`;
-                        });
-                        const label = document.createElement('label');
-                        label.for = `time__${i + 1}`;
-                        label.classList.add('checkbox__text');
-                        label.textContent = `${c[i]['TimeStart']}-${c[i]['TimeEnd']}`
-                        label.style.color = c[i]['IsDisable'] ? "white" : "black";
-                        newParagraph.appendChild(checkbox);
-                        newParagraph.appendChild(label);
-                        
-                        doc.appendChild(newParagraph);
-                        }
-                  }
-              ).catch(error => {
-              console.error(error);
-          });
-      }
-      document.querySelector('#book-btn').addEventListener('click', gg);
-      document.querySelector('#date').addEventListener('change', gg);
-      document.querySelector('#timeType').addEventListener('change', gg);
-      document.querySelector('#objectType').addEventListener('change', gg);
-   
-    </script>
-
-<script>
-const hjj = (evt) => {
-      
-          evt.preventDefault();
-          const date = document.getElementById("date").value;
-          const objectType = document.getElementById("objectType").value;
-          const time= document.getElementById('selected-time__value').value.split('-')
-          
-          $.post('/workspaces/@Model.Id/workspace-objects', {
-              date : date,
-              objectType: objectType,
-              timeEnd: time[0],
-              timeStart: time[1],
-          })
-              .then(code => {
-                let c = JSON.parse(code);
-                gh(c);
-                  }
-              ).catch(error => {
-                console.log(error)
-          });
-      }
-const gh = (objects) => {
-  var myDiagramDiv = document.getElementById('myDiagramDiv');
-  var myDiagram = go.Diagram.fromDiv(myDiagramDiv)
-  console.log("ss");
-  console.log(myDiagram, myDiagram.model);
-  let arr = [];
-  objects.forEach(obj => {
-    let color = obj['IsReserve'] ? "red" : "lightblue";
-    arr.push({ "key": obj['IdObject'], "pos": `${obj['X']} ${obj['Y']}`,"isReserve" : obj['IsReserve'],  "size": `${obj['Height']} ${obj['Width']}`, "color": color })
-  }
-  )
-  myDiagram.model = new go.GraphLinksModel(arr);
-  }
-  document.querySelector('#btn-next').addEventListener('click', hjj);
-</script>
-<script>
-const hgghhghg = (evt) => {
-      
-          evt.preventDefault();
-          const date = document.getElementById("date").value;
-          const selectedObject = document.getElementById("selected-object").value;
-          const time= document.getElementById('selected-time__value').value.split('-')
-          console.log(selectedObject,time[0],time[1],date)
-          @{
-            var jwtToken = Context.Session.GetString("JwtToken");
-          }
-          console.log(@JwtTokenDecoder.GetUserId(jwtToken))
-          $.post('/workspaces/@Model.Id/reserve', { 
-              idObject: selectedObject,
-              idUSer: @JwtTokenDecoder.GetUserId(jwtToken),
-              timeStart: time[0],
-              timeEnd: time[1],
-              date : date,
-          })
-              .then(code => {
-                document.querySelector("#book-result").textContent = "Бронирование успешно завершено";
-                }
-              ).catch(error => {
-                document.querySelector("#book-result").textContent = "Что-то пошло не так";
-                console.log(error)
-          });
-      }
-      console.log( document.querySelector('#reservation-button'));
-      document.querySelector('#reservation-button').addEventListener('click', hgghhghg);
-</script>

@@ -51,7 +51,7 @@ public class AuthenticationController(ILogger<AuthenticationController> logger, 
         var token = httpContextAccessor.HttpContext.Session.GetString("JwtToken");
         if (token != null)
         {
-            return Ok(JwtTokenDecoder.GetUserName(token));
+            return Ok(token);
         }
         if(message != "")
         {
