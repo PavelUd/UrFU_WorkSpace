@@ -13,12 +13,20 @@ public static class JwtTokenDecoder
 
     public static string GetUserName(string token)
     {
+        if (token == null)
+        {
+            return "";
+        }
         var info = Decode(token);
         return info["Login"];
     }
     
     public static string GetUserId(string token)
     {
+        if (token == null)
+        {
+            return "";
+        }
         var info = Decode(token);
         return info["Id"];
     }

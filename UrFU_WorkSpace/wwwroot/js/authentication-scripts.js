@@ -5,9 +5,14 @@ document.querySelector('#loginModal form').addEventListener('submit', function(e
     $.post('/Authentication/Login/', {
         login : formData.get('login'),
         password : formData.get('password')
-    }).then(Name => {
-        if (Name) {
-            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="~img/account.svg" alt="Лк">' + Name + '</div>');
+    }).then(token => {
+        if (token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payloadinit = atob(base64);
+            const payload = JSON.parse(payloadinit);
+            sessionStorage.setItem("token", token);
+            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="~img/account.svg" alt="Лк">' + payload.Login + '</div>');
             $('#loginModal').modal('hide');
         }
     })
