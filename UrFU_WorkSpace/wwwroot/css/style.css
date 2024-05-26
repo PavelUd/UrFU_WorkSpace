@@ -258,10 +258,12 @@ body {
   margin-bottom: 60px;
 }
 
-.cowork__about{
-  display: flex;
-  flex-wrap: wrap;
-  padding: 40px;
+.cowork__about {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 40px;
+	flex-direction: column;
+	width: 100%;
 }
 
 .cowork__title{
@@ -902,7 +904,7 @@ body {
   justify-content: end;
 }
 
-.modal-dialog{
+.book__width{
   min-width: 600px;
 }
 
