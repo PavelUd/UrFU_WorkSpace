@@ -34,4 +34,22 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
    {
        return _context.OperationMode.Where(om => om.IdWorkspace == workspaceId);
    }
+
+   public bool AddWeekday(WorkspaceWeekday weekday)
+   {
+       _context.OperationMode.Add(weekday);
+       return Save();
+   }
+   
+   public bool AddObject(WorkspaceObject obj)
+   {
+       _context.WorkspaceObjects.Add(obj);
+       return Save();
+   }
+   
+   public bool AddImage(WorkspaceImage image)
+   {
+       _context.WorkspaceImages.Add(image);
+       return Save();
+   }
 }

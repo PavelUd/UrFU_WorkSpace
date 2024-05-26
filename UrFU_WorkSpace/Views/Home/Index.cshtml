@@ -21,7 +21,7 @@
     {
       <article class="cowork">
         <div class="cowork-photo__container">
-          <img class="cowork__photo" src="@workspace.Images.First().Url" alt="Фото коворкинга">
+          <img height="400px" width="400px" class="cowork__photo" src="@workspace.Images.First().Url" alt="Фото коворкинга">
           <span class="cowork__rating">@workspace.Rating</span>
         </div>
         <div class="cowork__about">
@@ -42,7 +42,7 @@
           <div class="cowork__description">
             @workspace.Description
           </div>
-          <a class="btn-reset btn cowork__btn" href="/workspaces/@workspace.Id">
+          <a style="max-height: 100px; max-width: 200px" class="btn-reset btn cowork__btn" href="/workspaces/@workspace.Id">
             Забронировать
           </a>
         </div>
