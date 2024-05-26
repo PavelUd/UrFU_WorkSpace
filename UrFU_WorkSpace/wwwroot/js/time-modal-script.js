@@ -33,7 +33,7 @@ const getLabel = (timeSlotInfo, num) =>{
     label.classList.add('checkbox__text');
     label.value = `${timeStart}-${timeEnd}`
     label.textContent = `${timeStart.slice(0, 5)}-${timeEnd.slice(0, 5)}`
-    label.style.color = timeSlotInfo['IsDisable'] ? "#636464" : "black";
+    label.style.color = timeSlotInfo['IsDisable'];
     label.style.fontSize = "13px";
     
     return label;
@@ -54,6 +54,8 @@ const createSlotTimeElement = (timeSlotInfo, num) =>{
     return timeSlot
 }
 
+let previousSelectedElement = null;
+
 const onClickTimeSlot = (evt) => {
     const timeInfo = evt.target.value.split('-')
     const time =document.getElementById('selected-time__value');
@@ -63,6 +65,12 @@ const onClickTimeSlot = (evt) => {
     date.textContent = `${dateValue[2]}.${dateValue[1]}.${dateValue[0]}`
     time.value = evt.target.value
     time.textContent = `${timeInfo[0].slice(0, 5)}-${timeInfo[1].slice(0, 5)}`
+
+    if (previousSelectedElement) {
+        previousSelectedElement.classList.remove('selected-style');
+    }
+    evt.target.classList.toggle('selected-style');
+    previousSelectedElement = evt.target;
 }
 
 const createSlotTimeElements = (code) => {
