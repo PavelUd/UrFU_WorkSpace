@@ -855,8 +855,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 170px;
-  height: 50px;
+  width: 160px;
+  height: 40px;
   background-color: var(--color-grey);
   color: var(--color-black);
   padding: 10px 20px;
@@ -874,10 +874,10 @@ body {
   display: none;
 }
 
-.time__checkbox:checked + .checkbox__text {
-  background-color: var(--color-blue);
-  color: var(--color-white);
-  border-color: var(--color-blue);
+.selected-style {
+	background-color: var(--color-blue);
+	color: var(--color-white);
+	border-color: var(--color-blue);
 }
 
 .selected-time{
@@ -892,15 +892,20 @@ body {
   color: var(--color-black);
 }
 
-.btn__back{
-  margin-right: auto;
-}
-
 .btn__next{
-  align-self: flex-end;
+  margin-left: auto;
 }
 
 .modal__navigator{
   gap: 200px;
   display: flex;
+  justify-content: end;
+}
+
+.modal-dialog{
+  min-width: 600px;
+}
+
+.modal__params{
+  margin-bottom: 15px;
 }

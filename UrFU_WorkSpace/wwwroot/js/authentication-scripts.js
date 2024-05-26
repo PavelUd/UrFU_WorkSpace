@@ -12,7 +12,7 @@ document.querySelector('#loginModal form').addEventListener('submit', function(e
             const payloadinit = atob(base64);
             const payload = JSON.parse(payloadinit);
             sessionStorage.setItem("token", token);
-            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="~img/account.svg" alt="Лк">' + payload.Login + '</div>');
+            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="/img/account.svg" alt="Лк">' + payload.Login + '</div>');
             $('#loginModal').modal('hide');
         }
     })
