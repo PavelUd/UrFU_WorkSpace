@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using UrFU_WorkSpace_API.Models;
+using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 using User = UrFU_WorkSpace.Models.User;
@@ -16,7 +17,7 @@ public class HomeController
     private readonly Uri _baseAddress = new Uri("https://localhost:7077/api");
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
 
@@ -25,7 +26,7 @@ public class HomeController
     public IActionResult Index()
     {
         var workspaces = new List<Workspace>();
-        var responseMessage = HttpRequestSender.SentGetRequest(_baseAddress + "/workspaces");
+        var responseMessage = HttpRequestSender.SendRequest(_baseAddress + "/workspaces", RequestMethod.Get);
         var settings = new JsonSerializerSettings();
         settings.Converters.Add(new TimeOnlyJsonConverter());
         if (!responseMessage.Result.IsSuccessStatusCode)

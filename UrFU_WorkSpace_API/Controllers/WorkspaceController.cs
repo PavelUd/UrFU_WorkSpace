@@ -68,6 +68,47 @@ public class WorkspaceController : Controller
         
         return Ok(amenities);
     }
+
+    [HttpPut("add-weekday")]
+    public IActionResult AddWeekday([FromBody] WorkspaceWeekday weekday)
+    {
+        var isSaved = workspaceRepository.AddWeekday(weekday);
+        if (!ModelState.IsValid || !isSaved)
+            return BadRequest(ModelState);
+
+        return Ok(isSaved);
+    }
+    
+    [HttpPut("add-object")]
+    public IActionResult AddObject([FromBody] WorkspaceObject obj)
+    {
+        var isSaved = workspaceRepository.AddObject(obj);
+        if (!ModelState.IsValid || !isSaved)
+            return BadRequest(ModelState);
+
+        return Ok(isSaved);
+    }
+    
+    [HttpPut("add-image")]
+    public IActionResult AddObject([FromBody] WorkspaceImage image)
+    {
+        var isSaved = workspaceRepository.AddImage(image);
+        if (!ModelState.IsValid || !isSaved)
+            return BadRequest(ModelState);
+
+        return Ok(isSaved);
+    }
+    
+    [HttpPut("add-workspace")]
+    public IActionResult AddWorkspace([FromBody] Workspace workspace)
+    {
+        workspaceRepository.Create(workspace);
+        var isSaved = workspaceRepository.Save();
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Ok(workspace.Id);
+    }
     
     [HttpGet("{idWorkspace}/operation-mode")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceWeekday>))]

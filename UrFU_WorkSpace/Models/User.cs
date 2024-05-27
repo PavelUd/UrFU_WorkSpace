@@ -6,6 +6,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Primitives;
 using MimeKit;
 using Newtonsoft.Json;
+using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 
 namespace UrFU_WorkSpace.Models;
@@ -30,8 +31,9 @@ public class User(HttpContext httpContext)
             { "password", form["password"].ToString() }
         };
 
-        var responseMessage = await HttpRequestSender.SendPostRequest(dictionary, baseAdress + "/register");
+        var responseMessage = await HttpRequestSender.SendRequest(baseAdress + "/register", RequestMethod.Post, dictionary);
         WriteJwtToken(responseMessage);
+        
 
     }
 
@@ -43,7 +45,7 @@ public class User(HttpContext httpContext)
             { "login", form["login"].ToString() },
         };
 
-        var responseMessage = await HttpRequestSender.SendPostRequest(dictionary, baseAdress + "/check-user-existence");
+        var responseMessage = await HttpRequestSender.SendRequest(baseAdress + "/check-user-existence", RequestMethod.Post, dictionary);
         var responseBody = await responseMessage.Content.ReadAsStringAsync();
         return bool.Parse(responseBody);
     }
@@ -57,7 +59,7 @@ public class User(HttpContext httpContext)
             { "password", form["password"].ToString() }
         };
         
-        var responseMessage = await HttpRequestSender.SendPostRequest(dictionary, baseAdress + "/login");
+        var responseMessage = await HttpRequestSender.SendRequest(baseAdress + "/login", RequestMethod.Post, dictionary);
         if (responseMessage.StatusCode == HttpStatusCode.BadRequest)
         {
             return "Неправильный логин или пароль";

@@ -71,7 +71,7 @@ public class Workspace
     public static async Task<Workspace> GetWorkSpace(int idWorkspace)
     {
         var workspace = new Workspace();
-        var responseMessage = HttpRequestSender.SentGetRequest(baseAdress + $"/{idWorkspace}").Result;
+        var responseMessage = HttpRequestSender.SendRequest(baseAdress + $"/{idWorkspace}", RequestMethod.Get).Result;
         var settings = new JsonSerializerSettings(){};
         settings.Converters.Add(new TimeOnlyJsonConverter());
         if (responseMessage.IsSuccessStatusCode)
@@ -85,7 +85,7 @@ public class Workspace
     public static List<WorkspaceObject> GetWorkSpaceObjects(int idWorkspace)
     {
         var reservations = new List<WorkspaceObject>();
-        var operationModeMessage = HttpRequestSender.SentGetRequest(baseAdress + $"/{idWorkspace}/objects").Result;
+        var operationModeMessage = HttpRequestSender.SendRequest(baseAdress + $"/{idWorkspace}/objects", RequestMethod.Get).Result;
         if (!operationModeMessage.IsSuccessStatusCode)
             return reservations;
         
@@ -102,7 +102,7 @@ public class Workspace
         settings.Converters.Add(new DateOnlyJsonConverter());
         var jsonDate =  JsonConvert.SerializeObject(date).Replace("\"", "");
         var route = "https://localhost:7077/api/reservations?idWorkspace=" + idWorkspace + "&date=" + jsonDate;
-        var operationModeMessage = HttpRequestSender.SentGetRequest(route).Result;
+        var operationModeMessage = HttpRequestSender.SendRequest(route, RequestMethod.Get).Result;
         if (operationModeMessage.IsSuccessStatusCode)
         {
             var data = operationModeMessage.Content.ReadAsStringAsync().Result;
@@ -115,7 +115,7 @@ public class Workspace
     public static List<WorkspaceWeekday> GetWorkSpaceOperationMode(int idWorkspace)
     {
         var operationMode = new List<WorkspaceWeekday>();
-        var operationModeMessage = HttpRequestSender.SentGetRequest(baseAdress + $"/{idWorkspace}/operation-mode").Result;
+        var operationModeMessage = HttpRequestSender.SendRequest(baseAdress + $"/{idWorkspace}/operation-mode", RequestMethod.Get).Result;
         var settings = new JsonSerializerSettings();
         settings.Converters.Add(new TimeOnlyJsonConverter());
         if (operationModeMessage.IsSuccessStatusCode)
@@ -146,7 +146,124 @@ public class Workspace
             { "date", form["date"].ToString() }
         };
 
-        var responseMessage = await HttpRequestSender.SendPostRequest(dictionary, "https://localhost:7077/reserve");
+        var responseMessage = await HttpRequestSender.SendRequest("https://localhost:7077/reserve", RequestMethod.Post, dictionary);
         return responseMessage.StatusCode != HttpStatusCode.OK ? 0 : int.Parse(form["idObject"]);
+    }
+
+    public static int CreateWorkspace(IFormCollection form, int idUser)
+    {
+        var baseInfo = new Dictionary<string, object>()
+        {
+            {"name", form["name"].ToString() },
+            {"description", form["description"].ToString()},
+            {"rating", 0},
+            {"institute", form["institute"].ToString()},
+            {"address", form["address"].ToString()},
+            {"privacy", 0},
+            {"idCreator", idUser}
+        };
+        var message = HttpRequestSender.SendRequest(baseAdress + "/add-workspace", RequestMethod.Put, baseInfo).Result;
+        if (!message.IsSuccessStatusCode)
+        {
+            return 0;
+        }
+
+        var idWorkspace = message.Content.ReadAsStringAsync().Result;
+        return int.Parse(idWorkspace);
+    }
+    public static bool CreateOperationMode(IFormCollection form, int idWorkspace)
+    {
+        var operationMode = new List<(string, string)>()
+        {
+            (form["mondayStart"], form["mondayEnd"]),
+            (form["tuesdayStart"], form["tuesdayEnd"]),
+            (form["wednesdayStart"], form["wednesdayEnd"]),
+            (form["thursdayStart"], form["thursdayEnd"]),
+            (form["fridayStart"], form["fridayEnd"]),
+            (form["saturdayStart"], form["saturdayEnd"]),
+            (form["sundayStart"], form["sundayEnd"]),
+        };
+        var flag = true;
+        for (var i = 0; i < operationMode.Count; i++)
+        {
+            if (operationMode[i].Item1 == "" || operationMode[i].Item2 == "")
+                continue;
+            var dayOfWeek = i + 1;
+            var dictionary = new Dictionary<string, object>()
+            {
+                {"idWorkspace", idWorkspace},
+                {"timeStart", operationMode[i].Item1},
+                {"timeEnd", operationMode[i].Item2},
+                {"weekDayNumber", dayOfWeek}
+            };
+            
+            var message = HttpRequestSender.SendRequest(baseAdress + "/add-weekday", RequestMethod.Put, dictionary).Result;
+            if (!message.IsSuccessStatusCode)
+            {
+                return false;
+            }
+        }
+
+        return flag;
+
+    }
+
+    public static List<string> SaveImages(IWebHostEnvironment appEnvironment, IFormFileCollection images)
+    {
+        var urls = new List<string>();
+        foreach(var uploadedFile in images)
+        {
+            var path = "/Files/" + uploadedFile.FileName;
+            using var fileStream = new FileStream(appEnvironment.WebRootPath + path, FileMode.Create);
+            uploadedFile.CopyTo(fileStream);
+            urls.Add(path);
+        }
+
+        return urls;
+    }
+    
+    public static bool AddWorkspaceImages(int idWorkspace, List<string> urls)
+    {
+        foreach (var url in urls)
+        {
+            var dictionary = new Dictionary<string, object>()
+            {
+                { "url", url },
+                { "idWorkspace", idWorkspace}
+            };
+            
+            var message = HttpRequestSender.SendRequest(baseAdress + "/add-image", RequestMethod.Put, dictionary).Result;
+            if (!message.IsSuccessStatusCode)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    public static bool CreateObjects(int idWorkspace, string jsonObjects)
+    {
+        var settings = new JsonSerializerSettings();
+        var data = new List<Dictionary<string, object>>();
+        data = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(jsonObjects, settings);
+
+        foreach (var obj in data)
+        {
+            var coordinates = obj["loc"].ToString().Split(" ");
+            var size = obj["size"].ToString().Split(" ");
+            var objy = new Dictionary<string, object>()
+            {
+                { "type", obj["category"] },
+                { "idWorkspace", idWorkspace },
+                { "x",  coordinates[0] },
+                { "y", coordinates[1] },
+                { "height", size[0] },
+                { "width", size[1] }
+            };
+            
+            var message = HttpRequestSender.SendRequest(baseAdress + "/add-object", RequestMethod.Put, objy).Result;
+        }
+        return true;
     }
 }

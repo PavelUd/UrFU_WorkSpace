@@ -1,0 +1,151 @@
+
+<head>
+  <title>Загрузка нескольких фотографий</title>
+  <style>
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .image {
+      margin: 10px;
+      width: 200px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+<form id="baseForm" action="/1/workspace-create" method="post" enctype="multipart/form-data">
+  <div>
+    <input type="text" name="name">
+  </div>
+  <div>
+    <input type="text" name="description">
+  </div>
+  <div>
+    <input type="text" name="address">
+  </div>
+  <div>
+    <input type="text" name="institute">
+  </div>
+  <select>Удобства</select>
+  <div style="display: flex; flex-wrap: wrap">
+    <input style="margin-right: 1rem" type="time" name="mondayStart">
+    <input type="time"  multiple name="mondayEnd">
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+    <input style="margin-right: 1rem" type="time" name="tuesdayStart">
+    <input type="time" name="tuesdayEnd">
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+    <input style="margin-right: 1rem" type="time" name="wednesdayStart">
+    <input type="time" name="wednesdayEnd">
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+    <input style="margin-right: 1rem" type="time" name = "thursdayStart">
+    <input type="time" name = "thursdayEnd">
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+    <input style="margin-right: 1rem" type="time" name ="fridayStart">
+    <input type="time" name = "fridayEnd">
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+    <input style="margin-right: 1rem" type="time" name = "saturdayStart">
+    <input type="time" name = "saturdayEnd">
+  </div>
+  <div style="display: flex; flex-wrap: wrap">
+      <input style="margin-right: 1rem" type="time" name = "sundayStart">
+      <input type="time" name = "sundayEnd">
+  </div>
+  <div>
+    <input type="file" id="photos" name="uploads" multiple/>
+  </div>
+  <div>
+      <input hidden="" id="objects" name="objects"/>
+    </div>
+  
+  <button id = "submit-button">Сохранить</button>
+</form>
+<div id="myDiagramDiv" style="width:100%; height:400px"></div>
+<div id = "myPaletteDiv" style="width:100%; height:400px"></div>
+<script>
+    function init() {
+    const $ = go.GraphObject.make;
+        
+            diagram =
+              new go.Diagram("myDiagramDiv",
+                {
+                  fixedBounds: new go.Rect(0, 0, 500, 300),  
+                  allowHorizontalScroll: false, 
+                  allowVerticalScroll: false,
+                  allowZoom: false,
+                  "animationManager.isEnabled": false,
+                  "undoManager.isEnabled": true,
+                  "Changed": function(e) {
+                          ff();
+                  }
+              
+                });
+    diagram.add(
+              $(go.Part,
+                { layerName: "Grid", position: diagram.fixedBounds.position },
+                $(go.Shape, { fill: "oldlace", strokeWidth: 0, desiredSize: diagram.fixedBounds.size })
+              ));
+    
+    diagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "RoundedRectangle",
+          { fill: "white" },
+          new go.Binding("fill", "color"),
+          { portId: "", fromLinkable: true, toLinkable: true, cursor: "pointer" }),
+        $(go.TextBlock, { margin: 5 },
+          new go.Binding("text", "key"))
+      );
+    
+    diagram.undoManager.isEnabled = true;
+    
+    // create the Palette
+    var myPalette =
+      new go.Palette("myPaletteDiv");
+    
+    // the Palette's node template is different from the main Diagram's
+    myPalette.nodeTemplate =
+      $(go.Node, "Horizontal",
+        $(go.Shape,
+          { width: 14, height: 14, fill: "white" },
+          new go.Binding("fill", "color")),
+        $(go.TextBlock,
+          new go.Binding("text", "color"))
+      );
+    
+    // the list of data to show in the Palette
+    myPalette.model.nodeDataArray = [
+      { key: "C", color: "cyan", size: "50 50", category: "cyan" },
+      { key: "LC", color: "lightcyan", size: "50 50", category: "lightcyan"},
+      { key: "A", color: "aquamarine", size: "50 50", category: "aquamarine"},
+      { key: "T", color: "turquoise", size: "50 50", category: "turquoise"},
+      { key: "PB", color: "powderblue", size: "50 50", category: "powderblue"},
+      { key: "LB", color: "lightblue", size: "50 50", category:"lightblue" },
+      { key: "LSB", color: "lightskyblue", size: "50 50", category: "lightskyblue"},
+      { key: "DSB", color: "deepskyblue", size: "50 50", category:  "deepskyblue"}
+    ];
+    }
+    
+    window.addEventListener('DOMContentLoaded', init);
+          let date = [];
+const ff = () =>{
+  const myDiagram = go.Diagram.fromDiv(document.getElementById('myDiagramDiv'))
+  let modelData = JSON.parse(myDiagram.model.toJson());
+  
+  modelData.nodeDataArray.forEach(node => {
+    const location = myDiagram.findNodeForKey(node.key).location;
+    node.loc = `${location.x} ${location.y}`;
+  });
+  modelData = modelData["nodeDataArray"];
+  let json = JSON.stringify(modelData);
+  document.getElementById('objects').value = json
+  }
+    
+ 
+</script>
+</body>
+

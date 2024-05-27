@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
 using UrFU_WorkSpace_API.Helpers;
+using UrFU_WorkSpace.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+    
 builder.Services.AddSession();
 var app = builder.Build();
 app.UseSession();

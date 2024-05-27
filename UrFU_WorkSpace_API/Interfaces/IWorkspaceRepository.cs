@@ -10,4 +10,7 @@ public interface IWorkspaceRepository : IBaseRepository<Workspace>
 
     public IEnumerable<WorkspaceAmenity> GetWorkspaceAmenities(int workspaceId);
     public IEnumerable<WorkspaceWeekday> GetWorkspaceOperationMode(int workspaceId);
+    public bool AddWeekday(WorkspaceWeekday weekday);
+    public bool AddObject(WorkspaceObject obj);
+    public bool AddImage(WorkspaceImage image);
 }
