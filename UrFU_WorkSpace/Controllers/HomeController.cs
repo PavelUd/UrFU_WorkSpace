@@ -17,7 +17,7 @@ public class HomeController
     private readonly Uri _baseAddress = new Uri("https://localhost:7077/api");
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
+    public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
 

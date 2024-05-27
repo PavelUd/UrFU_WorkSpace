@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using UrFU_WorkSpace.enums;
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 
 namespace UrFU_WorkSpace.Controllers;
 
+[Authorize(AuthorizationStatus.Admin)]
 public class AdminController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -22,7 +25,6 @@ public class AdminController : Controller
     {
         return View("WorkspaceConstructor"); 
     }
-    
     
     [HttpPost]
     [Route("{idUser}/workspace-create")]

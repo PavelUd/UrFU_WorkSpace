@@ -33,6 +33,7 @@ public class User(HttpContext httpContext)
 
         var responseMessage = await HttpRequestSender.SendRequest(baseAdress + "/register", RequestMethod.Post, dictionary);
         WriteJwtToken(responseMessage);
+        
 
     }
 
