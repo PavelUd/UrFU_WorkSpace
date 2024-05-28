@@ -13,8 +13,9 @@ public class AdminController : Controller
     private HttpContext _context;
     private IWebHostEnvironment _appEnvironment;
 
-    public AdminController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment)
+    public AdminController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IConfiguration configuration)
     {
+        Workspace.baseAdress = new Uri(configuration["apiAddress"]);
         _context = httpContextAccessor.HttpContext;
         _logger = logger;
         _appEnvironment = appEnvironment;

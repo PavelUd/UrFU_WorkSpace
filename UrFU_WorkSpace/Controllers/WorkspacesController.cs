@@ -12,8 +12,9 @@ public class WorkspacesController : Controller
 {
     private readonly ILogger<HomeController> _logger;
 
-    public WorkspacesController(ILogger<HomeController> logger)
+    public WorkspacesController(ILogger<HomeController> logger, IConfiguration configuration)
     {
+        Workspace.baseAdress = new Uri(configuration["apiAddress"]);
         _logger = logger;
     }
     [Route("workspaces/{idWorkspace}")]

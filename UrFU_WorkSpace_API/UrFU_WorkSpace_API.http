@@ -1,4 +1,4 @@
-@UrFU_WorkSpace_API_HostAddress = http://localhost:5260
+@UrFU_WorkSpace_API_HostAddress = http://82.146.62.40
 
 GET {{UrFU_WorkSpace_API_HostAddress}}/weatherforecast/
 Accept: application/json

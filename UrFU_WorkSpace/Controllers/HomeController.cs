@@ -14,13 +14,15 @@ namespace UrFU_WorkSpace.Controllers;
 public class HomeController
     : Controller
 {
-    private readonly Uri _baseAddress = new Uri("http://localhost:5260/api");
+    private readonly Uri _baseAddress;
     private readonly ILogger<HomeController> _logger;
+    private IConfiguration _configuration;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
     {
         _logger = logger;
-
+        _configuration = configuration;
+        _baseAddress = new Uri(configuration["apiAddress"]);
     }
 
     public IActionResult Index()
