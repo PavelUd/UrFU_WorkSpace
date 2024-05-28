@@ -9,7 +9,7 @@ namespace UrFU_WorkSpace.Models;
 
 public class Workspace
 {
-    private static Uri baseAdress = new Uri("http://localhost:5260/api/workspaces");
+    public static Uri baseAdress;
     public int Id { get; set; }
     public string Name { get; set; }
     
@@ -71,7 +71,7 @@ public class Workspace
     public static async Task<Workspace> GetWorkSpace(int idWorkspace)
     {
         var workspace = new Workspace();
-        var responseMessage = HttpRequestSender.SendRequest(baseAdress + $"/{idWorkspace}", RequestMethod.Get).Result;
+        var responseMessage = HttpRequestSender.SendRequest(baseAdress + $"/workspaces/{idWorkspace}", RequestMethod.Get).Result;
         var settings = new JsonSerializerSettings(){};
         settings.Converters.Add(new TimeOnlyJsonConverter());
         if (responseMessage.IsSuccessStatusCode)
@@ -85,7 +85,7 @@ public class Workspace
     public static List<WorkspaceObject> GetWorkSpaceObjects(int idWorkspace)
     {
         var reservations = new List<WorkspaceObject>();
-        var operationModeMessage = HttpRequestSender.SendRequest(baseAdress + $"/{idWorkspace}/objects", RequestMethod.Get).Result;
+        var operationModeMessage = HttpRequestSender.SendRequest(baseAdress + $"/workspaces/{idWorkspace}/objects", RequestMethod.Get).Result;
         if (!operationModeMessage.IsSuccessStatusCode)
             return reservations;
         
@@ -101,7 +101,7 @@ public class Workspace
         settings.Converters.Add(new TimeOnlyJsonConverter());
         settings.Converters.Add(new DateOnlyJsonConverter());
         var jsonDate =  JsonConvert.SerializeObject(date).Replace("\"", "");
-        var route = "http://localhost:5260/api/reservations?idWorkspace=" + idWorkspace + "&date=" + jsonDate;
+        var route = baseAdress + "/reservations?idWorkspace=" + idWorkspace + "&date=" + jsonDate;
         var operationModeMessage = HttpRequestSender.SendRequest(route, RequestMethod.Get).Result;
         if (operationModeMessage.IsSuccessStatusCode)
         {
@@ -115,7 +115,7 @@ public class Workspace
     public static List<WorkspaceWeekday> GetWorkSpaceOperationMode(int idWorkspace)
     {
         var operationMode = new List<WorkspaceWeekday>();
-        var operationModeMessage = HttpRequestSender.SendRequest(baseAdress + $"/{idWorkspace}/operation-mode", RequestMethod.Get).Result;
+        var operationModeMessage = HttpRequestSender.SendRequest(baseAdress + $"/workspaces/{idWorkspace}/operation-mode", RequestMethod.Get).Result;
         var settings = new JsonSerializerSettings();
         settings.Converters.Add(new TimeOnlyJsonConverter());
         if (operationModeMessage.IsSuccessStatusCode)
@@ -145,8 +145,8 @@ public class Workspace
             { "timeEnd", form["timeEnd"].ToString() },
             { "date", form["date"].ToString() }
         };
-
-        var responseMessage = await HttpRequestSender.SendRequest("https://localhost:5260/reserve", RequestMethod.Post, dictionary);
+        
+        var responseMessage = await HttpRequestSender.SendRequest(baseAdress + "/reservations/reserve", RequestMethod.Post, dictionary);
         return responseMessage.StatusCode != HttpStatusCode.OK ? 0 : int.Parse(form["idObject"]);
     }
 
@@ -162,7 +162,7 @@ public class Workspace
             {"privacy", 0},
             {"idCreator", idUser}
         };
-        var message = HttpRequestSender.SendRequest(baseAdress + "/add-workspace", RequestMethod.Put, baseInfo).Result;
+        var message = HttpRequestSender.SendRequest(baseAdress + "/workspaces/add-workspace", RequestMethod.Put, baseInfo).Result;
         if (!message.IsSuccessStatusCode)
         {
             return 0;
@@ -197,7 +197,7 @@ public class Workspace
                 {"weekDayNumber", dayOfWeek}
             };
             
-            var message = HttpRequestSender.SendRequest(baseAdress + "/add-weekday", RequestMethod.Put, dictionary).Result;
+            var message = HttpRequestSender.SendRequest(baseAdress + "/workspaces/add-weekday", RequestMethod.Put, dictionary).Result;
             if (!message.IsSuccessStatusCode)
             {
                 return false;
@@ -232,7 +232,7 @@ public class Workspace
                 { "idWorkspace", idWorkspace}
             };
             
-            var message = HttpRequestSender.SendRequest(baseAdress + "/add-image", RequestMethod.Put, dictionary).Result;
+            var message = HttpRequestSender.SendRequest(baseAdress + "/workspaces/add-image", RequestMethod.Put, dictionary).Result;
             if (!message.IsSuccessStatusCode)
             {
                 return false;
@@ -262,7 +262,7 @@ public class Workspace
                 { "width", size[1] }
             };
             
-            var message = HttpRequestSender.SendRequest(baseAdress + "/add-object", RequestMethod.Put, objy).Result;
+            var message = HttpRequestSender.SendRequest(baseAdress + "/workspaces/add-object", RequestMethod.Put, objy).Result;
         }
         return true;
     }

@@ -11,9 +11,9 @@ using UrFU_WorkSpace.Helpers;
 
 namespace UrFU_WorkSpace.Models;
 
-public class User(HttpContext httpContext)
+public class User(HttpContext httpContext, IConfiguration configuration)
 {
-    private Uri baseAdress = new Uri("http://localhost:5260/api/users");
+    private Uri baseAdress = new Uri(configuration["apiAddress"] + "/users");
     private string Pattern = @"^[a-zA-Z0-9._%+-]+@urfu\.me$";
 
     private bool IsEmailCorrect(string email) 

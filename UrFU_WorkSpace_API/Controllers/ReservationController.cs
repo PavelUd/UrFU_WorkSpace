@@ -33,7 +33,7 @@ public class ReservationController : Controller
         return Ok(GetFilteredReservations(idUser, idWorkspace, reservations));
     }
     
-    [HttpPost("/reserve")]
+    [HttpPost("reserve")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
     public IActionResult GetReservations([FromBody] Reservation reservation)
     {
