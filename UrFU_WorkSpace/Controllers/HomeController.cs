@@ -14,7 +14,7 @@ namespace UrFU_WorkSpace.Controllers;
 public class HomeController
     : Controller
 {
-    private readonly Uri _baseAddress = new Uri("https://localhost:7077/api");
+    private readonly Uri _baseAddress = new Uri("http://localhost:5260/api");
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)

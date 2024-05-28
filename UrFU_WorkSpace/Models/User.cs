@@ -13,7 +13,7 @@ namespace UrFU_WorkSpace.Models;
 
 public class User(HttpContext httpContext)
 {
-    private Uri baseAdress = new Uri("https://localhost:7077/api/users");
+    private Uri baseAdress = new Uri("http://localhost:5260/api/users");
     private string Pattern = @"^[a-zA-Z0-9._%+-]+@urfu\.me$";
 
     private bool IsEmailCorrect(string email) 
