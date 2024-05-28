@@ -9,7 +9,7 @@ namespace UrFU_WorkSpace.Models;
 
 public class Workspace
 {
-    private static Uri baseAdress = new Uri("https://localhost:7077/api/workspaces");
+    private static Uri baseAdress = new Uri("http://localhost:5260/api/workspaces");
     public int Id { get; set; }
     public string Name { get; set; }
     
@@ -101,7 +101,7 @@ public class Workspace
         settings.Converters.Add(new TimeOnlyJsonConverter());
         settings.Converters.Add(new DateOnlyJsonConverter());
         var jsonDate =  JsonConvert.SerializeObject(date).Replace("\"", "");
-        var route = "https://localhost:7077/api/reservations?idWorkspace=" + idWorkspace + "&date=" + jsonDate;
+        var route = "http://localhost:5260/api/reservations?idWorkspace=" + idWorkspace + "&date=" + jsonDate;
         var operationModeMessage = HttpRequestSender.SendRequest(route, RequestMethod.Get).Result;
         if (operationModeMessage.IsSuccessStatusCode)
         {
@@ -146,7 +146,7 @@ public class Workspace
             { "date", form["date"].ToString() }
         };
 
-        var responseMessage = await HttpRequestSender.SendRequest("https://localhost:7077/reserve", RequestMethod.Post, dictionary);
+        var responseMessage = await HttpRequestSender.SendRequest("https://localhost:5260/reserve", RequestMethod.Post, dictionary);
         return responseMessage.StatusCode != HttpStatusCode.OK ? 0 : int.Parse(form["idObject"]);
     }
 
