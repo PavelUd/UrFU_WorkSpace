@@ -4,12 +4,11 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - api
     ports:
-      - 8080:8080
+      - 5290:5290
     networks:
       - api_net
+      - postgres_net
 
   api:
     build: 
@@ -18,7 +17,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - 5260:8080
+      - 5260:5260
     networks:
       - postgres_net
       - api_net
@@ -34,6 +33,7 @@ services:
       - 5432:5432
     networks:
       - postgres_net
+      - api_net
     
 volumes:
   habrdb-data:
