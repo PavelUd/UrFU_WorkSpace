@@ -40,7 +40,7 @@ public class AuthenticationController(ILogger<AuthenticationController> logger, 
         if (token != null)
         {
             
-            return Ok(JwtTokenDecoder.GetUserName(token));
+            return Ok(token);
         }
         return BadRequest("Register failed");
     }
