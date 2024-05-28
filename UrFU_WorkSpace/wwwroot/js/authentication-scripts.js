@@ -1,3 +1,5 @@
+import {decodeJwtToken} from "./utils.js";
+
 document.querySelector('#loginModal form').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -7,12 +9,9 @@ document.querySelector('#loginModal form').addEventListener('submit', function(e
         password : formData.get('password')
     }).then(token => {
         if (token) {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const payloadinit = atob(base64);
-            const payload = JSON.parse(payloadinit);
+            const user = decodeJwtToken(token)
             sessionStorage.setItem("token", token);
-            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="/img/account.svg" alt="Лк">' + payload.Login + '</div>');
+            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="/img/account.svg" alt="Лк">' + user.Login + '</div>');
             $('#loginModal').modal('hide');
         }
     })
@@ -86,8 +85,10 @@ const sendreg = (evt) => {
         correctCode : formData.get('code'),
         code : codeForm.get('code')
     })
-        .then(Name => {
-            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="img/account.svg" alt="Лк">' + Name + '</div>');
+        .then(token => {
+            const user = decodeJwtToken(token)
+            sessionStorage.setItem("token", token);
+            $('#lk').replaceWith('<div style="margin-right: 5rem" class="btn-reset btn nav__btn"><img src="/img/account.svg" alt="Лк">' + user.Login + '</div>');
         }).catch(error => {
         console.error(error);
     })
