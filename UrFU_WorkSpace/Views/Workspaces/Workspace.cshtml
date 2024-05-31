@@ -123,31 +123,52 @@
           <h2 class="section__title review__title">
             Отзывы о пространстве
           </h2>
-          <button class="btn-reset btn review__btn"> 
+          <button class="btn-reset btn review__btn" id="reviewButton"> 
             Написать отзыв
           </button>
         </div>
-
-        <div class="review__wrapper">
+        <div class="review__wrapper" style="margin-bottom: 2rem" id="reviewForm" hidden>
+          <form method="post" action="/workspaces/@Model.Id/add-review">
           <div class="review__head">
-            <span class="review__author">
-              Имя посетителя
+            <span class="review__author" id="formName"></span>
+            <span class="review__date" id="formDate">
             </span>
-            <span class="review__date">
-              01.01.24
-            </span>
-            <ul class="list-reset review__stars">
-              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
-              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
-              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
-              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
-              <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+            <ul class="list-reset review__stars" id="formStars">
+              <li class="review__elem"><img id="star-0" src="~/img/star.png" alt="Звезда"></li>
+              <li class="review__elem"><img id="star-1" src="~/img/star.png" alt="Звезда"></li>
+              <li class="review__elem"><img id="star-2" src="~/img/star.png" alt="Звезда"></li>
+              <li class="review__elem"><img id="star-3" src="~/img/star.png" alt="Звезда"></li>
+              <li class="review__elem"><img id="star-4" src="~/img/star.png" alt="Звезда"></li>
             </ul>
+            <input hidden="true" id="starsCount" name="starsCount">
           </div>
-          <span class="review__text">
-            Текст отзыва текст отзыва текст отзыва
-          </span>
+          <label style="color:black ">Введите текст сообщения</label>
+          <input name="text" class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
+          <button class="btn btn-success" type="submit">Save</button>
+          </form>
         </div>
+          @foreach (var review in Model.Reviews)
+          {
+            <div class="review__wrapper" style="margin-bottom: 2rem">
+            <div class="review__head">
+              <span class="review__author">
+                MegaGrib
+              </span>
+              <span class="review__date">
+                01.06.24
+              </span>
+              <ul class="list-reset review__stars">
+              @for (var i = 0; i < review.Estimation; i++ )
+              {
+                  <li class="review__elem"><img src="~/img/blue-star.png" alt="Звезда"></li>
+              }
+              </ul>
+            </div>
+            <span class="review__text">
+              @review.Message
+            </span>
+                    </div>
+          }
       </section>
       <div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="border-radius: 10px;">
@@ -324,5 +345,10 @@
           { "key": "4", "pos": "239 171", "size": "50 100", "color": "red" }
         ]);
       }
+      
+      const writeReview = () => {
+        
+        }
+      
       window.addEventListener('DOMContentLoaded', init);
       </script>

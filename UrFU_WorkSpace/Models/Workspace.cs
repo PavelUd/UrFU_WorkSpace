@@ -12,7 +12,8 @@ public class Workspace
     public static Uri baseAdress;
     public int Id { get; set; }
     public string Name { get; set; }
-    
+
+    public IEnumerable<Review> Reviews;
     public string Description { get; set; }
     
     public double Rating { get; set; }

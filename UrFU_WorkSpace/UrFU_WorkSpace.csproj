@@ -38,6 +38,12 @@
     <ItemGroup>
       <Folder Include="wwwroot\Files\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="enums\AuthorizationStatus.cs">
+        <DependentUpon>TimeType.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
 	
 
 </Project>
