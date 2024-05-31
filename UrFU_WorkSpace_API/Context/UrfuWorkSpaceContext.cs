@@ -24,6 +24,7 @@ public partial class UrfuWorkSpaceContext : DbContext
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<AmenityDetail> AmenityDetails { get; set; }
     public DbSet<WorkspaceAmenity> WorkspaceAmenities { get; set; }
