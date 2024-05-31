@@ -29,6 +29,7 @@ public class Startup
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles(services.BuildServiceProvider().GetService<IWorkspaceRepository>())));
         services.AddAuthentication(x =>
         {

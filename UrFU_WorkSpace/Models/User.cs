@@ -114,6 +114,4 @@ public class User(HttpContext httpContext, IConfiguration configuration)
             client.Dispose();
         }
     }
-    
-    
 }
