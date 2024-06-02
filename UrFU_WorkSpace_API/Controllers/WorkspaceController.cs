@@ -31,6 +31,14 @@ public class WorkspaceController : Controller
         return Ok(workspaces);
     }
     
+    [HttpPost("save")]
+    public IActionResult SaveWorkspaces()
+    {
+        var isSaved = workspaceRepository.Save();
+
+        return isSaved ? Ok() : BadRequest();
+    }
+    
     [HttpGet("{idWorkspace}")]
     [ProducesResponseType(200, Type = typeof(WorkspaceDTO))]
     public IActionResult GetWorkspaceById(int idWorkspace)
