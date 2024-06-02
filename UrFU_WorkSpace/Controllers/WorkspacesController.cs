@@ -5,6 +5,7 @@ using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services;
+using UrFU_WorkSpace.Services.Interfaces;
 using Review = UrFU_WorkSpace_API.Models.Review;
 
 namespace UrFU_WorkSpace.Controllers;
@@ -14,18 +15,20 @@ public class WorkspacesController : Controller
     private readonly ILogger<HomeController> _logger;
     private ReviewRepository _reviewRepository;
     private readonly IHttpContextAccessor httpContextAccessor;
-
-    public WorkspacesController(ILogger<HomeController> logger, IConfiguration configuration, ReviewRepository reviewRepository, IHttpContextAccessor httpContextAccessor)
+    private readonly IWorkspaceService WorkspaceService;
+    private readonly IReservationService ReservationService;
+    public WorkspacesController(ILogger<HomeController> logger, ReviewRepository reviewRepository, IWorkspaceService workspaceService, IReservationService reservationService)
     {
         this.httpContextAccessor = httpContextAccessor;
-        Workspace.baseAdress = new Uri(configuration["apiAddress"]);
+        WorkspaceService = workspaceService;
+        ReservationService = reservationService;
         _logger = logger;
         _reviewRepository = reviewRepository;
     }
     [Route("workspaces/{idWorkspace}")]
     public IActionResult GetWorkspace(int idWorkspace)
     {
-        var workspace = Workspace.GetWorkSpace(idWorkspace).Result;
+        var workspace = WorkspaceService.GetWorkspace(idWorkspace);
         workspace.Reviews = _reviewRepository.GetByIdWorkspace(idWorkspace);
         return View("Workspace", workspace); 
     }
@@ -36,7 +39,7 @@ public class WorkspacesController : Controller
         var d = form["date"];
         var t ='\"' + d + '\"';
         var date = JsonConvert.DeserializeObject<DateTime>(t , new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
-        var timeSlots = Workspace.GetWorkspaceTimeSlots(idWorkspace, date,  Enum.Parse<TimeType>(form["timeType"].ToString()), form["objectType"]);
+        var timeSlots = WorkspaceService.GetWorkspaceTimeSlots(idWorkspace, date,  Enum.Parse<TimeType>(form["timeType"].ToString()), form["objectType"]);
         var str = JsonConvert.SerializeObject(timeSlots);
         return Ok(str);
     }
@@ -72,11 +75,12 @@ public class WorkspacesController : Controller
         var dateStr = '\"' + form["date"] + '\"';
         var timeEndStr = '\"' + form["timeStart"] + '\"';
         var timeStartStr = '\"' + form["timeEnd"] + '\"';
-        var date = JsonConvert.DeserializeObject<DateTime>(dateStr,
-            new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
+        
+        var date = JsonConvert.DeserializeObject<DateTime>(dateStr,new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
         var timeEnd = JsonConvert.DeserializeObject<TimeOnly>(timeEndStr);
         var timeStart = JsonConvert.DeserializeObject<TimeOnly>(timeStartStr);
-        var objects = Workspace.GetReservationObjects(timeStart, timeEnd, idWorkspace, date);
+        
+        var objects = WorkspaceService.GetReservedObjects(timeStart, timeEnd, idWorkspace, date);
         return Ok(JsonConvert.SerializeObject(objects));
     }
 
@@ -84,7 +88,7 @@ public class WorkspacesController : Controller
     [Route("workspaces/{idWorkspace}/reserve")]
     public async Task<IActionResult> Reserve([FromRoute] int idWorkspace, IFormCollection form)
     {
-        var idSelectedObject = await Workspace.Reserve(idWorkspace, form);
+        var idSelectedObject = ReservationService.Reserve(idWorkspace, form).Result;
         if (idSelectedObject == 0)
         {
             return BadRequest();

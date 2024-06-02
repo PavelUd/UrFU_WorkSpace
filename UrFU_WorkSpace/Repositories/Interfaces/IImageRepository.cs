@@ -1,6 +1,8 @@
+
+
 namespace UrFU_WorkSpace.Services.Interfaces;
 
-public class IImageRepository
+public interface IImageRepository
 {
-    
+    public bool CreateImage(Dictionary<string, object> image);
 }
