@@ -5,10 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 5090:5090
+      - 5090:8080
     networks:
-      - api_net
-      - postgres_net
+      - nettw
 
   api:
     build: 
@@ -17,10 +16,9 @@ services:
     depends_on:
       - postgres
     ports:
-      - 5260:5260
+      - 5260:8080
     networks:
-      - postgres_net
-      - api_net
+      - nettw
       
   postgres:
     image: postgres:16
@@ -32,15 +30,12 @@ services:
     ports:
       - 5432:5432
     networks:
-      - postgres_net
-      - api_net
+      - nettw
     
 volumes:
   habrdb-data:
   pgadmin-data:
   
 networks:
-  postgres_net:
-    driver: bridge
-  api_net:
+  nettw:
     driver: bridge
