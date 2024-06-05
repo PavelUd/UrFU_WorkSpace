@@ -824,9 +824,37 @@ body {
   font-weight: 500;
 }
 
-.modal__input{
-  margin-top: 20px;
-  margin-bottom: 10px;
+.modal-body {
+	border-top: 10px solid rgb(226, 226, 226);
+}
+
+.modal-first-page::before {
+	content: '';
+	position: absolute;
+	right: 0;
+	bottom: 0px;
+	left: 0;
+	top: -10px;
+	width: 33%;
+	height: 10px;
+	background-color: var(--color-blue);
+}
+
+.modal-second-page::before {
+	content: '';
+	position: absolute;
+	right: 0;
+	bottom: 0px;
+	left: 0;
+	top: -10px;
+	width: 66%;
+	height: 10px;
+	background-color: var(--color-blue);
+}
+
+.modal__input {
+	margin-top: 20px;
+	margin-bottom: 10px;
 }
 
 .book__date{  
