@@ -11,44 +11,36 @@ namespace UrFU_WorkSpace_API.Controllers;
 
 public class WorkspaceController : Controller
 {
-    private readonly IWorkspaceRepository workspaceRepository;
+    private readonly IWorkspaceRepository WorkspaceRepository;
     public IMapper mapper { get; set; }
 
     public WorkspaceController(IWorkspaceRepository workspaceRepository,  IMapper mapper)
     {
-        this.workspaceRepository = workspaceRepository;
+        WorkspaceRepository = workspaceRepository;
         this.mapper = mapper;
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceDTO>))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<Workspace>))]
     public IActionResult GetWorkspaces()
     { 
-        var workspaces = mapper.Map<IEnumerable<Workspace>, IEnumerable<WorkspaceDTO>>(workspaceRepository.FindAll());
+        var workspaces = WorkspaceRepository.FindAll();
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         return Ok(workspaces);
     }
     
-    [HttpPost("save")]
-    public IActionResult SaveWorkspaces()
-    {
-        var isSaved = workspaceRepository.Save();
-
-        return isSaved ? Ok() : BadRequest();
-    }
-    
     [HttpGet("{idWorkspace}")]
-    [ProducesResponseType(200, Type = typeof(WorkspaceDTO))]
+    [ProducesResponseType(200, Type = typeof(Workspace))]
     public IActionResult GetWorkspaceById(int idWorkspace)
     {
-        var workspace = workspaceRepository.FindByCondition(x => x.Id == idWorkspace).FirstOrDefault();
+        var workspace = WorkspaceRepository.FindByCondition(x => x.Id == idWorkspace).FirstOrDefault();
         if (workspace == null)
         {
             return NotFound(ModelState);
         }
-        var workspaces = mapper.Map<Workspace, WorkspaceDTO>(workspace);
+        var workspaces = workspace;
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -56,10 +48,10 @@ public class WorkspaceController : Controller
     }
 
     [HttpGet("{idWorkspace}/objects")]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceObject>))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<Image>))]
     public IActionResult GetWorkspaceObjects(int idWorkspace)
     {
-        var objects = workspaceRepository.GetWorkspaceObjects(idWorkspace);
+        var objects = WorkspaceRepository.GetWorkspaceObjects(idWorkspace);
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
@@ -70,7 +62,7 @@ public class WorkspaceController : Controller
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceAmenity>))]
     public IActionResult GetWorkspaceAmenities(int idWorkspace)
     {
-        var amenities = workspaceRepository.GetWorkspaceAmenities(idWorkspace);
+        var amenities = WorkspaceRepository.GetWorkspaceAmenities(idWorkspace);
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
@@ -80,7 +72,7 @@ public class WorkspaceController : Controller
     [HttpPut("add-weekday")]
     public IActionResult AddWeekday([FromBody] WorkspaceWeekday weekday)
     {
-        var isSaved = workspaceRepository.AddWeekday(weekday);
+        var isSaved = WorkspaceRepository.AddWeekday(weekday);
         if (!ModelState.IsValid || !isSaved)
             return BadRequest(ModelState);
 
@@ -90,7 +82,7 @@ public class WorkspaceController : Controller
     [HttpPut("add-object")]
     public IActionResult AddObject([FromBody] WorkspaceObject obj)
     {
-        var isSaved = workspaceRepository.AddObject(obj);
+        var isSaved = WorkspaceRepository.AddObject(obj);
         if (!ModelState.IsValid || !isSaved)
             return BadRequest(ModelState);
 
@@ -98,9 +90,10 @@ public class WorkspaceController : Controller
     }
     
     [HttpPut("add-image")]
-    public IActionResult AddObject([FromBody] WorkspaceImage image)
+    public IActionResult AddImage([FromBody] Image image)
     {
-        var isSaved = workspaceRepository.AddImage(image);
+        var isSaved = WorkspaceRepository.AddImage(image);
+        
         if (!ModelState.IsValid || !isSaved)
             return BadRequest(ModelState);
 
@@ -110,8 +103,8 @@ public class WorkspaceController : Controller
     [HttpPut("add-workspace")]
     public IActionResult AddWorkspace([FromBody] Workspace workspace)
     {
-        workspaceRepository.Create(workspace);
-        var isSaved = workspaceRepository.Save();
+        WorkspaceRepository.Create(workspace);
+        WorkspaceRepository.Save();
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -122,7 +115,7 @@ public class WorkspaceController : Controller
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceWeekday>))]
     public IActionResult GetWorkspaceOperationMode(int idWorkspace)
     {
-        var amenities = workspaceRepository.GetWorkspaceOperationMode(idWorkspace);
+        var amenities = WorkspaceRepository.GetWorkspaceOperationMode(idWorkspace);
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         

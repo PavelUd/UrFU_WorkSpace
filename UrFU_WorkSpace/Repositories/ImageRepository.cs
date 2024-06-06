@@ -7,7 +7,6 @@ namespace UrFU_WorkSpace.Services;
 public class ImageRepository : IImageRepository
 {
     private Uri BaseAddress;
-    //fgfg
     public ImageRepository(string baseApiAddress)
     {
         BaseAddress = new Uri(baseApiAddress + "/workspaces");

@@ -13,6 +13,6 @@ public class WorkspaceAmenity
     
     [Column("workspace_id")]
     public int IdWorkspace { get; set; }
-
-    public virtual AmenityDetail Detail { get; set; }
+    
+    public AmenityTemplate Template { get; set; }
 }

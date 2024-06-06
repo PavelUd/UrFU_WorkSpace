@@ -30,7 +30,9 @@ public class Startup
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
-        services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles(services.BuildServiceProvider().GetService<IWorkspaceRepository>())));
+        services.AddScoped<IAmenityTemplateRepository, AmenityTemplateRepository>();
+        services.AddScoped<IObjectTemplateRepository, ObjectTemplateRepository>();
+        services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles()));
         services.AddAuthentication(x =>
         {
             

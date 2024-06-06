@@ -91,7 +91,7 @@
                 $(go.Shape, { fill: "oldlace", strokeWidth: 0, desiredSize: diagram.fixedBounds.size })
               ));
     
-    diagram.nodeTemplate =
+    diagram.nodeDetail =
       $(go.Node, "Auto",
         $(go.Shape, "RoundedRectangle",
           { fill: "white" },
@@ -108,7 +108,7 @@
       new go.Palette("myPaletteDiv");
     
     // the Palette's node template is different from the main Diagram's
-    myPalette.nodeTemplate =
+    myPalette.nodeDetail =
       $(go.Node, "Horizontal",
         $(go.Shape,
           { width: 14, height: 14, fill: "white" },

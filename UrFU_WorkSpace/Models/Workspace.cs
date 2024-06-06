@@ -26,7 +26,7 @@ public class Workspace
     
     public int IdCreator { get; set; }
     
-    public IEnumerable<WorkspaceImage> Images { get; set; }
+    public IEnumerable<UrFU_WorkSpace_API.Models.Image> Images { get; set; }
     public IEnumerable<UrFU_WorkSpace_API.Models.WorkspaceObject> Objects { get; set; }
     public IEnumerable<WorkspaceWeekday> OperationMode { get; set; }
     public IEnumerable<WorkspaceAmenity> Amenities { get; set; }
