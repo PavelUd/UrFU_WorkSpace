@@ -875,8 +875,8 @@ body {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 7px;
+  margin-bottom: 50px;
 }
 
 
@@ -885,12 +885,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 160px;
-  height: 40px;
-  background-color: var(--color-grey);
+  width: 125px;
+  height: 38px;
+  background-color: #d3d3d4;
   color: var(--color-black);
-  padding: 10px 20px;
-  border-radius: 3px;
+  border-radius: 10px;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
@@ -912,10 +911,10 @@ body {
 
 .selected-time{
   align-self: flex-start;
-  font-size: 24px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 600;
   color: var(--color-blue);
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .selected-time__value{
@@ -937,5 +936,5 @@ body {
 }
 
 .modal__params{
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }

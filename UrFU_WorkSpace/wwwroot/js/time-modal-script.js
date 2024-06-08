@@ -33,8 +33,8 @@ const getLabel = (timeSlotInfo, num) =>{
     label.classList.add('checkbox__text');
     label.value = `${timeStart}-${timeEnd}`
     label.textContent = `${timeStart.slice(0, 5)}-${timeEnd.slice(0, 5)}`
-    label.style.backgroundColor = timeSlotInfo['IsDisable'] ? "rgb(105, 105, 105)" : "";
-    label.style.fontSize = "13px";
+    label.style.color = timeSlotInfo['IsDisable'] ? "rgb(172, 172, 172)" : "";
+    label.style.fontSize = "19px";
     
     return label;
 }
