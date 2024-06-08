@@ -23,7 +23,7 @@ public class OperationModeRepository : IOperationModeRepository
         return JsonHelper.Deserialize<List<WorkspaceWeekday>>(content);
     }
     
-    public bool CreateWeekday(Dictionary<string, object> weekday)
+    public bool CreateWeekday(WorkspaceWeekday weekday)
     {
         var message = HttpRequestSender.SendRequest(BaseAddress + "/add-weekday", RequestMethod.Put, weekday).Result;
         if (!message.IsSuccessStatusCode)

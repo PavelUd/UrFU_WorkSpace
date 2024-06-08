@@ -43,7 +43,7 @@ public class ReviewRepository
         var dictionary = new Dictionary<string, object>()
         {
             {"IdUser", review.IdUser },
-            {"IdWorkspace", review.IdWorkspace },
+            {"WorkspaceId", review.IdWorkspace },
             {"Message", review.Message },
             {"Estimation", review.Estimation },
         };

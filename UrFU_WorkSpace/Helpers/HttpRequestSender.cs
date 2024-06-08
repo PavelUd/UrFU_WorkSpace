@@ -27,8 +27,12 @@ public static class HttpRequestSender
             _ => throw new ArgumentException("Invalid request method")
         };
     }
+    public static async Task<HttpResponseMessage> SendRequest(string route, RequestMethod method)
+    {
+        return await SendRequest<object>(route, method, null);
+    }
     
-    public static async Task<HttpResponseMessage> SendRequest(string route, RequestMethod method, Dictionary<string, object>? data = null)
+    public static async Task<HttpResponseMessage> SendRequest<T>(string route, RequestMethod method, T? data)
     {
         if (data == null || method == RequestMethod.Get) 
             return await RequestMethodInvokerFactory(method)(route, null);

@@ -31,9 +31,28 @@ public class AdminController : Controller
     
     [HttpPost]
     [Route("{idUser}/workspace-create")]
-    public IActionResult SaveWorkspaceImages(int idUser,IFormCollection form, IFormFileCollection uploads)
+    public IActionResult CreateWorkspace(int idUser,IFormCollection form, IFormFileCollection uploads)
     {
-        var isSaved = Service.CreateWorkspace(idUser, form, uploads, _appEnvironment);
+        var baseInfo = new Dictionary<string, object>()
+        {
+            {"name", form["name"].ToString() },
+            {"description", form["description"].ToString()},
+            {"institute", form["institute"].ToString()},
+            {"address", form["address"].ToString()},
+        };
+       
+        var operationModeJson = new List<(string, string)>()
+        {
+            (form["mondayStart"], form["mondayEnd"]),
+            (form["tuesdayStart"], form["tuesdayEnd"]),
+            (form["wednesdayStart"], form["wednesdayEnd"]),
+            (form["thursdayStart"], form["thursdayEnd"]),
+            (form["fridayStart"], form["fridayEnd"]),
+            (form["saturdayStart"], form["saturdayEnd"]),
+            (form["sundayStart"], form["sundayEnd"]),
+        };
+        
+        var isSaved = Service.CreateWorkspace(idUser, baseInfo, operationModeJson, form["objects"],uploads, _appEnvironment);
         return isSaved ? Ok() : BadRequest();
     }
 }

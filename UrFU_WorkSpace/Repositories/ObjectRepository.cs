@@ -14,7 +14,7 @@ public class ObjectRepository : IObjectRepository
         BaseAddress = new Uri(baseApiAddress + "/workspaces");
     }
     
-    public  bool CreateObject(Dictionary<string, object> data)
+    public  bool CreateObject(WorkspaceObject data)
     {
         var message = HttpRequestSender.SendRequest(BaseAddress + "/add-object", RequestMethod.Put, data).Result;
            if (!message.IsSuccessStatusCode)

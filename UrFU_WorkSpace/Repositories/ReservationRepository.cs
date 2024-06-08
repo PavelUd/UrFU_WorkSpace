@@ -35,8 +35,8 @@ public class ReservationRepository : IReservationRepository
         var responseMessage = await HttpRequestSender.SendRequest(BaseAddress + "/reservations/reserve", RequestMethod.Post, dictionary);
         responseMessage.EnsureSuccessStatusCode();
 
-        var content = JsonHelper.Deserialize<WorkspaceObject>(await responseMessage.Content.ReadAsStringAsync());
+        var content = JsonHelper.Deserialize<Reservation>(await responseMessage.Content.ReadAsStringAsync());
         
-        return content.IdObject;
+        return content.IdReservation;
     }
 }

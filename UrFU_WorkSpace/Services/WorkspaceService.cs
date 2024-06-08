@@ -9,58 +9,57 @@ namespace UrFU_WorkSpace.Services;
 
 public class WorkspaceService : IWorkspaceService
 {
-   private IWorkspaceRepository Repository;
-   private IObjectService ObjectService;
-   private IOperationModeService OperationModeService;
-   private IImageService ImageService;
-   private IReservationService ReservationService;
+    private IWorkspaceRepository Repository;
+    private IObjectService ObjectService;
+    private IOperationModeService OperationModeService;
+    private IImageService ImageService;
+    private IReservationService ReservationService;
    
-   public WorkspaceService(IWorkspaceRepository repository, 
-                           IObjectService objectService, 
-                           IOperationModeService operationModeService,
-                           IImageService imageService, IReservationService reservationService)
-   {
-       Repository = repository;
-       ReservationService = reservationService;
-       ObjectService = objectService;
-       OperationModeService = operationModeService;
-       ImageService = imageService;
-   }
+    public WorkspaceService(IWorkspaceRepository repository, 
+        IObjectService objectService, 
+        IOperationModeService operationModeService,
+        IImageService imageService, IReservationService reservationService)
+    {
+        Repository = repository;
+        ReservationService = reservationService;
+        ObjectService = objectService;
+        OperationModeService = operationModeService;
+        ImageService = imageService;
+    }
 
    public Workspace GetWorkspace(int idWorkspace)
    {
        return Repository.GetWorkspaceAsync(idWorkspace).Result;
    }
    
-   public int AddBaseWorkspaceInfo(IFormCollection form, int idUser)
+   public Workspace ConstructWorkspace(Dictionary<string, object> baseInfo, IEnumerable<WorkspaceObject> objects, IEnumerable<WorkspaceWeekday> operationMode, IEnumerable<Image> images, int idUser)
    {
-       var baseInfo = new Dictionary<string, object>()
+       var workspace = new Workspace()
        {
-           {"name", form["name"].ToString() },
-           {"description", form["description"].ToString()},
-           {"rating", 0},
-           {"institute", form["institute"].ToString()},
-           {"address", form["address"].ToString()},
-           {"privacy", 0},
-           {"idCreator", idUser}
+           IdCreator = idUser,
+           Privacy = 0,
+           Rating = 0,
+           Name = baseInfo["name"].ToString(),
+           Description = baseInfo["description"].ToString(),
+           Institute = baseInfo["institute"].ToString(),
+           Address = baseInfo["address"].ToString(),
+           Objects = objects,
+           OperationMode = operationMode,
+           Images = images,
        };
-       return Repository.CreateWorkspaceAsync(baseInfo).Result;
+       return workspace;
    }
 
-   public bool CreateWorkspace(int idUser,IFormCollection form, IFormFileCollection uploads, IWebHostEnvironment appEnvironment)
+   public bool CreateWorkspace(int idUser,Dictionary<string, object> baseInfo,List<(string, string)> operationModeJson, string jsonObjects, IFormFileCollection uploads,
+       IWebHostEnvironment appEnvironment)
    {
        var urls = ImageService.SaveImages(appEnvironment, uploads);
-        
-       var idCreatedWorkspace = AddBaseWorkspaceInfo(form, idUser);
-       if (idCreatedWorkspace == 0)
-       {
-           return false;
-       }
-       var imagesIsSaved = ImageService.CreateImages(idCreatedWorkspace ,urls);
-       var objIsSaved = ObjectService.CreateObjects(idCreatedWorkspace ,form["objects"]);
-       var weekDaysIsSaved = OperationModeService.CreateOperationMode(form ,idCreatedWorkspace);
-       
-       return objIsSaved && weekDaysIsSaved && imagesIsSaved;
+       var images = ImageService.ConstructImages(urls);
+       var operationMode =  OperationModeService.ConstructOperationMode(operationModeJson, idUser);
+       var objects = ObjectService.ConstructWorkspaceObjects(jsonObjects);
+
+       var workspace = ConstructWorkspace(baseInfo, objects,operationMode, images, idUser);
+       return  Repository.CreateWorkspaceAsync(workspace).Result > 0;
    }
    
    public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, string typeObject)

@@ -7,9 +7,11 @@ public interface IWorkspaceService
 {
     public Workspace GetWorkspace(int idWorkspace);
 
-    public int AddBaseWorkspaceInfo(IFormCollection form, int idUser);
+    public Workspace ConstructWorkspace(Dictionary<string, object> baseInfo, IEnumerable<WorkspaceObject> objects,
+        IEnumerable<WorkspaceWeekday> operationMode, IEnumerable<Image> images, int idUser);
 
-    public bool CreateWorkspace(int idUser, IFormCollection form, IFormFileCollection uploads,
+    public bool CreateWorkspace(int idUser, Dictionary<string, object> baseInfo,
+        List<(string, string)> operationModeJson, string jsonObjects, IFormFileCollection uploads,
         IWebHostEnvironment appEnvironment);
 
     public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, string typeObject);

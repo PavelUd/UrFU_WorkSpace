@@ -1,8 +1,10 @@
 
 
+using UrFU_WorkSpace.Models;
+
 namespace UrFU_WorkSpace.Services.Interfaces;
 
 public interface IImageRepository
 {
-    public bool CreateImage(Dictionary<string, object> image);
+    public bool CreateImage(Image image);
 }

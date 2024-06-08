@@ -24,7 +24,7 @@ public class ReservationService : IReservationService
         var objs = new List<WorkspaceObject>();
         foreach (var obj in objects)
         {
-            var isReserved = reservations.Any(x => x.IdObject == obj.IdObject && !(x.TimeStart >= end || x.TimeEnd <= start));
+            var isReserved = reservations.Any(x => x.IdObject == obj.Id && !(x.TimeStart >= end || x.TimeEnd <= start));
             obj.IsReserve = isReserved;
             objs.Add(obj);
         }

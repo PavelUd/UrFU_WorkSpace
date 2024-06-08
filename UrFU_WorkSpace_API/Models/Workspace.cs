@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AutoMapper.Configuration.Annotations;
+using UrFU_WorkSpace_API.Enums;
 
 namespace UrFU_WorkSpace_API.Models;
 
@@ -15,7 +17,12 @@ public class Workspace
     [Column("rating")] public double Rating { get; set; }
 
     [Column("institute")] public string Institute { get; set; }
-
+    
+    public IEnumerable<Image> Images { get; set;}
+    public IEnumerable<WorkspaceObject> Objects { get; set;}
+    public IEnumerable<WorkspaceAmenity> Amenities { get; set;}
+    public IEnumerable<WorkspaceWeekday> OperationMode { get; set;}
+    
     [Required]
     [MaxLength(100)]
     [Column("address")]
