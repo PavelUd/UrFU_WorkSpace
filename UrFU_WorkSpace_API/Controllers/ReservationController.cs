@@ -34,7 +34,7 @@ public class ReservationController : Controller
     }
     
     [HttpPost("reserve")]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
+    [ProducesResponseType(201, Type = typeof(IEnumerable<Reservation>))]
     public IActionResult GetReservations([FromBody] Reservation reservation)
     {
         var options = new JsonSerializerOptions() { WriteIndented = true };

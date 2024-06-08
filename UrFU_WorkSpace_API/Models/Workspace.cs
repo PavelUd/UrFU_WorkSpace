@@ -21,7 +21,6 @@ public class Workspace
     public IEnumerable<Image> Images { get; set;}
     public IEnumerable<WorkspaceObject> Objects { get; set;}
     public IEnumerable<WorkspaceAmenity> Amenities { get; set;}
-    
     public IEnumerable<WorkspaceWeekday> OperationMode { get; set;}
     
     [Required]

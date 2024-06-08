@@ -20,10 +20,15 @@
         </span>
 
         <div class="gallery">
-          @foreach (var image in Model.Images){
-              <figure class="gallery__item gallery__item--@image.Id">
-                <img src="@image.Url"  class="gallery__img" alt="@image.Id">
+          @{
+            var count = 1;
+            foreach (var image in Model.Images)
+            {
+              <figure class="gallery__item gallery__item--@count">
+                <img src="@image.Url" class="gallery__img" alt="@image.Id">
               </figure>
+              count++;
+            }
           }
         </div>
       </section>
@@ -46,9 +51,9 @@
             @foreach (var amenity in Model.Amenities)
             {
               <li class="comfort__elem">
-                <img src="@amenity.Detail.Icon" alt="Wi-Fi" class="comfort__img">
+                <img src="@amenity.Template?.Picture " alt="Wi-Fi" class="comfort__img">
                 <span class="comfort__text">
-                  @amenity.Detail.Name
+                  @amenity.Template?.Name
                 </span>
               </li>
             }
@@ -59,12 +64,12 @@
       <section class="book__location">
         <div class="location__container">
           <h2 class="section__title">
-            Расположение
+            Схема Помещения
           </h2>
           <div class="location__wrapper">
-            <img src="~/img/map.png" alt="Карта" class="location__img">
+            <div id="showDiagram" style="width:550px; height:350px; border-radius: 10px; background: lightgray; border:2px solid black;margin-bottom:2rem "></div>
              <button class="btn btn-reset" id ="book-btn">
-              Забронировать место
+              Забронировать место 
               </button>
           </div>
           
@@ -218,7 +223,7 @@
             <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="selectWorkplaceModalLabel">Бронирование места</h4>
           </div>
           <div class="modal-body" style="margin: auto">
-            <div id="myDiagramDiv" style="width:100%; height:400px"></div>
+            <div id="myDiagramDiv" style="width:100%; height:400px; border-radius: 10px; background: lightgray; border:2px solid black;margin-bottom:2rem "></div>
             <input value="" hidden="" id="selected-object"/>
             <div class="modal__navigator">
               <button id = "btn-back" class="btn-reset btn btn__back">
@@ -243,112 +248,21 @@
       </div>
       </div>
     </main>
-<script id="code">
-      function init() {
-        
-        const $ = go.GraphObject.make;
-    
-        myDiagram =
-          new go.Diagram("myDiagramDiv",
-            {
-              fixedBounds: new go.Rect(0, 0, 500, 300),  
-              allowHorizontalScroll: false, 
-              allowVerticalScroll: false,
-              allowZoom: false,
-              "animationManager.isEnabled": false,
-              "undoManager.isEnabled": true,
-          
-            });
-        myDiagram.isReadOnly = true;
-        // the background Part showing the fixed bounds of the diagram contents
-        myDiagram.add(
-          $(go.Part,
-            { layerName: "Grid", position: myDiagram.fixedBounds.position },
-            $(go.Shape, { fill: "oldlace", strokeWidth: 0, desiredSize: myDiagram.fixedBounds.size })
-          ));
-    
-        // This function is the Node.dragComputation, to limit the movement of the parts.
-        function stayInFixedArea(part, pt, gridpt) {
-          var diagram = part.diagram;
-          if (diagram === null) return pt;
-          // compute the document area without padding
-          var v = diagram.documentBounds.copy().subtractMargin(diagram.padding);
-          // get the bounds of the part being dragged
-          var bnd = part.actualBounds;
-          var loc = part.location;
-          // now limit the location appropriately
-          var l = v.x + (loc.x - bnd.x);
-          var r = v.right - (bnd.right - loc.x);
-          var t = v.y + (loc.y - bnd.y);
-          var b = v.bottom - (bnd.bottom - loc.y);
-          if (l <= gridpt.x && gridpt.x <= r && t <= gridpt.y && gridpt.y <= b) return gridpt;
-          var p = gridpt.copy();
-          if (diagram.toolManager.draggingTool.isGridSnapEnabled) {
-            // find a location that is inside V but also keeps the part's bounds within V
-            var cw = diagram.grid.gridCellSize.width;
-            if (cw > 0) {
-              while (p.x > r) p.x -= cw;
-              while (p.x < l) p.x += cw;
-            }
-            var ch = diagram.grid.gridCellSize.height;
-            if (ch > 0) {
-              while (p.y > b) p.y -= ch;
-              while (p.y < t) p.y += ch;
-            }
-            return p;
-          } else {
-            p.x = Math.max(l, Math.min(p.x, r));
-            p.y = Math.max(t, Math.min(p.y, b));
-            return p;
-          }
-        }
-      var prevNode = null;
-        var prevColor = null;
-        myDiagram.nodeDetail =
-          $(go.Node, "Auto",
-            { dragComputation: stayInFixedArea },
-                  {
-                    click: function(e, node) {
-                      var shape = node.findObject("SHAPE");
-                      if (shape == null || node.data.isReserve){
-                          return;
-                      }
-                      
-                        if(prevNode){
-                          prevNode.findObject("SHAPE").fill = prevColor;
-                          myDiagram.model.setDataProperty(prevNode.data, "color", prevColor);
-                        }
-                        
-                        prevColor = shape.fill;
-                        prevNode= node;
-                        shape.fill = "green";
-                        myDiagram.model.setDataProperty(node.data, "color","green");
-                        console.log(node.data)
-                       document.getElementById("selected-object").value = node.data.key;
-                      },
-                  },
-            new go.Binding("desiredSize", "size", go.Size.parse),
-            new go.Binding("position", "pos", go.Point.parse).makeTwoWay(go.Point.stringify),
-            // temporarily put selected nodes in Foreground layer
-            new go.Binding("layerName", "isSelected", s => s ? "Foreground" : "").ofObject(),
-            $(go.Shape, "Rectangle",
-              {name: "SHAPE", strokeWidth: 0 },  // avoid extra thickness from the stroke
-              new go.Binding("fill", "color")),
-            $(go.TextBlock,
-              new go.Binding("text", "color"))
-          );
-    
-        myDiagram.model = new go.GraphLinksModel([
-          { "key": "1", "pos": "0 0", "size": "50 50", "color": "lightblue" },
-          { "key": "2", "pos": "276 19", "size": "100 100", "color": "orange" },
-          { "key": "3", "pos": "44 214", "size": "100 50", "color": "lightgreen" },
-          { "key": "4", "pos": "239 171", "size": "50 100", "color": "red" }
-        ]);
-      }
+<script>
+window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv"));
+window.addEventListener('DOMContentLoaded',() =>{ 
+  init("showDiagram");
+  loadObjects("showDiagram", @Json.Serialize(Model.Objects));
+});
+
+const loadObjects = (divName, objects) => {
+       const diagram = go.Diagram.fromDiv(document.getElementById(divName))
+          let modelNodes = [];
+          objects.forEach(obj => {
+            console.log(obj.x);
+                  modelNodes.push({ "key": obj['Id'], "pos": `${obj.x} ${obj.y}`,"isReserve" : obj['IsReserve'],  "size": `${obj.height} ${obj.width}`,category: "work", image : obj.template.picture, color : ''})
+              })
+          diagram.model = new go.GraphLinksModel(modelNodes);
+}
+</script>      
       
-      const writeReview = () => {
-        
-        }
-      
-      window.addEventListener('DOMContentLoaded', init);
-      </script>

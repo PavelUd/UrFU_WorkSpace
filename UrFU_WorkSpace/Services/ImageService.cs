@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
 
@@ -12,16 +13,28 @@ public class ImageService : IImageService
         Repository = repository;
     }
 
-    public bool CreateImages(int idOwner, List<string> urls)
+    public IEnumerable<Image> ConstructImages(List<string> urls, int idOwner = 0, int id = 0)
     {
+        var images = new List<Image>();
         foreach (var url in urls)
         {
-            var dictionary = new Dictionary<string, object>()
+            var image = new Image()
             {
-                { "url", url },
-                { "idWorkspace", idOwner }
+                Id = id,
+                Url = url,
+                IdWorkspace = idOwner
             };
-            if (!Repository.CreateImage(dictionary))
+            images.Add(image);
+        }
+
+        return images;
+    }
+    
+    public bool CreateImages(int idOwner, List<Image> images)
+    {
+        foreach (var image in images)
+        {
+            if (!Repository.CreateImage(image))
             {
                 return false;
             };

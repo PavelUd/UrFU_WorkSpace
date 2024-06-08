@@ -15,9 +15,9 @@ public class WorkspaceRepository : IWorkspaceRepository
         BaseAddress = new Uri(baseApiAddress + "/workspaces");
     }
 
-    public async Task<int> CreateWorkspaceAsync(Dictionary<string, object> baseInfo)
+    public async Task<int> CreateWorkspaceAsync(Workspace baseInfo)
     {
-        var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/add-workspace", RequestMethod.Put, baseInfo).Result;
+        var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
         responseMessage.EnsureSuccessStatusCode();
         var content = await responseMessage.Content.ReadAsStringAsync();
         
@@ -32,15 +32,4 @@ public class WorkspaceRepository : IWorkspaceRepository
         
         return JsonHelper.Deserialize<Workspace>(content);
     }
-    
-    public async Task<bool> SaveWorkspace()
-    {
-        var responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/save", RequestMethod.Post, new Dictionary<string, object>()).Result;
-        responseMessage.EnsureSuccessStatusCode();
-        var content = await responseMessage.Content.ReadAsStringAsync();
-        
-        return JsonHelper.Deserialize<bool>(content);
-    }
-    
-    
 }

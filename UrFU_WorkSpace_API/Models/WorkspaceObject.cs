@@ -1,16 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using UrFU_WorkSpace_API.Interfaces;
 
 namespace UrFU_WorkSpace_API.Models;
 [Table("workspace_objects")]
-public class WorkspaceObject  
+public class WorkspaceObject : IWorkspaceComponent
 {
     [Key]
     [Column("object_id")]
-    public int IdObject { get; set; }
+    public int Id { get; set; }
     
     [Column("workspace_id")]
-    public int WorkspaceId { get; set; }
+    public int IdWorkspace { get; set; }
     
     [Column("template_id")]
     public int IdTemplate { get; set; }

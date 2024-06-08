@@ -24,8 +24,8 @@ const getDiagram = (objects) => {
     const myDiagram = go.Diagram.fromDiv(document.getElementById('myDiagramDiv'))
     let modelNodes = [];
     objects.forEach(obj => {
-            let color = obj['IsReserve'] ? "red" : "lightblue";
-            modelNodes.push({ "key": obj['IdObject'], "pos": `${obj['X']} ${obj['Y']}`,"isReserve" : obj['IsReserve'],  "size": `${obj['Height']} ${obj['Width']}`, "color": color })
+            let color = obj['IsReserve'] ? "invert(35%) opacity(50%)" : "opacity(60%)";
+            modelNodes.push({ "key": obj['Id'], "pos": `${obj['X']} ${obj['Y']}`,"isReserve" : obj['IsReserve'],  "size": `${obj['Height']} ${obj['Width']}`,category: "work", image : obj.Template.Picture, color : color })
         })
     myDiagram.model = new go.GraphLinksModel(modelNodes);
 }

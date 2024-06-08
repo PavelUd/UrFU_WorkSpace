@@ -31,7 +31,7 @@ public partial class UrfuWorkSpaceContext : DbContext
         modelBuilder.Entity<WorkspaceAmenity>()
             .HasOne(wo => wo.Template)
             .WithOne()
-            .HasPrincipalKey<WorkspaceAmenity>(e => e.IdAmenity).
+            .HasPrincipalKey<WorkspaceAmenity>(e => e.IdTemplate).
             HasForeignKey<AmenityTemplate>(e => e.Id)
             .IsRequired();
        
@@ -49,6 +49,12 @@ public partial class UrfuWorkSpaceContext : DbContext
         
         modelBuilder.Entity<Workspace>()
             .HasMany(e => e.OperationMode).WithOne()
+            .HasPrincipalKey(e =>  e.Id)
+            .HasForeignKey(e => e.IdWorkspace)
+            .IsRequired();
+        
+        modelBuilder.Entity<Workspace>()
+            .HasMany(e => e.Objects).WithOne()
             .HasPrincipalKey(e =>  e.Id)
             .HasForeignKey(e => e.IdWorkspace)
             .IsRequired();

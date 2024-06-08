@@ -31,6 +31,9 @@ public class Startup
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IAmenityTemplateRepository, AmenityTemplateRepository>();
+        services.AddScoped<IBaseRepository<WorkspaceAmenity>, WorkspaceAmenityRepository>();
+        services.AddScoped<IBaseRepository<WorkspaceObject>, WorkspaceObjectRepository>();
+        services.AddScoped<IBaseRepository<WorkspaceWeekday>, OperationModeRepository>();
         services.AddScoped<IObjectTemplateRepository, ObjectTemplateRepository>();
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles()));
         services.AddAuthentication(x =>

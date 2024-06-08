@@ -11,46 +11,47 @@ public class OperationModeService : IOperationModeService
     {
         Repository = repository;
     }
-    
-    public bool CreateOperationMode(IFormCollection form, int idWorkspace)
-    {
-        var operationMode = new List<(string, string)>()
-        {
-            (form["mondayStart"], form["mondayEnd"]),
-            (form["tuesdayStart"], form["tuesdayEnd"]),
-            (form["wednesdayStart"], form["wednesdayEnd"]),
-            (form["thursdayStart"], form["thursdayEnd"]),
-            (form["fridayStart"], form["fridayEnd"]),
-            (form["saturdayStart"], form["saturdayEnd"]),
-            (form["sundayStart"], form["sundayEnd"]),
-        };
-        var flag = true;
-        for (var i = 0; i < operationMode.Count; i++)
-        {
-            if (operationMode[i].Item1 == "" || operationMode[i].Item2 == "")
-                continue;
-            var dayOfWeek = i + 1;
-            var dictionary = CreateWeekdayDictionary(idWorkspace, operationMode[i].Item1, operationMode[i].Item2, dayOfWeek);
-            flag = Repository.CreateWeekday(dictionary);
 
+    public bool CreateOperationMode(List<WorkspaceWeekday> operationMode, int idWorkspace)
+    {
+        var flag = true;
+        foreach (var weekday in operationMode)
+        {
+            flag = Repository.CreateWeekday(weekday);
         }
 
         return flag;
     }
 
-    public List<WorkspaceWeekday> GetOperationMode(int idWorkspace)
+    public IEnumerable<WorkspaceWeekday> ConstructOperationMode(List<(string, string)> jsonOperationMode, int idWorkspace = 0, int id = 0)
+    {
+        var operationMode = new List<WorkspaceWeekday>();
+        for (var i = 0; i < jsonOperationMode.Count; i++)
+        {
+            if (jsonOperationMode[i].Item1 == "" || jsonOperationMode[i].Item2 == "")
+                continue;
+            var dayOfWeek = i + 1;
+            var weekday = CreateWeekday(idWorkspace, jsonOperationMode[i].Item1, jsonOperationMode[i].Item2, dayOfWeek, id);
+            operationMode.Add(weekday);
+        }
+
+        return operationMode;
+    }
+
+    public IEnumerable<WorkspaceWeekday> GetOperationMode(int idWorkspace)
     {
         return Repository.GetWorkspaceOperationModeAsync(idWorkspace).Result;
     }
     
-    private Dictionary<string, object> CreateWeekdayDictionary(int idWorkspace, string timeStart, string timeEnd, int weekDayNumber)
+    private static WorkspaceWeekday CreateWeekday(int idWorkspace, string timeStart, string timeEnd, int weekDayNumber, int id)
     {
-        return new Dictionary<string, object>()
+        return new WorkspaceWeekday
         {
-            { "idWorkspace", idWorkspace },
-            { "timeStart", timeStart },
-            { "timeEnd", timeEnd },
-            { "weekDayNumber", weekDayNumber }
+            Id = id,
+            IdWorkspace = idWorkspace,
+            TimeStart = JsonHelper.Deserialize<TimeOnly>(timeStart),
+            TimeEnd = JsonHelper.Deserialize<TimeOnly>(timeEnd),
+            WeekDayNumber = weekDayNumber
         };
     }
 }

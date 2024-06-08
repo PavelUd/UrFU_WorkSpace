@@ -5,5 +5,5 @@ namespace UrFU_WorkSpace.Services.Interfaces;
 public interface IOperationModeRepository
 {
     public Task<List<WorkspaceWeekday>> GetWorkspaceOperationModeAsync(int idWorkspace);
-    public bool CreateWeekday(Dictionary<string, object> weekday);
+    public bool CreateWeekday(WorkspaceWeekday weekday);
 }
