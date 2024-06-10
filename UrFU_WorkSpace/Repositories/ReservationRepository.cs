@@ -30,13 +30,13 @@ public class ReservationRepository : IReservationRepository
         return JsonHelper.Deserialize<List<Reservation>>(data);
     }
     
-    public async Task<int> CreateReservations(Dictionary<string, object> dictionary)
+    public async Task<Reservation> CreateReservations(Dictionary<string, object> dictionary)
     {
         var responseMessage = await HttpRequestSender.SendRequest(BaseAddress + "/reservations/reserve", RequestMethod.Post, dictionary);
         responseMessage.EnsureSuccessStatusCode();
 
         var content = JsonHelper.Deserialize<Reservation>(await responseMessage.Content.ReadAsStringAsync());
         
-        return content.IdReservation;
+        return content;
     }
 }

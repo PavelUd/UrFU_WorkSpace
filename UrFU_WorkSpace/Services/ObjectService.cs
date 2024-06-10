@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Linq.Expressions;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
 
@@ -37,10 +38,15 @@ public class ObjectService : IObjectService
         }
         return true;
     }
-
     public async Task<List<WorkspaceObject>> GetWorkspaceObjects(int idWorkspace)
     {
         return await Repository.GetWorkspaceObjects(idWorkspace);
+    }
+    
+    public async Task<List<WorkspaceObject>> GetWorkspaceObjectsByCondition(int idWorkspace, Expression<Func<WorkspaceObject, bool>> expression)
+    {
+        var workspaceObjects =await  GetWorkspaceObjects(idWorkspace);
+        return workspaceObjects.Where(expression.Compile()).ToList();
     }
 
     private static WorkspaceObject CreateObject(string category, int idWorkspace, IReadOnlyList<int> size , string[] coordinate, int id)

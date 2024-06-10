@@ -104,4 +104,14 @@ function init(divName, size) {
 
 }
 
+function loadObjects(divName, objects, filterHandler) {
+    const diagram = go.Diagram.fromDiv(document.getElementById(divName));
+    let modelNodes = [];
+    objects.forEach(obj => {
+        let color = filterHandler ? filterHandler(obj) : '';
+        modelNodes.push({ "key": obj.id, "pos": `${obj.x} ${obj.y}`,"isReserve" : obj.isReserve,  "size": `${obj.height} ${obj.width}`,category: obj.template.category, image : obj.template.picture, color : color})
+    });
+    diagram.model = new go.GraphLinksModel(modelNodes);
+}
+
 

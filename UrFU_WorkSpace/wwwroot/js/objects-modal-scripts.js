@@ -20,14 +20,9 @@ const getWorkspaceObjects = (evt) => {
         .then(code => getDiagram(JSON.parse(code)))
         .catch(error => console.log(error));
 }
-const getDiagram = (objects) => {
-    const myDiagram = go.Diagram.fromDiv(document.getElementById('myDiagramDiv'))
-    let modelNodes = [];
-    objects.forEach(obj => {
-            let color = obj['IsReserve'] ? "invert(35%) opacity(50%)" : "opacity(60%)";
-            modelNodes.push({ "key": obj['Id'], "pos": `${obj['X']} ${obj['Y']}`,"isReserve" : obj['IsReserve'],  "size": `${obj['Height']} ${obj['Width']}`,category: "work", image : obj.Template.Picture, color : color })
-        })
-    myDiagram.model = new go.GraphLinksModel(modelNodes);
+const getDiagram = (objects) =>{
+    
+    loadObjects("myDiagramDiv", objects,(obj) => obj.isReserve ? "invert(35%) opacity(50%)" : "opacity(60%)")
 }
 
 const onClickResBtnBack = () =>{

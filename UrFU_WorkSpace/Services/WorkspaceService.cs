@@ -62,18 +62,18 @@ public class WorkspaceService : IWorkspaceService
        return  Repository.CreateWorkspaceAsync(workspace).Result > 0;
    }
    
-   public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, string typeObject)
+   public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, int idTemplate)
    {
        var operationMode = WeekdayForDate(idWorkspace, date);
-       var objects = ObjectService.GetWorkspaceObjects(idWorkspace).Result;
+       var objects = ObjectService.GetWorkspaceObjectsByCondition(idWorkspace, x => x.Template.Id == idTemplate || idTemplate == 0).Result;
        var reservations = ReservationService.GetReservations(idWorkspace, new DateOnly(date.Year, date.Month, date.Day)).Result;
        return GenerateTimeSlots(operationMode,reservations, objects, timeType);
    }
 
-   public List<WorkspaceObject> GetReservedObjects(TimeOnly start, TimeOnly end, int idWorkspace, DateTime date)
+   public List<WorkspaceObject> GetReservedObjects(TimeOnly start, TimeOnly end, int idWorkspace, DateTime date,int idTemplate)
    {
        var reservations = ReservationService.GetReservations(idWorkspace, new DateOnly(date.Year, date.Month, date.Day)).Result;
-       var objects = ObjectService.GetWorkspaceObjects(idWorkspace).Result;
+       var objects = ObjectService.GetWorkspaceObjectsByCondition(idWorkspace, x => x.Template.Id == idTemplate || idTemplate == 0).Result;
        return ReservationService.UpdateReservationStatus(start, end, reservations, objects);
    }
    
