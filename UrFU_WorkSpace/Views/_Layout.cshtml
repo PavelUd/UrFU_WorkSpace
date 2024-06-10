@@ -33,9 +33,26 @@
         }
         else
         {
-          <div style=" margin-right: 5rem" class="btn-reset btn nav__btn">
-            <img src="~/img/account.svg" alt="Лк">
-            @JwtTokenDecoder.GetUserName(jwtToken)
+          <div class="select-menu">
+            <div style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn">
+               <img src="~/img/account.svg" alt="Лк">
+                  @JwtTokenDecoder.GetUserName(jwtToken)
+                  </div>
+
+            <ul class="options">
+              <li class="option">
+                <i class="bx bxl-linkedin-square" style="color: #0E76A8;"></i>
+                <span class="option-text"><a href="/1/constructor">Конструктор</a></span>
+              </li>
+              <li class="option">
+                <i class="bx bxl-facebook-circle" style="color: #4267B2;"></i>
+                <span class="option-text">Мои Коворкинги</span>
+              </li>
+              <li class="option">
+                <i class="bx bxl-twitter" style="color: #1DA1F2;"></i>
+                <span class="option-text">Мои Брони</span>
+              </li>
+            </ul>
           </div>
         }
       }
@@ -159,7 +176,34 @@
 <script src="~/js/time-modal-script.js" type="module"></script>
 <script src="~/js/objects-modal-scripts.js" type="module"></script>
 <script src="~/js/add-review-script.js" type="module"></script>
-  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const optionMenu = document.querySelector(".select-menu"),
+  selectBtn = optionMenu.querySelector(".select-btn"),
+  options = optionMenu.querySelectorAll(".option"),
+  sBtn_text = optionMenu.querySelector(".sBtn-text");
+
+selectBtn.addEventListener("click", () =>
+  optionMenu.classList.toggle("active")
+);
+
+document.addEventListener('click', (event) => {
+    if (!optionMenu.contains(event.target) && optionMenu.classList.contains('active')) {
+      optionMenu.classList.remove('active');
+    }
+    });
+
+
+
+options.forEach((option) => {
+  option.addEventListener("click", () => {
+    let selectedOption = option.querySelector(".option-text").innerText;
+    sBtn_text.innerText = selectedOption;
+
+    optionMenu.classList.remove("active");
+  });
+});
+</script>
   <script src="~/js/site.js" asp-append-version="true"></script>
   <script src="~/js/authentication-scripts.js" asp-append-version="true" type="module"></script>
   @await RenderSectionAsync("Scripts", required: false)
