@@ -8,14 +8,14 @@ using UrFU_WorkSpace.Services.Interfaces;
 namespace UrFU_WorkSpace.Controllers;
 
 [Authorize(AuthorizationStatus.Admin)]
-public class AdminController : Controller
+public class UserController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private HttpContext _context;
     private IWorkspaceService Service;
     private IWebHostEnvironment _appEnvironment;
 
-    public AdminController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service)
+    public UserController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service)
     {
         _context = httpContextAccessor.HttpContext;
         _logger = logger;

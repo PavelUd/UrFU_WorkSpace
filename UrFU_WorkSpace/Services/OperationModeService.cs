@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
 
@@ -49,8 +51,8 @@ public class OperationModeService : IOperationModeService
         {
             Id = id,
             IdWorkspace = idWorkspace,
-            TimeStart = JsonHelper.Deserialize<TimeOnly>(timeStart),
-            TimeEnd = JsonHelper.Deserialize<TimeOnly>(timeEnd),
+            TimeStart = JsonHelper.Deserialize<TimeOnly>('\"' + timeStart + '\"'),
+            TimeEnd = JsonHelper.Deserialize<TimeOnly>('\"' + timeEnd + '\"'),
             WeekDayNumber = weekDayNumber
         };
     }
