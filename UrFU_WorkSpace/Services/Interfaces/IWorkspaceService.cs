@@ -11,6 +11,8 @@ public interface IWorkspaceService
         IEnumerable<WorkspaceObject> objects, IEnumerable<WorkspaceWeekday> operationMode, IEnumerable<Image> images,
         int idUser);
 
+    public int UpdateWorkspaceRating(int idWorkspace, double rating);
+    
     public bool CreateWorkspace(int idUser, Dictionary<string, object> baseInfo,
         List<(string, string)> operationModeJson, List<int> idTemplates, string jsonObjects,
         IFormFileCollection uploads,

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
@@ -45,6 +46,16 @@ public class WorkspaceController : Controller
             return BadRequest(ModelState);
 
         return Ok(workspaces);
+    }
+
+    [HttpPatch("{idWorkspace}/update-rating")]
+    public IActionResult UpdateWorkspaceRating([FromQuery]double rating, [FromRoute]int idWorkspace)
+    {
+       var i = WorkspaceRepository.FindByCondition(x => x.Id == idWorkspace)
+            .Where(x => x.Id == idWorkspace)
+            .ExecuteUpdate(b => b.SetProperty(x => x.Rating, rating));
+
+        return Ok(i);
     }
 
     [HttpPost("create")]
