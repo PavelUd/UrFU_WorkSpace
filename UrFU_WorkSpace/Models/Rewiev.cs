@@ -13,4 +13,6 @@ public class Review
     public string Message { set; get; }
     
     public double Estimation { set; get; }
+
+    public DateOnly Date { set; get; }
 }

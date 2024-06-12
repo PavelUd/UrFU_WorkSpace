@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
@@ -93,6 +94,11 @@ public class WorkspaceService : IWorkspaceService
        var operationMode = OperationModeService.GetOperationMode(idWorkspace);
        var weekday = operationMode.FirstOrDefault(w => (int)dayOfWeek == w.WeekDayNumber % 7);
        return weekday ?? new WorkspaceWeekday();
+   }
+
+   public int UpdateWorkspaceRating(int idWorkspace,double rating)
+   {
+       return Repository.UpdateRating(rating, idWorkspace).Result;
    }
 
    private List<TimeSlot> GenerateTimeSlots(WorkspaceWeekday operationMode,List<Reservation> reservations, List<WorkspaceObject> objects, TimeType timeType)

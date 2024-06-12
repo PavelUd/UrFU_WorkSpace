@@ -14,23 +14,23 @@ namespace UrFU_WorkSpace.Controllers;
 public class WorkspacesController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private ReviewRepository _reviewRepository;
+    private ReviewService _reviewService;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly IWorkspaceService WorkspaceService;
     private readonly IReservationService ReservationService;
-    public WorkspacesController(ILogger<HomeController> logger, ReviewRepository reviewRepository, IWorkspaceService workspaceService, IReservationService reservationService)
+    public WorkspacesController(ILogger<HomeController> logger, ReviewService reviewService, IWorkspaceService workspaceService, IReservationService reservationService, IHttpContextAccessor httpContextAccessor)
     {
         this.httpContextAccessor = httpContextAccessor;
         WorkspaceService = workspaceService;
         ReservationService = reservationService;
         _logger = logger;
-        _reviewRepository = reviewRepository;
+        _reviewService = reviewService;
     }
     [Route("workspaces/{idWorkspace}")]
     public IActionResult GetWorkspace(int idWorkspace)
     {
         var workspace = WorkspaceService.GetWorkspace(idWorkspace);
-        workspace.Reviews = _reviewRepository.GetByIdWorkspace(idWorkspace);
+        workspace.Reviews = _reviewService.GetReviews(idWorkspace);
         return View("Workspace", workspace); 
     }
     [HttpPost]
@@ -53,15 +53,21 @@ public class WorkspacesController : Controller
         var idUser = JwtTokenDecoder.GetUserId(httpContextAccessor.HttpContext.Session.GetString("JwtToken"));
         var stars = form["starsCount"];
         var text = form["text"];
+        var date = JsonHelper.Deserialize<DateOnly>('\"' + form["date"] + '\"');
         
-        _reviewRepository.AddReview(new Models.Review()
+        _reviewService.AddReview(new Models.Review()
         {
             IdUser = int.Parse(idUser),
             IdWorkspace = idWorkspace,
             Message = text,
-            Estimation = int.Parse(stars)
+            Estimation = int.Parse(stars),
+            Date = date
+            
         });
-        
+
+       var newRating = _reviewService.RecalculateRating(idWorkspace);
+       WorkspaceService.UpdateWorkspaceRating(idWorkspace, newRating);
+       
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         

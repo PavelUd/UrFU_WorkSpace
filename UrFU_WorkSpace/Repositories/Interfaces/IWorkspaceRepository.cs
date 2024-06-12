@@ -7,4 +7,6 @@ public interface IWorkspaceRepository
 
     public Task<bool> CreateWorkspaceAsync(Workspace baseInfo);
     public Task<Workspace> GetWorkspaceAsync(int idWorkspace);
+
+    public Task<int> UpdateRating(double rating, int idWorkspace);
 }
