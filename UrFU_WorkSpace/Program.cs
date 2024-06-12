@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace.Helpers;
+using UrFU_WorkSpace.Repositories.Interfaces;
 using UrFU_WorkSpace.Services;
 using UrFU_WorkSpace.Services.Interfaces;
 
@@ -13,6 +14,8 @@ builder.Services.AddScoped<IObjectRepository, ObjectRepository>(sp => new Object
 builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>(sp => new WorkspaceRepository(baseAddress));
 builder.Services.AddScoped<IOperationModeRepository, OperationModeRepository>(sp => new OperationModeRepository(baseAddress));
 builder.Services.AddScoped<IImageRepository,ImageRepository>(sp => new ImageRepository(baseAddress));
+builder.Services.AddScoped<IAmenityRepository,AmenityRepository>(sp => new AmenityRepository(baseAddress));
+builder.Services.AddScoped<IAmenityService,AmenityService>();
 
 builder.Services.AddScoped<IObjectService, ObjectService>();
 builder.Services.AddScoped<IOperationModeService, OperationModeService>();

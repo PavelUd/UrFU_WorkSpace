@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 using UrFU_WorkSpace_API.Interfaces;
 
 namespace UrFU_WorkSpace_API.Models;
@@ -27,6 +28,7 @@ public class WorkspaceObject : IWorkspaceComponent
     
     [Column("width")]
     public int Width { get; set; }
-
-    public ObjectTemplate Template { get; set; }
+    [JsonIgnore]
+    [JsonProperty("Template")]
+    public ObjectTemplate? Template { get; set; }
 }

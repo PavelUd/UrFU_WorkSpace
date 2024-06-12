@@ -19,8 +19,7 @@ public class WorkspaceRepository : IWorkspaceRepository
     public async Task<bool> CreateWorkspaceAsync(Workspace baseInfo)
     {
         var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
-        
-        return responseMessage.StatusCode == HttpStatusCode.Created;;
+        return responseMessage.IsSuccessStatusCode;
     }
     
     public async Task<Workspace> GetWorkspaceAsync(int idWorkspace)

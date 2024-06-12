@@ -14,7 +14,6 @@ function init(divName, size) {
                 "undoManager.isEnabled": true,
 
             });
-    myDiagram.isReadOnly = true;
 
     myDiagram.add(
         $(go.Part,
