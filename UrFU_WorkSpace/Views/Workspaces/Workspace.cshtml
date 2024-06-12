@@ -190,10 +190,13 @@
                   <option value="lol">2 часа</option>
                   <option value="lil">45 минут</option>
                 </select>
-                <select class="form-select form-select-sm" name="objectType" id="objectType" value="lel"  style="margin-right: 10px">
-                  <option value="lel" selected="">lel</option>
-                  <option value="lol">lol</option>
-                  <option value="lil">lil</option>
+                <select class="form-select form-select-sm" name="objectType" id="objectType" value="lel" style="margin-right: 10px">
+                  <option value="0" selected>Все типы</option>
+                  @foreach (var obj in Model.Objects.DistinctBy(x => x.Template.Category))
+
+                  {
+                    <option value="@obj.IdTemplate">@obj.Template.Category</option>
+                  }
                 </select>
                 <input id="idWorkspace" name="idWorkspace" value="@Model.Id" hidden/>
               </div>
@@ -239,10 +242,12 @@
       </div>
 
       <div class="modal fade" id="bookResultModal" tabindex="-1" aria-labelledby="bookResultModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" style="border-radius: 10px;">
+      <div class="modal-dialog modal-dialog-centered book__width" style="border-radius: 10px;">
         <div class="modal-content">
-          <div class="modal-body">
-            <div id="book-result" style="color: black"></div>
+          <div style="margin:2rem auto 2rem;">
+                      <h4 style="position: relative ; color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="bookTitle"></h4>
+                    </div>
+          <div class="modal-body" id="bookBody">
           </div>
         </div>
       </div>
@@ -255,14 +260,5 @@ window.addEventListener('DOMContentLoaded',() =>{
   loadObjects("showDiagram", @Json.Serialize(Model.Objects));
 });
 
-const loadObjects = (divName, objects) => {
-       const diagram = go.Diagram.fromDiv(document.getElementById(divName))
-          let modelNodes = [];
-          objects.forEach(obj => {
-            console.log(obj.x);
-                  modelNodes.push({ "key": obj['Id'], "pos": `${obj.x} ${obj.y}`,"isReserve" : obj['IsReserve'],  "size": `${obj.height} ${obj.width}`,category: "work", image : obj.template.picture, color : ''})
-              })
-          diagram.model = new go.GraphLinksModel(modelNodes);
-}
 </script>      
       

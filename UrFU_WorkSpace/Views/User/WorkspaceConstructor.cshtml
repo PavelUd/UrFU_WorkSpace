@@ -1,17 +1,6 @@
 
 <head>
   <title>Загрузка нескольких фотографий</title>
-  <style>
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .image {
-      margin: 10px;
-      width: 200px;
-      height: 200px;
-    }
-  </style>
 </head>
 <body>
 <form id="baseForm" action="/1/workspace-create" method="post" enctype="multipart/form-data">
@@ -27,7 +16,12 @@
   <div>
     <input type="text" name="institute">
   </div>
-  <select>Удобства</select>
+  <select name = "idTemplate">Удобства
+  @foreach (var amenity in ViewBag.Amenities)
+  {
+    <option value="@amenity.Id">@amenity.Name</option>
+  }
+  </select>
   <div style="display: flex; flex-wrap: wrap">
     <input style="margin-right: 1rem" type="time" name="mondayStart">
     <input type="time"  multiple name="mondayEnd">
@@ -53,31 +47,36 @@
     <input type="time" name = "saturdayEnd">
   </div>
   <div style="display: flex; flex-wrap: wrap">
-      <input style="margin-right: 1rem" type="time" name = "sundayStart">
-      <input type="time" name = "sundayEnd">
+    <input style="margin-right: 1rem" type="time" name = "sundayStart">
+    <input type="time" name = "sundayEnd">
   </div>
   <div>
-    <input type="file" id="photos" name="uploads" multiple/>
+    <input type="file"  name="uploads"/>
+    <input type="file"  name="uploads" />
+    <input type="file"  name="uploads" />
+    <input type="file"  name="uploads"/>
+    <input type="file" name="uploads" />
   </div>
   <div>
-      <input hidden="" id="objects" name="objects"/>
-    </div>
+    <input hidden="" id="objects" name="objects"/>
+  </div>
   
   <button id = "submit-button">Сохранить</button>
 </form>
-<div id="myDiagramDiv" style="width:100%; height:400px"></div>
+
+<div id="myCreateDiagram" style="width:500px; height:300px; background: #565e64; align-self: center"></div>
 <div id = "myPaletteDiv" style="width:100%; height:400px"></div>
 <script>
     function init() {
     const $ = go.GraphObject.make;
         
             diagram =
-              new go.Diagram("myDiagramDiv",
+              new go.Diagram("myCreateDiagram",
                 {
                   fixedBounds: new go.Rect(0, 0, 500, 300),  
                   allowHorizontalScroll: false, 
                   allowVerticalScroll: false,
-                  allowZoom: false,
+                  allowZoom: true,
                   "animationManager.isEnabled": false,
                   "undoManager.isEnabled": true,
                   "Changed": function(e) {
@@ -88,22 +87,32 @@
     diagram.add(
               $(go.Part,
                 { layerName: "Grid", position: diagram.fixedBounds.position },
-                $(go.Shape, { fill: "oldlace", strokeWidth: 0, desiredSize: diagram.fixedBounds.size })
               ));
-    
-    diagram.nodeDetail =
-      $(go.Node, "Auto",
-        $(go.Shape, "RoundedRectangle",
-          { fill: "white" },
-          new go.Binding("fill", "color"),
-          { portId: "", fromLinkable: true, toLinkable: true, cursor: "pointer" }),
-        $(go.TextBlock, { margin: 5 },
-          new go.Binding("text", "key"))
-      );
+    diagram.allowLink = false;
+    diagram.nodeTemplate = $(go.Node,
+                                       'Auto',
+                                       {
+                                           selectionAdorned: false
+                                       },
+                                       new go.Binding('desiredSize', 'size', go.Size.parse),
+                                       new go.Binding('position', 'pos', go.Point.parse).makeTwoWay(go.Point.stringify),
+                                       new go.Binding('layerName', 'isSelected', (s) => (s ? 'Foreground' : '')).ofObject(),
+                           
+                                       $(go.Picture,
+                                           'Rectangle',
+                                           {
+                                               name: "SHAPE",
+                                               stretch: go.GraphObject.Fill, filter: ''
+                                           },
+                                           new go.Binding('source', 'image'),
+                                           new go.Binding('bn', 'color'),
+                                           new go.Binding('category', 'category'),
+                                           new go.Binding('fill', 'color'),
+                                       )
+                                   );
     
     diagram.undoManager.isEnabled = true;
     
-    // create the Palette
     var myPalette =
       new go.Palette("myPaletteDiv");
     
@@ -111,29 +120,18 @@
     myPalette.nodeDetail =
       $(go.Node, "Horizontal",
         $(go.Shape,
-          { width: 14, height: 14, fill: "white" },
+          { maxSize: new go.Size(100, 100), fill: "white" },
           new go.Binding("fill", "color")),
         $(go.TextBlock,
           new go.Binding("text", "color"))
       );
-    
-    // the list of data to show in the Palette
-    myPalette.model.nodeDataArray = [
-      { key: "C", color: "cyan", size: "50 50", category: "cyan" },
-      { key: "LC", color: "lightcyan", size: "50 50", category: "lightcyan"},
-      { key: "A", color: "aquamarine", size: "50 50", category: "aquamarine"},
-      { key: "T", color: "turquoise", size: "50 50", category: "turquoise"},
-      { key: "PB", color: "powderblue", size: "50 50", category: "powderblue"},
-      { key: "LB", color: "lightblue", size: "50 50", category:"lightblue" },
-      { key: "LSB", color: "lightskyblue", size: "50 50", category: "lightskyblue"},
-      { key: "DSB", color: "deepskyblue", size: "50 50", category:  "deepskyblue"}
-    ];
-    }
+   myPalette.model.nodeDataArray =  gh(@Json.Serialize(ViewBag.Objects))
+  }
     
     window.addEventListener('DOMContentLoaded', init);
           let date = [];
 const ff = () =>{
-  const myDiagram = go.Diagram.fromDiv(document.getElementById('myDiagramDiv'))
+  const myDiagram = go.Diagram.fromDiv(document.getElementById('myCreateDiagram'))
   let modelData = JSON.parse(myDiagram.model.toJson());
   
   modelData.nodeDataArray.forEach(node => {
@@ -142,9 +140,17 @@ const ff = () =>{
   });
   modelData = modelData["nodeDataArray"];
   let json = JSON.stringify(modelData);
-  document.getElementById('objects').value = json
+  document.getElementById('objects').value = json;
   }
-    
+  
+  function gh(array){
+    let g = [];
+    array.forEach(x => {
+      g.push({key:0, idTemplate: x.id, color: "", size: "100 100", category: x.category, image: x.picture });
+      });
+    return g;
+  }
+
  
 </script>
 </body>

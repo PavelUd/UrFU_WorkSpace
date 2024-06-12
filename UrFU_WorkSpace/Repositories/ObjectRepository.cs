@@ -11,22 +11,31 @@ public class ObjectRepository : IObjectRepository
     
     public ObjectRepository(string baseApiAddress)
     {
-        BaseAddress = new Uri(baseApiAddress + "/workspaces");
+        BaseAddress = new Uri(baseApiAddress);
     }
     
     public  bool CreateObject(WorkspaceObject data)
     {
-        var message = HttpRequestSender.SendRequest(BaseAddress + "/add-object", RequestMethod.Put, data).Result;
+        var message = HttpRequestSender.SendRequest(BaseAddress + "/workspaces/create", RequestMethod.Put, data).Result;
            if (!message.IsSuccessStatusCode)
            {
                return false;
            }
         return true;
     }
+
+    public async Task<IEnumerable<ObjectTemplate>> GetObjectTemplates()
+    {
+        var responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/templates/objects", RequestMethod.Get).Result;
+        responseMessage.EnsureSuccessStatusCode();
+        
+        var data =await responseMessage.Content.ReadAsStringAsync();
+        return JsonHelper.Deserialize<List<ObjectTemplate>>(data);
+    }
     
     public async Task<List<WorkspaceObject>> GetWorkspaceObjects(int idWorkspace)
     {
-        var responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/{idWorkspace}/objects", RequestMethod.Get).Result;
+        var responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/workspaces/{idWorkspace}/objects", RequestMethod.Get).Result;
         responseMessage.EnsureSuccessStatusCode();
         
         var data =await responseMessage.Content.ReadAsStringAsync();

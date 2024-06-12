@@ -48,7 +48,7 @@ public class WorkspaceController : Controller
     }
 
     [HttpPost("create")]
-    [ProducesResponseType(200, Type = typeof(Workspace))]
+    [ProducesResponseType(204, Type = typeof(Workspace))]
     public IActionResult CreateWorkspace([FromBody] Workspace workspace)
     {
         WorkspaceRepository.Create(workspace);
@@ -56,6 +56,6 @@ public class WorkspaceController : Controller
         if (!ModelState.IsValid || !isSaved)
             return BadRequest(ModelState);
 
-        return Ok(workspace);
+        return Created();
     }
 }

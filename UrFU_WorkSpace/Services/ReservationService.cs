@@ -32,7 +32,7 @@ public class ReservationService : IReservationService
         return objs;
     }
     
-    public async Task<int> Reserve(int idWorkspace, IFormCollection form)
+    public async Task<Reservation> Reserve(int idWorkspace, IFormCollection form)
     {
         var dictionary = new Dictionary<string, object>()
         {

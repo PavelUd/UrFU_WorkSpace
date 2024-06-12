@@ -8,16 +8,20 @@ using UrFU_WorkSpace.Services.Interfaces;
 namespace UrFU_WorkSpace.Controllers;
 
 [Authorize(AuthorizationStatus.Admin)]
-public class AdminController : Controller
+public class UserController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private HttpContext _context;
     private IWorkspaceService Service;
+    private IAmenityService AmenityService;
+    private IObjectService ObjectService;
     private IWebHostEnvironment _appEnvironment;
 
-    public AdminController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service)
+    public UserController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service, IAmenityService amenityService, IObjectService objectService)
     {
         _context = httpContextAccessor.HttpContext;
+        ObjectService = objectService;
+        AmenityService = amenityService;
         _logger = logger;
         _appEnvironment = appEnvironment;
         Service = service;
@@ -26,6 +30,10 @@ public class AdminController : Controller
     [Route("{idUser}/constructor")]
     public IActionResult GetWorkspace(int idUser)
     {
+        var amenityTemplates = AmenityService.GetAmenityTemplates().Result;
+        var objectTemplates = ObjectService.GetObjectTemplates().Result;
+        ViewBag.Amenities = amenityTemplates;
+        ViewBag.Objects =objectTemplates;
         return View("WorkspaceConstructor"); 
     }
     
@@ -51,8 +59,8 @@ public class AdminController : Controller
             (form["saturdayStart"], form["saturdayEnd"]),
             (form["sundayStart"], form["sundayEnd"]),
         };
-        
-        var isSaved = Service.CreateWorkspace(idUser, baseInfo, operationModeJson, form["objects"],uploads, _appEnvironment);
+        var idTemplates = new List<int>() { int.Parse(form["idTemplate"].ToString()) };
+        var isSaved = Service.CreateWorkspace(idUser, baseInfo, operationModeJson,idTemplates, form["objects"],uploads, _appEnvironment);
         return isSaved ? Ok() : BadRequest();
     }
 }

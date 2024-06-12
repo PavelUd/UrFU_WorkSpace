@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using UrFU_WorkSpace_API.Interfaces;
 
 namespace UrFU_WorkSpace_API.Models;
@@ -14,6 +15,5 @@ public class WorkspaceAmenity : IWorkspaceComponent
     
     [Column("workspace_id")]
     public int IdWorkspace { get; set; }
-    
-    public AmenityTemplate Template { get; set; }
+    public AmenityTemplate? Template { get; set; }
 }

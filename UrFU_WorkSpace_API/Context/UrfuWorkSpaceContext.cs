@@ -24,16 +24,12 @@ public partial class UrfuWorkSpaceContext : DbContext
         modelBuilder.Entity<WorkspaceObject>()
             .HasOne(wo => wo.Template)
             .WithOne()
-            .HasPrincipalKey<WorkspaceObject>(e => e.IdTemplate).
-            HasForeignKey<ObjectTemplate>(e => e.Id)
-            .IsRequired();
-        
+            .HasPrincipalKey<WorkspaceObject>(e => e.IdTemplate).HasForeignKey<ObjectTemplate>(e => e.Id);
+
         modelBuilder.Entity<WorkspaceAmenity>()
             .HasOne(wo => wo.Template)
             .WithOne()
-            .HasPrincipalKey<WorkspaceAmenity>(e => e.IdTemplate).
-            HasForeignKey<AmenityTemplate>(e => e.Id)
-            .IsRequired();
+            .HasPrincipalKey<WorkspaceAmenity>(e => e.IdTemplate).HasForeignKey<AmenityTemplate>(e => e.Id);
        
         modelBuilder.Entity<Workspace>()
             .HasMany(e => e.Images).WithOne()

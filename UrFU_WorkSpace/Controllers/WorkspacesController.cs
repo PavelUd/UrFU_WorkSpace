@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
@@ -39,7 +40,7 @@ public class WorkspacesController : Controller
         var d = form["date"];
         var t ='\"' + d + '\"';
         var date = JsonConvert.DeserializeObject<DateTime>(t , new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
-        var timeSlots = WorkspaceService.GetWorkspaceTimeSlots(idWorkspace, date,  Enum.Parse<TimeType>(form["timeType"].ToString()), form["objectType"]);
+        var timeSlots = WorkspaceService.GetWorkspaceTimeSlots(idWorkspace, date,  Enum.Parse<TimeType>(form["timeType"].ToString()), int.Parse(form["objectType"]));
         var str = JsonConvert.SerializeObject(timeSlots);
         return Ok(str);
     }
@@ -75,25 +76,31 @@ public class WorkspacesController : Controller
         var dateStr = '\"' + form["date"] + '\"';
         var timeEndStr = '\"' + form["timeStart"] + '\"';
         var timeStartStr = '\"' + form["timeEnd"] + '\"';
-        
+        var idTemplate = int.Parse(form["objectType"]);
         var date = JsonConvert.DeserializeObject<DateTime>(dateStr,new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
         var timeEnd = JsonConvert.DeserializeObject<TimeOnly>(timeEndStr);
         var timeStart = JsonConvert.DeserializeObject<TimeOnly>(timeStartStr);
         
-        var objects = WorkspaceService.GetReservedObjects(timeStart, timeEnd, idWorkspace, date);
-        return Ok(JsonConvert.SerializeObject(objects));
+        var objects = WorkspaceService.GetReservedObjects(timeStart, timeEnd, idWorkspace, date, idTemplate);
+        return Ok(JsonConvert.SerializeObject(objects, new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver() 
+        }));
     }
 
     [HttpPost]
     [Route("workspaces/{idWorkspace}/reserve")]
     public async Task<IActionResult> Reserve([FromRoute] int idWorkspace, IFormCollection form)
     {
-        var idSelectedObject = ReservationService.Reserve(idWorkspace, form).Result;
-        if (idSelectedObject == 0)
+        var reservation = ReservationService.Reserve(idWorkspace, form).Result;
+        if (reservation == null)
         {
             return BadRequest();
         }
 
-        return Ok(idSelectedObject);
+        return Ok(JsonConvert.SerializeObject(reservation, new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver() 
+        }));
     }
 }

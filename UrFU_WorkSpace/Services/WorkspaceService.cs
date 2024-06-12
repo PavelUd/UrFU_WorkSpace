@@ -3,7 +3,13 @@ using System.Xml.Linq;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
+using Image = UrFU_WorkSpace.Models.Image;
+using Reservation = UrFU_WorkSpace.Models.Reservation;
 using Size = Npgsql.Internal.Size;
+using Workspace = UrFU_WorkSpace.Models.Workspace;
+using WorkspaceAmenity = UrFU_WorkSpace.Models.WorkspaceAmenity;
+using WorkspaceObject = UrFU_WorkSpace.Models.WorkspaceObject;
+using WorkspaceWeekday = UrFU_WorkSpace.Models.WorkspaceWeekday;
 
 namespace UrFU_WorkSpace.Services;
 
@@ -14,12 +20,15 @@ public class WorkspaceService : IWorkspaceService
     private IOperationModeService OperationModeService;
     private IImageService ImageService;
     private IReservationService ReservationService;
+    private IAmenityService AmenityService;
    
     public WorkspaceService(IWorkspaceRepository repository, 
         IObjectService objectService, 
         IOperationModeService operationModeService,
-        IImageService imageService, IReservationService reservationService)
+        IImageService imageService, IReservationService reservationService, IAmenityService amenityService)
     {
+
+        AmenityService = amenityService;
         Repository = repository;
         ReservationService = reservationService;
         ObjectService = objectService;
@@ -32,7 +41,7 @@ public class WorkspaceService : IWorkspaceService
        return Repository.GetWorkspaceAsync(idWorkspace).Result;
    }
    
-   public Workspace ConstructWorkspace(Dictionary<string, object> baseInfo, IEnumerable<WorkspaceObject> objects, IEnumerable<WorkspaceWeekday> operationMode, IEnumerable<Image> images, int idUser)
+   public Workspace ConstructWorkspace(Dictionary<string, object> baseInfo, IEnumerable<WorkspaceAmenity> amenities, IEnumerable<WorkspaceObject> objects, IEnumerable<WorkspaceWeekday> operationMode, IEnumerable<Image> images, int idUser)
    {
        var workspace = new Workspace()
        {
@@ -44,36 +53,37 @@ public class WorkspaceService : IWorkspaceService
            Institute = baseInfo["institute"].ToString(),
            Address = baseInfo["address"].ToString(),
            Objects = objects,
+           Amenities = amenities,
            OperationMode = operationMode,
            Images = images,
        };
        return workspace;
    }
 
-   public bool CreateWorkspace(int idUser,Dictionary<string, object> baseInfo,List<(string, string)> operationModeJson, string jsonObjects, IFormFileCollection uploads,
+   public bool CreateWorkspace(int idUser,Dictionary<string, object> baseInfo,List<(string, string)> operationModeJson, List<int> idTemplates, string jsonObjects, IFormFileCollection uploads,
        IWebHostEnvironment appEnvironment)
    {
        var urls = ImageService.SaveImages(appEnvironment, uploads);
        var images = ImageService.ConstructImages(urls);
        var operationMode =  OperationModeService.ConstructOperationMode(operationModeJson, idUser);
        var objects = ObjectService.ConstructWorkspaceObjects(jsonObjects);
-
-       var workspace = ConstructWorkspace(baseInfo, objects,operationMode, images, idUser);
-       return  Repository.CreateWorkspaceAsync(workspace).Result > 0;
+       var amenities = AmenityService.ConstructWorkspaceAmenities(idTemplates);
+       var workspace = ConstructWorkspace(baseInfo,amenities.AsEnumerable(), objects,operationMode, images, idUser);
+       return  Repository.CreateWorkspaceAsync(workspace).Result;
    }
    
-   public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, string typeObject)
+   public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, int idTemplate)
    {
        var operationMode = WeekdayForDate(idWorkspace, date);
-       var objects = ObjectService.GetWorkspaceObjects(idWorkspace).Result;
+       var objects = ObjectService.GetWorkspaceObjectsByCondition(idWorkspace, x => x.Template.Id == idTemplate || idTemplate == 0).Result;
        var reservations = ReservationService.GetReservations(idWorkspace, new DateOnly(date.Year, date.Month, date.Day)).Result;
        return GenerateTimeSlots(operationMode,reservations, objects, timeType);
    }
 
-   public List<WorkspaceObject> GetReservedObjects(TimeOnly start, TimeOnly end, int idWorkspace, DateTime date)
+   public List<WorkspaceObject> GetReservedObjects(TimeOnly start, TimeOnly end, int idWorkspace, DateTime date,int idTemplate)
    {
        var reservations = ReservationService.GetReservations(idWorkspace, new DateOnly(date.Year, date.Month, date.Day)).Result;
-       var objects = ObjectService.GetWorkspaceObjects(idWorkspace).Result;
+       var objects = ObjectService.GetWorkspaceObjectsByCondition(idWorkspace, x => x.Template.Id == idTemplate || idTemplate == 0).Result;
        return ReservationService.UpdateReservationStatus(start, end, reservations, objects);
    }
    

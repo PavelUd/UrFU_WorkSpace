@@ -1,3 +1,4 @@
+using System.Net;
 using Newtonsoft.Json;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
@@ -15,13 +16,10 @@ public class WorkspaceRepository : IWorkspaceRepository
         BaseAddress = new Uri(baseApiAddress + "/workspaces");
     }
 
-    public async Task<int> CreateWorkspaceAsync(Workspace baseInfo)
+    public async Task<bool> CreateWorkspaceAsync(Workspace baseInfo)
     {
         var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
-        responseMessage.EnsureSuccessStatusCode();
-        var content = await responseMessage.Content.ReadAsStringAsync();
-        
-        return int.Parse(content);
+        return responseMessage.IsSuccessStatusCode;
     }
     
     public async Task<Workspace> GetWorkspaceAsync(int idWorkspace)

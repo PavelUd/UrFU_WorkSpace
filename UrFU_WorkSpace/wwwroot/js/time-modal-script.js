@@ -1,3 +1,5 @@
+import {getShortTime, parseDate} from './utils.js';
+
 const sendTimeSlotsRequest = (evt) => {
 
     evt.preventDefault();
@@ -19,7 +21,7 @@ const sendTimeSlotsRequest = (evt) => {
 const getCheckbox = (times, i) =>{
     const checkbox = document.createElement('input');
     checkbox.classList.add("time__checkbox");
-    checkbox.value = `${times['TimeStart'].slice(0, 5)}-${times['TimeEnd'].slice(0, 5)}`;
+    checkbox.value = `${getShortTime(times['TimeStart'])}-${getShortTime(times['TimeEnd'])}`;
     checkbox.id = `time__${i + 1}`;
 
     return checkbox;
@@ -32,7 +34,7 @@ const getLabel = (timeSlotInfo, num) =>{
     label.for = `time__${num + 1}`;
     label.classList.add('checkbox__text');
     label.value = `${timeStart}-${timeEnd}`
-    label.textContent = `${timeStart.slice(0, 5)}-${timeEnd.slice(0, 5)}`
+    label.textContent = `${getShortTime(timeStart)}-${getShortTime(timeEnd)}`
     label.style.color = timeSlotInfo['IsDisable'] ? "rgb(172, 172, 172)" : "";
     label.style.fontSize = "19px";
     
@@ -60,11 +62,10 @@ const onClickTimeSlot = (evt) => {
     const timeInfo = evt.target.value.split('-')
     const time =document.getElementById('selected-time__value');
     const date = document.getElementById('selected-date__value');
-    const dateValue = document.getElementById("date").value.split('-')
-    
-    date.textContent = `${dateValue[2]}.${dateValue[1]}.${dateValue[0]}`
+    const dateValue = document.getElementById("date").value;
+    date.textContent = `${parseDate(dateValue)}`
     time.value = evt.target.value
-    time.textContent = `${timeInfo[0].slice(0, 5)}-${timeInfo[1].slice(0, 5)}`
+    time.textContent = `${getShortTime(timeInfo[0])}-${getShortTime(timeInfo[1])}`
 
     if (previousSelectedElement) {
         previousSelectedElement.classList.remove('selected-style');
