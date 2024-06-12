@@ -35,7 +35,7 @@ public class Startup
         services.AddScoped<IBaseRepository<WorkspaceObject>, WorkspaceObjectRepository>();
         services.AddScoped<IBaseRepository<WorkspaceWeekday>, OperationModeRepository>();
         services.AddScoped<IObjectTemplateRepository, ObjectTemplateRepository>();
-        services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles()));
+        services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles(services.BuildServiceProvider().GetService<IUserRepository>())));
         services.AddAuthentication(x =>
         {
             
