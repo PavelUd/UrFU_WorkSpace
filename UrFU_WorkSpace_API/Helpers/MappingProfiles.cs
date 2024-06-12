@@ -8,9 +8,13 @@ namespace UrFU_WorkSpace_API.Helpers;
 
 public class MappingProfiles : Profile
 {
-    private readonly IWorkspaceRepository _workspaceRepository;
+    private readonly IUserRepository _userRepository;
 
-    public MappingProfiles()
+    public MappingProfiles(IUserRepository userRepository)
     {
+        _userRepository = userRepository;
+        CreateMap<Review, ReviewDto>()
+            .BeforeMap((src, dest)
+                => dest.UserName = userRepository.FindByCondition(x => x.Id == src.IdUser).First().Login);
     }
 }
