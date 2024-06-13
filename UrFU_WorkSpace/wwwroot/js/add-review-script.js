@@ -5,6 +5,7 @@ let name = document.getElementById("formName")
 let date = document.getElementById("formDate")
 const formStars = document.getElementById("formStars")
 const starsCount = document.getElementById("starsCount")
+const dateInput = document.getElementById("dateInput")
 const toggleForm =() =>{
     if(sessionStorage.token === undefined){
         return;
@@ -20,7 +21,8 @@ const parseCurrentDate = () => {
     const day = String(today.getDate()).padStart(2, '0');
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
-
+    dateInput.value = `${year}-${month}-${day}`;
+    console.log(dateInput.value);
     return `${day}.${month}.${year}`;
 
 }

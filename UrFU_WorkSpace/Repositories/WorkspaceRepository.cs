@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using Newtonsoft.Json;
 using UrFU_WorkSpace.enums;
@@ -20,6 +21,14 @@ public class WorkspaceRepository : IWorkspaceRepository
     {
         var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
         return responseMessage.IsSuccessStatusCode;
+    }
+    
+    public async Task<int> UpdateRating(double rating, int idWorkspace)
+    {
+        var t = rating.ToString(CultureInfo.InvariantCulture);
+        var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/{idWorkspace}/update-rating?rating={t}", RequestMethod.Patch).Result;
+        var content = await responseMessage.Content.ReadAsStringAsync();
+        return int.Parse(content);
     }
     
     public async Task<Workspace> GetWorkspaceAsync(int idWorkspace)

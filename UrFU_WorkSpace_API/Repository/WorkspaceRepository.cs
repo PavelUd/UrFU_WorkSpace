@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Context;
@@ -16,7 +17,7 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
        return FindByCondition(x => x.Id == workspaceId).First().Images;
    }
 
-   public IEnumerable<WorkspaceObject> GetWorkspaceObjects(int workspaceId)
+    public IEnumerable<WorkspaceObject> GetWorkspaceObjects(int workspaceId)
    {
        return FindByCondition(x => x.Id == workspaceId).First().Objects;
    }
@@ -32,20 +33,5 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
        return FindByCondition(x => x.Id == workspaceId).First().OperationMode;
    }
 
-   public bool AddWeekday(WorkspaceWeekday weekday)
-   {
-       _context.OperationMode.Add(weekday);
-       return Save();
-   }
-   public bool AddImage(Image image)
-   {
-       _context.Images.Add(image);
-       return Save();
-   }
-   
-   public bool AddObject(WorkspaceObject obj)
-   {
-       _context.WorkspaceObjects.Add(obj);
-       return Save();
-   }
+
 }
