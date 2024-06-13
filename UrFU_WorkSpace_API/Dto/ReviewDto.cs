@@ -1,12 +1,8 @@
-using UrFU_WorkSpace.Services;
+namespace UrFU_WorkSpace_API.Dto;
 
-namespace UrFU_WorkSpace.Models;
-
-public class Review
+public class ReviewDto
 {
     public int Id { set; get; }
-    
-    public int IdUser { set; get; }
     
     public string UserName { set; get; }
     
@@ -15,6 +11,5 @@ public class Review
     public string Message { set; get; }
     
     public double Estimation { set; get; }
-
-    public DateOnly Date { set; get; }
+    public DateOnly Date{ set; get; }
 }

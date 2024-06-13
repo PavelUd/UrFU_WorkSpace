@@ -146,6 +146,7 @@
               <li class="review__elem"><img id="star-4" src="~/img/star.png" alt="Звезда"></li>
             </ul>
             <input hidden="true" id="starsCount" name="starsCount">
+            <input hidden="true" type="date" value = "" id = "dateInput" name="date">
           </div>
           <label style="color:black ">Введите текст сообщения</label>
           <input name="text" class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
@@ -157,10 +158,10 @@
             <div class="review__wrapper" style="margin-bottom: 2rem">
             <div class="review__head">
               <span class="review__author">
-                MegaGrib
+                @review.UserName
               </span>
               <span class="review__date">
-                01.06.24
+                @review.Date 
               </span>
               <ul class="list-reset review__stars">
               @for (var i = 0; i < review.Estimation; i++ )

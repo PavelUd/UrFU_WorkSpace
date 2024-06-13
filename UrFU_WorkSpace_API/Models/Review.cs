@@ -20,4 +20,7 @@ public class Review : IWorkspaceComponent
     
     [Column("estimation")]
     public double Estimation { set; get; }
+    
+    [Column("date")]
+    public DateOnly Date{ set; get; }
 }

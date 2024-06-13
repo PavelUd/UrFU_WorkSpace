@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
+using UrFU_WorkSpace_API.Repository;
 
 namespace UrFU_WorkSpace_API.Controllers;
 
@@ -20,14 +21,14 @@ public class ReviewController : Controller
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewDto>))]
     public IActionResult GetReviews(int? idUser, int? idWorkspace)
     {
         var reviews = reviewRepository.FindAll();
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        return Ok(GetFilteredReservations(idUser, idWorkspace, reviews));
+        return Ok(GetFilteredReservations(idUser, idWorkspace, reviews).Select(x => mapper.Map<Review, ReviewDto>(x)).OrderByDescending(x => x.Date));
     }
 
     [HttpPost]

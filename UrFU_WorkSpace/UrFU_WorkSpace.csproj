@@ -43,7 +43,6 @@
       <Compile Update="enums\AuthorizationStatus.cs">
         <DependentUpon>TimeType.cs</DependentUpon>
       </Compile>
-      <Content Include="wwwroot\js\dropdown.js" />
     </ItemGroup>
 	
 

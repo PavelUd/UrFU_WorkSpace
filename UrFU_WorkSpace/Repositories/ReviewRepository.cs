@@ -40,13 +40,6 @@ public class ReviewRepository
     
     public void AddReview(Review review)
     {
-        var dictionary = new Dictionary<string, object>()
-        {
-            {"IdUser", review.IdUser },
-            {"WorkspaceId", review.IdWorkspace },
-            {"Message", review.Message },
-            {"Estimation", review.Estimation },
-        };
-        var message = HttpRequestSender.SendRequest(BaseAddress + "/reviews/add-review", RequestMethod.Post, dictionary);
+        var message = HttpRequestSender.SendRequest(BaseAddress + "/reviews/add-review", RequestMethod.Post, review);
     }
 }
