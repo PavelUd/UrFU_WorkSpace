@@ -128,7 +128,7 @@
           <h2 class="section__title review__title">
             Отзывы о пространстве
           </h2>
-          <button class="btn-reset btn review__btn" id="reviewButton"> 
+          <button class="btn-reset btn review__btn" id="reviewButton" href="#"> 
             Написать отзыв
           </button>
         </div>
@@ -138,18 +138,9 @@
             <span class="review__author" id="formName"></span>
             <span class="review__date" id="formDate">
             </span>
-            <ul class="list-reset review__stars" id="formStars">
-              <li class="review__elem"><img id="star-0" src="~/img/star.png" alt="Звезда"></li>
-              <li class="review__elem"><img id="star-1" src="~/img/star.png" alt="Звезда"></li>
-              <li class="review__elem"><img id="star-2" src="~/img/star.png" alt="Звезда"></li>
-              <li class="review__elem"><img id="star-3" src="~/img/star.png" alt="Звезда"></li>
-              <li class="review__elem"><img id="star-4" src="~/img/star.png" alt="Звезда"></li>
-            </ul>
-            <input hidden="true" id="starsCount" name="starsCount">
-            <input hidden="true" type="date" value = "" id = "dateInput" name="date">
           </div>
           <label style="color:black ">Введите текст сообщения</label>
-          <input name="text" class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
+          <input  class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
           <button class="btn btn-success" type="submit">Save</button>
           </form>
         </div>
@@ -242,18 +233,56 @@
       </div>
       </div>
 
-      <div class="modal fade" id="bookResultModal" tabindex="-1" aria-labelledby="bookResultModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered book__width" style="border-radius: 10px;">
-        <div class="modal-content">
-          <div style="margin:2rem auto 2rem;">
-                      <h4 style="position: relative ; color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="bookTitle"></h4>
-                    </div>
-          <div class="modal-body" id="bookBody">
-          </div>
-        </div>
+<div class="modal fade" id="bookResultModal" tabindex="-1" aria-labelledby="bookResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered book__width" style="border-radius: 10px;">
+    <div class="modal-content">
+      <div style="margin:2rem auto 2rem;">
+        <h4 style="position: relative ; color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center" id="bookTitle"></h4>
       </div>
+      <div class="modal-body" id="bookBody">
       </div>
-    </main>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" style="border-radius: 10px;">
+  <form method="post" action="/workspaces/@Model.Id/add-review">
+    <div  class="modal-content review-modal" >
+    <div class="modal-header" style="border: none">
+      <h5 class="review__title modal-title"> Как Вам данное пространство?</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="review__header">
+      <img src="@Model.Images.FirstOrDefault()?.Url" alt="review-img" class="review__img " style="border-radius: 5px">
+      <div class="review__name">
+        @Model.Name
+      </div>
+    </div>
+
+    <div class="review__stars-wrapper">
+      <ul class="list-reset review__stars-modal" id="formStars">
+        <li class="review__elem"><img id="star-0" src="~/img/grey-star.png" alt="Звезда"></li>
+        <li class="review__elem"><img id="star-1" src="~/img/grey-star.png" alt="Звезда"></li>
+        <li class="review__elem"><img id="star-2" src="~/img/grey-star.png" alt="Звезда"></li>
+        <li class="review__elem"><img id="star-3" src="~/img/grey-star.png" alt="Звезда"></li>
+        <li class="review__elem"><img id="star-4" src="~/img/grey-star.png" alt="Звезда"></li>
+      </ul>
+      <input hidden="true" id="starsCount" name="starsCount" value="0">
+      <input hidden="true" type="date" value="" id="dateInput" name="date">
+    </div>
+    <div class="review__text-wrapper">
+      <textarea  class="review-text" name="text" id="review" placeholder="Ваш отзыв..." required></textarea>
+    </div>
+    <button type="submit" class="btn-reset btn review-modal__btn">
+      Оставить отзыв
+    </button>
+    </div>
+  </form>
+  </div>
+</div>
+</main>
 <script>
 window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv"));
 window.addEventListener('DOMContentLoaded',() =>{ 

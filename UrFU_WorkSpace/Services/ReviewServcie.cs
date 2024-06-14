@@ -22,8 +22,8 @@ public class ReviewService
         return Repository.GetByIdWorkspace(idWorkspace);
     }
 
-    public void AddReview(Review review)
+    public async Task AddReview(Review review)
     {
-        Repository.AddReview(review);
+       await Repository.AddReview(review);
     }
 }

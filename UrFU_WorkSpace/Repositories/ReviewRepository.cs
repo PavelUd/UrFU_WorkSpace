@@ -38,8 +38,8 @@ public class ReviewRepository
         return GetAll().Where(r => r.IdUser == id);
     }
     
-    public void AddReview(Review review)
+    public async Task AddReview(Review review)
     {
-        var message = HttpRequestSender.SendRequest(BaseAddress + "/reviews/add-review", RequestMethod.Post, review);
+        await HttpRequestSender.SendRequest(BaseAddress + "/reviews/add-review", RequestMethod.Post, review);
     }
 }
