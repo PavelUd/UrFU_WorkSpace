@@ -293,7 +293,7 @@ function amenityHandler(evt){
   console.log(amenitiesContainer.value);
   }
   
-window.addEventListener('DOMContentLoaded', getTemplates);  
+document.getElementById('constructorModal').addEventListener('shown.bs.modal', getTemplates)
 document.getElementById('constructor-cover').addEventListener('change',  viewPhotoInContainer);
 document.getElementById('constructor-add-img-1').addEventListener('change',  viewPhotoInContainer);
 document.getElementById('constructor-add-img-2').addEventListener('change',  viewPhotoInContainer);
