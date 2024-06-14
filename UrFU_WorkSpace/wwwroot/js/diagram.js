@@ -15,6 +15,8 @@ function init(divName, size) {
 
             });
 
+    myDiagram.isReadOnly = true;
+
     myDiagram.add(
         $(go.Part,
             { layerName: "Grid", position: myDiagram.fixedBounds.position },
