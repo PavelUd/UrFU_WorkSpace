@@ -15,54 +15,24 @@
 <body class="page">
 <nav class="navbar navbar-light sticky-top" style="background-color: white">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
       <img src="~/img/Logo.png" alt="Лого" class="d-inline-block align-text-top">
     </a>
     <div style="display: inline-flex">
       <span class="navbar-text">
         <a href="#" class="nav__link">Контакты</a>
       </span>
-      @{
-        int code;
-        var jwtToken = Context.Session.GetString("JwtToken");
-        if (jwtToken == null)
-        {
-          <button id="lk" class="btn-reset btn nav__btn" style="margin-right: 5rem" data-bs-toggle="modal" data-bs-target="#loginModal">
-            Войти
-          </button>
-        }
-        else
-        {
-          <div class="select-menu">
-            <div style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn">
-               <img src="~/img/account.svg" alt="Лк">
-                  @JwtTokenDecoder.GetUserName(jwtToken)
-                  </div>
-
-            <ul class="options">
-              <li class="option">
-                <i class="bx bxl-linkedin-square" style="color: #0E76A8;"></i>
-                <span class="option-text"><a href="/1/constructor">Конструктор</a></span>
-              </li>
-              <li class="option">
-                <i class="bx bxl-facebook-circle" style="color: #4267B2;"></i>
-                <span class="option-text">Мои Коворкинги</span>
-              </li>
-              <li class="option">
-                <i class="bx bxl-twitter" style="color: #1DA1F2;"></i>
-                <span class="option-text">Мои Брони</span>
-              </li>
-            </ul>
+          <div id="lk">
+            <button class="btn-reset btn nav__btn" style="margin-right: 5rem" data-bs-toggle="modal" data-bs-target="#loginModal">
+              Войти
+            </button>
           </div>
-        }
-      }
     </div>
   </div>
 </nav>
 
 <div class="container">
   @RenderBody()
-  
   <footer class="footer">
     <img class="footer__logo" src="~/img/logo-footer.png" alt="Логотип">
     <div class="footer__description">
@@ -74,6 +44,19 @@
       </a>
     </div>
   </footer>
+</div>
+<div class="modal fade" id="constructorModal" tabindex="-1" aria-labelledby="constructorModal" aria-hidden="true">
+<div class="modal-dialog constructor">
+  <div class="modal-content" style="border: transparent">
+    <div class="modal-header" style="border: none">
+      <h5 class="constructor__title modal-title">Конструктор карточки коворкинга</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+     @Html.Partial("~/Views/User/WorkspaceConstructor.cshtml") 
+    </div>
+  </div>
+</div>
 </div>
 <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
@@ -163,7 +146,6 @@
           </div>
         </form>
       </div>
-      
     </div>
   </div>
 </div>
@@ -172,38 +154,7 @@
 <script src="~/js/diagram.js"></script>
 <script src="~/js/scripts.js"></script>
 <script src="~/js/utils.js" type="module"></script>
-<script src="~/js/book-modals-scripts.js" type="module"></script>
-<script src="~/js/time-modal-script.js" type="module"></script>
-<script src="~/js/objects-modal-scripts.js" type="module"></script>
-<script src="~/js/add-review-script.js" type="module"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-const optionMenu = document.querySelector(".select-menu"),
-  selectBtn = optionMenu.querySelector(".select-btn"),
-  options = optionMenu.querySelectorAll(".option"),
-  sBtn_text = optionMenu.querySelector(".sBtn-text");
-
-selectBtn.addEventListener("click", () =>
-  optionMenu.classList.toggle("active")
-);
-
-document.addEventListener('click', (event) => {
-    if (!optionMenu.contains(event.target) && optionMenu.classList.contains('active')) {
-      optionMenu.classList.remove('active');
-    }
-    });
-
-
-
-options.forEach((option) => {
-  option.addEventListener("click", () => {
-    let selectedOption = option.querySelector(".option-text").innerText;
-    sBtn_text.innerText = selectedOption;
-
-    optionMenu.classList.remove("active");
-  });
-});
-</script>
   <script src="~/js/site.js" asp-append-version="true"></script>
   <script src="~/js/authentication-scripts.js" asp-append-version="true" type="module"></script>
   @await RenderSectionAsync("Scripts", required: false)

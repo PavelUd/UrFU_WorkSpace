@@ -70,7 +70,7 @@ public class WorkspaceService : IWorkspaceService
        var objects = ObjectService.ConstructWorkspaceObjects(jsonObjects);
        var amenities = AmenityService.ConstructWorkspaceAmenities(idTemplates);
        var workspace = ConstructWorkspace(baseInfo,amenities.AsEnumerable(), objects,operationMode, images, idUser);
-       return  Repository.CreateWorkspaceAsync(workspace).Result;
+       return  Repository.CreateWorkspaceAsync(workspace);
    }
    
    public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType, int idTemplate)
