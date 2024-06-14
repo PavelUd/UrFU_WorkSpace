@@ -1,80 +1,158 @@
+<form action="/1/workspace-create" method="post" enctype="multipart/form-data">
+  <ul class="list-reset constructor__list">
+    <div>
+      <span class="grey">
+        Добавить обложку
+      </span>
+      <span class="grey">
+        Добавить фото
+      </span>
+    </div>
+    <div class="constructor-images-wrap">
+      <div class="constructor-cover-wrap">
+        <label for="constructor-cover" class="constructor-file"><img src="~/img/plus.png" alt="plus" class="plus" style="object-fit: cover;"></label>
+        <input class="constructor__input" type="file" id="constructor-cover" name="uploads" >
+      </div>
 
-<head>
-  <title>Загрузка нескольких фотографий</title>
-</head>
-<body>
-<form id="baseForm" action="/1/workspace-create" method="post" enctype="multipart/form-data">
-  <div>
-    <input type="text" name="name">
-  </div>
-  <div>
-    <input type="text" name="description">
-  </div>
-  <div>
-    <input type="text" name="address">
-  </div>
-  <div>
-    <input type="text" name="institute">
-  </div>
-  <select name = "idTemplate">Удобства
-  @foreach (var amenity in ViewBag.Amenities)
-  {
-    <option value="@amenity.Id">@amenity.Name</option>
-  }
-  </select>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name="mondayStart">
-    <input type="time"  multiple name="mondayEnd">
-  </div>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name="tuesdayStart">
-    <input type="time" name="tuesdayEnd">
-  </div>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name="wednesdayStart">
-    <input type="time" name="wednesdayEnd">
-  </div>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name = "thursdayStart">
-    <input type="time" name = "thursdayEnd">
-  </div>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name ="fridayStart">
-    <input type="time" name = "fridayEnd">
-  </div>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name = "saturdayStart">
-    <input type="time" name = "saturdayEnd">
-  </div>
-  <div style="display: flex; flex-wrap: wrap">
-    <input style="margin-right: 1rem" type="time" name = "sundayStart">
-    <input type="time" name = "sundayEnd">
-  </div>
-  <div>
-    <input type="file"  name="uploads"/>
-    <input type="file"  name="uploads"/>
-    <input type="file"  name="uploads"/>
-    <input type="file"  name="uploads"/>
-    <input type="file" name="uploads"/>
+      <div class="constructor-additional-images">
+        <div class="additional-img">
+          <label for="constructor-add-img-1" class="constructor-file"><img src="~/img/plus.png" alt="plus" class="plus"></label>
+          <input class="constructor__input" type="file" id="constructor-add-img-1" name="uploads" >
+        </div>
+        <div class="additional-img">
+          <label for="constructor-add-img-2" class="constructor-file"><img src="~/img/plus.png" alt="plus" class="plus"></label>
+          <input class="constructor__input" type="file" id="constructor-add-img-2" name="uploads" >
+        </div>
+        <div class="additional-img">
+          <label for="constructor-add-img-3" class="constructor-file"><img src="~/img/plus.png" alt="plus" class="plus"></label>
+          <input class="constructor__input" type="file" id="constructor-add-img-3" name="uploads" >
+        </div>
+        <div class="additional-img">
+          <label for="constructor-add-img-4" class="constructor-file"><img src="~/img/plus.png" alt="plus" class="plus"></label>
+          <input class="constructor__input" type="file" id="constructor-add-img-4" name="uploads" >
+        </div>
+      </div>
+    </div>
 
-  </div>
-  <div>
-    <input hidden="" id="objects" name="objects"/>
-  </div>
-  
-  <button id = "submit-button">Сохранить</button>
+    <li class="constructor__elem">
+      <label class="constructor-label" for="constructor-name">Название</label>
+      <input class="constructor__input" type="text" id="constructor-name" name="name" placeholder="Добавить название"  required>
+    </li>
+
+    <li class="constructor__elem">
+      <label class="constructor-label" for="constructor-description">Описание</label>
+      <input class="constructor__input" type="text" id="constructor-description" name="description" placeholder="Добавить описание" required="">
+    </li>
+
+    <li class="constructor__elem">
+      <label class="constructor-label" for="constructor-address">Адрес</label>
+      <input class="constructor__input" type="text" id="constructor-address" name="address" placeholder="Добавить адрес"  required>
+    </li>
+
+    <li class="constructor__elem">
+      <label class="constructor-label" for="constructor-institute">Институт</label>
+      <select class="constructor__input" name="institute" id="constructor-institute" placeholder="Выбрать адрес"  required>
+        <option value="" selected>Выберите институт</option>
+        <option value="first">Уральский гуманитарный институт</option>
+        <option value="second">Институт экономики и управления</option>
+        <option value="third">Институт естественных наук и математики</option>
+        <option value="fourth">Институт радиоэлектроники и информационных технологий–РтФ</option>
+        <option value="fifth">Химико-технологический институт</option>
+        <option value="sixth">Физико-технологический институт</option>
+        <option value="seventh">Уральский энергетический институт</option>
+      </select>
+    </li>
+
+    <div class="days__wrap">
+      <span class="day__about">Режим работы</span>
+      <span class="day__about">Время начала</span>
+      <span class="day__about">Время конца</span>
+    </div>
+
+    <ul class="list-reset days__list">
+      <li class="day__elem">
+        <div class="constructor__day">
+          <span class="day__name">Понедельник</span>
+          <input class="form-control time__start" type="time" name="mondayStart" id="">
+          <input class="form-control" type="time" name="mondayEnd" id="">
+        </div>
+      </li>
+      <li class="day__elem">
+        <div class="constructor__day">
+          <div class="day__name">Вторник</div>
+          <input class="form-control time__start" type="time" name="thursdayStart" id="">
+          <input class="form-control" type="time" name="thursdayEnd" id="">
+        </div>
+      </li>
+      <li class="day__elem">
+        <div class="constructor__day">
+          <span class="day__name">Среда</span>
+          <input class="time__start form-control" type="time" name="wednesdayStart" id="">
+          <input class="form-control" type="time" name="wednesdayEnd" id="">
+        </div>
+      </li>
+      <li class="day__elem">
+        <div class="constructor__day">
+          <span class="day__name">Четверг</span>
+          <input class="form-control time__start" type="time" name="tuesdayStart" id="">
+          <input class="form-control" type="time" name="tuesdayEnd" id="">
+        </div>
+      </li>
+      <li class="day__elem">
+        <div class="constructor__day">
+          <span class="day__name">Пятница</span>
+          <input class="form-control time__start" type="time" name="fridayStart" id="">
+          <input class="form-control" type="time" name="fridayEnd" id="">
+        </div>
+      </li>
+      <li class="day__elem">
+        <div class="constructor__day">
+          <span class="day__name">Суббота</span>
+          <input class="form-control time__start" type="time" name="saturdayStart" id="">
+          <input class="form-control" type="time" name="saturdayEnd" id="">
+        </div>
+      </li>
+      <li class="day__elem">
+        <div class="constructor__day">
+          <span class="day__name">Воскресенье</span>
+          <input class="form-control time__start" type="time" name="sundayStart" id="">
+          <input class="form-control" type="time" name="" id="sundayEnd">
+        </div>
+      </li>
+    </ul>
+
+    <span class="grey">
+      Удобства коворкинга
+    </span>
+    <div>
+      <input type="text" id="templates" name="idTemplate" value="[]" hidden>
+      <ul class="list-reset constructor-comfort-list"></ul>
+    </div>
+
+    <div class="constructor__redactor">
+      <div>
+        <input hidden="" id="objects" name="objects"/>
+      </div>
+      <span class="redactor__title">
+        Редактор помещения
+      </span>
+      <div style="border-radius: 10px; background: lightgray; border:2px solid black;margin-bottom:1rem;padding: 20px; ">
+        <div id="myCreateDiagram" style="width:500px; height:300px; background: white;margin: auto; border:2px solid black"></div>
+      </div>
+      <div id = "myPaletteDiv" style="width:100%; height:50px"></div>
+    </div>
+  </ul>
+  <button class="btn btn-reset" style="margin: auto; padding: 5px 30px 5px 30px">Создать коворкинг</button>
 </form>
-
-<div id="myCreateDiagram" style="width:500px; height:300px; background: #565e64; align-self: center"></div>
-<div id = "myPaletteDiv" style="width:100%; height:400px"></div>
 <script>
-    function init() {
+    function initDiagram(objects) {
     const $ = go.GraphObject.make;
         
             diagram =
               new go.Diagram("myCreateDiagram",
                 {
-                  fixedBounds: new go.Rect(0, 0, 500, 300),  
+                  fixedBounds: new go.Rect(0, 0, 500, 300),
+                  contentAlignment: go.Spot.Center,  
                   allowHorizontalScroll: false, 
                   allowVerticalScroll: false,
                   allowZoom: true,
@@ -117,20 +195,20 @@
     var myPalette =
       new go.Palette("myPaletteDiv");
     
-    // the Palette's node template is different from the main Diagram's
-    myPalette.nodeDetail =
-      $(go.Node, "Horizontal",
-        $(go.Shape,
-          { maxSize: new go.Size(100, 100), fill: "white" },
-          new go.Binding("fill", "color")),
-        $(go.TextBlock,
-          new go.Binding("text", "color"))
-      );
-   myPalette.model.nodeDataArray =  gh(@Json.Serialize(ViewBag.Objects))
+      myPalette.nodeTemplate = $(go.Node, "Auto",
+                                      {
+                                        cursor: "pointer", 
+                                        selectionAdorned: false
+                                      },
+                                     $(go.Shape, "RoundedRectangle",
+                                       { fill: "lightgray", stroke: null, width: go.GraphObject.Auto, height: 37, parameter1: 5}),
+                                     $(go.TextBlock,  
+                                       { font: "bold 14px sans-serif", stroke: "white", textAlign: "center",margin: 5  },
+                                       new go.Binding("text", "category")
+                                     )
+                                   );
+      myPalette.model.nodeDataArray =  gh(objects)
   }
-    
-    window.addEventListener('DOMContentLoaded', init);
-          let date = [];
 const ff = () =>{
   const myDiagram = go.Diagram.fromDiv(document.getElementById('myCreateDiagram'))
   let modelData = JSON.parse(myDiagram.model.toJson());
@@ -147,12 +225,79 @@ const ff = () =>{
   function gh(array){
     let g = [];
     array.forEach(x => {
-      g.push({key:0, idTemplate: x.id, color: "", size: "100 100", category: x.category, image: x.picture });
+      g.push({key:0, idTemplate: x.Id, color: "", size: "100 100", category: x.Category, image: x.Picture });
       });
     return g;
   }
-
  
+function makeAmenitiesElements(amenities){
+      
+  let container = document.querySelector('.constructor-comfort-list');
+  
+  amenities.forEach(x => {
+    container.innerHTML += `<li data-id="${x.Id}"><div class="constructor-comfort__elem" data-id="${x.Id}">
+                                            <img src="${x.Picture}" alt="Wi-Fi" class="constructor-comfort__img">
+                                            <span class="constructor-comfort__text">${x.Name}
+                                            </span>
+                                          </div></li>`
+    });
+  
+  document.querySelectorAll('.constructor-comfort__elem').forEach(element =>   
+    element.addEventListener('click', amenityHandler));
+  }
+function getTemplates() {
+  
+  
+  $.get("/constructor-templates").then(x =>{
+    let elems = JSON.parse(x);
+     initDiagram(elems.objects);
+   makeAmenitiesElements(elems.amenities);
+  });
+}
+ </script>
+<script>
+const viewPhotoInContainer = (evt) => {
+  const previewContainer =evt.target.parentNode; 
+  const file = evt.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = previewContainer.querySelector('img');
+     if (img.classList.contains('plus')){
+        img.classList.replace('plus', 'photo')
+        }
+    img.src = event.target.result;
+    img.alt = 'Preview';
+  };
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+};
+
+let amenitiesContainer = document.getElementById("templates")
+
+function amenityHandler(evt){
+  const node = evt.target.parentNode;
+  node.querySelector('.constructor-comfort__img').classList.toggle('active');
+  node.querySelector('.constructor-comfort__text').classList.toggle('active');
+  let array = JSON.parse(amenitiesContainer.value)
+  if (!array.find(element => element === node.dataset.id)){
+    array.push(node.dataset.id)
+    }
+  else{
+     array = array.filter(function(value) {
+      return value !== node.dataset.id;
+    });
+  }
+  amenitiesContainer.value = JSON.stringify(array);
+  console.log(amenitiesContainer.value);
+  }
+  
+window.addEventListener('DOMContentLoaded', getTemplates);  
+document.getElementById('constructor-cover').addEventListener('change',  viewPhotoInContainer);
+document.getElementById('constructor-add-img-1').addEventListener('change',  viewPhotoInContainer);
+document.getElementById('constructor-add-img-2').addEventListener('change',  viewPhotoInContainer);
+document.getElementById('constructor-add-img-3').addEventListener('change',  viewPhotoInContainer);
+ document.getElementById('constructor-add-img-4').addEventListener('change',  viewPhotoInContainer);
 </script>
-</body>
 
