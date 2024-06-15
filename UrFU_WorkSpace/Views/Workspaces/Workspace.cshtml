@@ -163,8 +163,7 @@
             </div>
             <span class="review__text">
               @review.Message
-            </span>
-                    </div>
+            </span></div>
           }
       </section>
       <div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
@@ -284,7 +283,26 @@
 </div>
 </main>
 <script>
-window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv"));
+var prevNode = null;
+var prevColor = null;
+function click(e, node) {
+                    var shape = node.findObject("SHAPE");
+                    if (shape == null || node.data.isReserve){
+                        return;
+                    }
+
+                    if(prevNode){
+                        prevNode.findObject("SHAPE").bn = prevColor;
+                        myDiagram.model.setDataProperty(prevNode.data, "source", prevColor);
+                    }
+
+                    prevColor = shape.bn;
+                    prevNode= node;
+
+                    shape.bn = '';
+                    document.getElementById("selected-object").value = node.data.key;
+                }
+window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv", click));
 window.addEventListener('DOMContentLoaded',() =>{ 
   init("showDiagram");
   loadObjects("showDiagram", @Json.Serialize(Model.Objects));

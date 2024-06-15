@@ -15,6 +15,16 @@ public class ReservationRepository : IReservationRepository
     {
         BaseAddress = new Uri(baseApiAddress);
     }
+
+    public async Task<List<Reservation>> GetUserReservations(int idUser)
+    {
+        var route = BaseAddress + "/reservations?idUser=" + idUser;
+        var responseMessage = HttpRequestSender.SendRequest(route, RequestMethod.Get).Result;
+        responseMessage.EnsureSuccessStatusCode();
+        
+        var data = await responseMessage.Content.ReadAsStringAsync();
+        return JsonHelper.Deserialize<List<Reservation>>(data);
+    }
     
     public async Task<List<Reservation>> GetReservations(int idWorkspace, DateOnly date)
     {
@@ -28,6 +38,11 @@ public class ReservationRepository : IReservationRepository
             
 
         return JsonHelper.Deserialize<List<Reservation>>(data);
+    }
+
+    public async Task ConfirmReservation(int idReservation)
+    {
+        await HttpRequestSender.SendRequest(BaseAddress + "/reservations/" + idReservation + "/confirm", RequestMethod.Patch);
     }
     
     public async Task<Reservation> CreateReservations(Dictionary<string, object> dictionary)

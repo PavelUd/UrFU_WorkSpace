@@ -12,4 +12,6 @@ public class Reservation
     public TimeOnly TimeEnd { get; set; }
     
     public DateOnly Date { get; set; }
+    
+    public bool IsConfirmed { get; set; }
 }

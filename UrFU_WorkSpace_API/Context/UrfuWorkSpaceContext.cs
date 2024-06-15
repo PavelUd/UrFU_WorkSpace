@@ -62,6 +62,7 @@ public partial class UrfuWorkSpaceContext : DbContext
         modelBuilder.Entity<Workspace>().Navigation(e => e.Amenities).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.OperationMode).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.Images).AutoInclude();
+        modelBuilder.Entity<VerificationCode>();
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
@@ -76,4 +77,5 @@ public partial class UrfuWorkSpaceContext : DbContext
     public DbSet<Workspace> Workspaces { get; set; }
     public DbSet<WorkspaceWeekday> OperationMode { get; set; }
     public DbSet<ObjectTemplate> ObjectTemplates { get; set; }
+    public DbSet<VerificationCode> VerificationCodes { get; set; }
 }

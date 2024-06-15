@@ -139,12 +139,70 @@
         <form>
           <div style="margin-top: 1rem;">
             <input class="form-control form-control-lg" name="code" style="padding: 10px" placeholder="Код подтверждения с Email"/>
-            <span style="font-size: small; color: darkgray; padding: 10px">Отправить код еще раз</span>
           </div>
           <div style="margin:2rem 10px 10px 0"> 
             <button type="submit" style="padding: 5px;height: 75%; width: 100%" class="btn form-control-lg" required>Подтвердить почту</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="generateReservationGenerateCodeModal" tabindex="-1" aria-labelledby="generateReservationCodeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
+    <div class="modal-content">
+      <div class="modal-header" style="border: none; text-align: center">
+        <h4 class="modal-title" style="color: black">Сгенерировать новый код подтверждения</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="" style="margin:auto">
+          <div class="register-confirm__message" style="text-align: center">
+            <span style="font-weight: bold"></span>Выберете коворкинг
+          </div>
+          <div style="margin-top: 1rem;">
+            <select class="form-control" id="workspaceNames" name="code" style="padding: 10px">
+              <option hidden="">Выберете коворкинг</option>
+            </select>
+          </div>
+          <div style="margin-top: 1rem; text-align: center">
+            <div style="color: black; margin-bottom: 10px">Код Подтверждения</div>
+            <span data-id ="" style=" font-size: 24px; font-weight: bold; color: black" id="reservationCode"></span>
+          </div>
+          <div style="margin:2rem 10px 10px 0">
+            <button style="padding: 5px;height: 75%; width: 100%" id="generateCodeBtn" class="btn form-control-lg" required>Сгенерировать</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="userReservationsModal" tabindex="-1" aria-labelledby="userReservationsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
+    <div class="modal-content">
+      <div class="modal-header" style="border: none; text-align: center">
+            <h4 class="modal-title" style="color: black">Подтвердите бронирование</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+      <div class="modal-body">
+        <div class="" style="margin:auto">
+          <div class="register-confirm__message" style="text-align: center">
+            <span style="font-weight: bold"></span>Выберете бронирование
+          </div>
+            <div style="margin-top: 1rem;">
+              <select class="form-control" id="reservations" style="padding: 10px">
+                <option hidden="0">Выберете бронь</option>
+              </select>
+            </div>
+          <div style="margin-top: 1rem; text-align: center">
+            <div style="color: black; margin-bottom: 10px">Код Подтверждения</div>
+            <input class="form-control" id="userCode" />
+          </div>
+          <div style="margin-bottom: 1rem; text-align: center; color: white" id="statusConfirmCode"></div>
+          <div style="margin:10px 10px 10px 0">
+              <button style="padding: 5px;height: 75%; width: 100%" id="confirmReservationBtn" class="btn form-control-lg" required>Подтвердить</button>
+            </div>
+        </div>
       </div>
     </div>
   </div>

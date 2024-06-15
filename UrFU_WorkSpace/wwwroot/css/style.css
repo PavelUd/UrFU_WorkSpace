@@ -692,6 +692,7 @@ body {
   justify-content: space-between;;
 }
 .select-menu .options {
+  display: none;
   margin-top: 1rem;
   position: absolute;
   width: 240px;

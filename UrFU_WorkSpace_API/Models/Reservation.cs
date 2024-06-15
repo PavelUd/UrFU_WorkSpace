@@ -32,4 +32,7 @@ public class Reservation
         [Column("date")]
         public DateOnly Date { get; set; }
         
+        [Column("isConfirmed")] 
+        public bool IsConfirmed { get; set; }
+        
 }
