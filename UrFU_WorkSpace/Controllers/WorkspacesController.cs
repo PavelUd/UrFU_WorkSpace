@@ -14,7 +14,6 @@ namespace UrFU_WorkSpace.Controllers;
 
 public class WorkspacesController : Controller
 {
-    private Uri baseAdress = new Uri("https://localhost:7077/api/workspaces");
     private readonly ILogger<HomeController> _logger;
     private ReviewService _reviewService;
     private readonly IHttpContextAccessor httpContextAccessor;
@@ -22,20 +21,17 @@ public class WorkspacesController : Controller
     private readonly IReservationService ReservationService;
     public WorkspacesController(ILogger<HomeController> logger, ReviewService reviewService, IWorkspaceService workspaceService, IReservationService reservationService, IHttpContextAccessor httpContextAccessor)
     {
+        this.httpContextAccessor = httpContextAccessor;
+        WorkspaceService = workspaceService;
+        ReservationService = reservationService;
         _logger = logger;
         _reviewService = reviewService;
     }
     [Route("workspaces/{idWorkspace}")]
     public IActionResult GetWorkspace(int idWorkspace)
     {
-        var workspace = new Workspace();
-        var responseMessage = HttpRequestSender.SentGetRequest(baseAdress + $"/{idWorkspace}").Result;
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            var data = responseMessage.Content.ReadAsStringAsync().Result;
-            workspace = JsonConvert.DeserializeObject<Workspace>(data);
-        }
-
+        var workspace = WorkspaceService.GetWorkspace(idWorkspace);
+        workspace.Reviews = _reviewService.GetReviews(idWorkspace);
         return View("Workspace", workspace); 
     }
     [HttpPost]
