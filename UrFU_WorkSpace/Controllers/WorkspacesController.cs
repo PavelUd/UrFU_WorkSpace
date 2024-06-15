@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using UrFU_WorkSpace.enums;
@@ -52,14 +53,14 @@ public class WorkspacesController : Controller
     [HttpPost]
     [Route("workspaces/{idWorkspace}/add-review")]
 
-    public IActionResult AddReview([FromRoute] int idWorkspace, IFormCollection form)
+    public async Task<IActionResult> AddReview([FromRoute] int idWorkspace, IFormCollection form)
     {
         var idUser = JwtTokenDecoder.GetUserId(httpContextAccessor.HttpContext.Session.GetString("JwtToken"));
-        var stars = form["starsCount"];
+        var stars = form["starsCount"].IsNullOrEmpty() ? "0" : form["starsCount"].ToString();
         var text = form["text"];
         var date = JsonHelper.Deserialize<DateOnly>('\"' + form["date"] + '\"');
         
-        _reviewService.AddReview(new Models.Review()
+       await _reviewService.AddReview(new Models.Review()
         {
             IdUser = int.Parse(idUser),
             IdWorkspace = idWorkspace,

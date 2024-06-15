@@ -27,14 +27,19 @@ public class UserController : Controller
         Service = service;
     }
     
-    [Route("{idUser}/constructor")]
-    public IActionResult GetWorkspace(int idUser)
+    [Route("constructor-templates")]
+    public IActionResult GetWorkspace()
     {
         var amenityTemplates = AmenityService.GetAmenityTemplates().Result;
         var objectTemplates = ObjectService.GetObjectTemplates().Result;
         ViewBag.Amenities = amenityTemplates;
         ViewBag.Objects =objectTemplates;
-        return View("WorkspaceConstructor"); 
+        var templates = new Dictionary<string, object>()
+        {
+            { "amenities", amenityTemplates },
+            { "objects", objectTemplates }
+        };
+        return Ok(JsonHelper.Serialize(templates)); 
     }
     
     [HttpPost]
@@ -59,8 +64,8 @@ public class UserController : Controller
             (form["saturdayStart"], form["saturdayEnd"]),
             (form["sundayStart"], form["sundayEnd"]),
         };
-        var idTemplates = new List<int>() { int.Parse(form["idTemplate"].ToString()) };
+        var idTemplates = JsonHelper.Deserialize<List<int>>(form["idTemplate"].ToString());
         var isSaved = Service.CreateWorkspace(idUser, baseInfo, operationModeJson,idTemplates, form["objects"],uploads, _appEnvironment);
-        return isSaved ? Ok() : BadRequest();
+        return Redirect("/");
     }
 }

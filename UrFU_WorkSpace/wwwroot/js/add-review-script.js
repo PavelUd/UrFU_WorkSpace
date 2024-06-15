@@ -12,8 +12,8 @@ const toggleForm =() =>{
     }
     let token = decodeJwtToken(sessionStorage.token);
     name.textContent = token["Login"]
-    date.textContent = parseCurrentDate();
-    form.hidden = !form.hidden
+    parseCurrentDate();
+    $('#addReviewModal').modal('show');
 }
 
 const parseCurrentDate = () => {
@@ -22,8 +22,6 @@ const parseCurrentDate = () => {
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
     dateInput.value = `${year}-${month}-${day}`;
-    console.log(dateInput.value);
-    return `${day}.${month}.${year}`;
 
 }
 
@@ -32,10 +30,10 @@ const starts = (evt) => {
     const max = 5;
     for (let i = 0; i < max; i++) {
         if(count > i) {
-            document.getElementById(`star-${i}`).src = "../img/blue-star.png"
+            document.getElementById(`star-${i}`).src = "../img/big-blue-star.png"
         }
         else  {
-            document.getElementById(`star-${i}`).src = "../img/star.png"
+            document.getElementById(`star-${i}`).src = "../img/grey-star.png"
         }
     }
     starsCount.value = count;

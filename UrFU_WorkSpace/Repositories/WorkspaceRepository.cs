@@ -17,7 +17,7 @@ public class WorkspaceRepository : IWorkspaceRepository
         BaseAddress = new Uri(baseApiAddress + "/workspaces");
     }
 
-    public async Task<bool> CreateWorkspaceAsync(Workspace baseInfo)
+    public bool CreateWorkspaceAsync(Workspace baseInfo)
     {
         var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
         return responseMessage.IsSuccessStatusCode;
