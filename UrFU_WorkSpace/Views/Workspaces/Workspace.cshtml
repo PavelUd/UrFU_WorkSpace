@@ -148,9 +148,8 @@
             <input hidden="true" id="starsCount" name="starsCount">
             <input hidden="true" type="date" value = "" id = "dateInput" name="date">
           </div>
-          <label style="color:black ">Введите текст сообщения</label>
-          <input name="text" class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
-          <button class="btn btn-success" type="submit">Save</button>
+                <input name="text" placeholder="Введите текст сообщения" class="form-control-lg review__text review__padding" style="border: none; outline: transparent; background: transparent; width: 100%;">
+                <button class="btn-reset btn" type="submit">Отправить</button>
           </form>
         </div>
           @foreach (var review in Model.Reviews)
