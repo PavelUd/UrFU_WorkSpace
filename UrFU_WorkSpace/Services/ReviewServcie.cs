@@ -1,4 +1,5 @@
 using UrFU_WorkSpace.Models;
+using UrFU_WorkSpace.Repositories;
 
 namespace UrFU_WorkSpace.Services;
 

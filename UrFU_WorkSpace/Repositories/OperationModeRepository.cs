@@ -3,7 +3,7 @@ using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
 
-namespace UrFU_WorkSpace.Services;
+namespace UrFU_WorkSpace.Repositories;
 
 public class OperationModeRepository : IOperationModeRepository
 {

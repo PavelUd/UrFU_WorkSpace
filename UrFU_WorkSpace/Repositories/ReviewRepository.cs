@@ -1,10 +1,9 @@
 using Newtonsoft.Json;
-using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 
-namespace UrFU_WorkSpace.Services;
+namespace UrFU_WorkSpace.Repositories;
 
 public class ReviewRepository
 {

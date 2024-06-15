@@ -1,4 +1,4 @@
-namespace UrFU_WorkSpace.Services;
+namespace UrFU_WorkSpace.Repositories;
 
 public class UserRepository
 {
