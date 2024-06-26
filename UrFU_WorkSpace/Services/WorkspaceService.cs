@@ -61,7 +61,7 @@ public class WorkspaceService : IWorkspaceService
        return workspace;
    }
 
-   public bool CreateWorkspace(int idUser,Dictionary<string, object> baseInfo,List<(string, string)> operationModeJson, List<int> idTemplates, string jsonObjects, IFormFileCollection uploads,
+   public int CreateWorkspace(int idUser,Dictionary<string, object> baseInfo,List<(string, string)> operationModeJson, List<int> idTemplates, string jsonObjects, IFormFileCollection uploads,
        IWebHostEnvironment appEnvironment)
    {
        var urls = ImageService.SaveImages(appEnvironment, uploads);

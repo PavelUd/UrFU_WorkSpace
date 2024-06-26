@@ -5,7 +5,6 @@ using UrFU_WorkSpace.Services.Interfaces;
 
 namespace UrFU_WorkSpace.Controllers;
 
-[Authorize(AuthorizationStatus.Admin)]
 public class UserController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -102,7 +101,11 @@ public class UserController : Controller
             (form["sundayStart"], form["sundayEnd"]),
         };
         var idTemplates = JsonHelper.Deserialize<List<int>>(form["idTemplate"].ToString());
-        var isSaved = Service.CreateWorkspace(idUser, baseInfo, operationModeJson,idTemplates, form["objects"],uploads, _appEnvironment);
+        var idWorkspace = Service.CreateWorkspace(idUser, baseInfo, operationModeJson,idTemplates, form["objects"],uploads, _appEnvironment);
+        if (idWorkspace != 0)
+        {
+            VerificationCodeService.AddCode(idWorkspace);
+        }
         return Redirect("/");
     }
 }

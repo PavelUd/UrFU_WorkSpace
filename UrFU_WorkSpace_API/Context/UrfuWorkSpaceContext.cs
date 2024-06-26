@@ -23,13 +23,13 @@ public partial class UrfuWorkSpaceContext : DbContext
     {
         modelBuilder.Entity<WorkspaceObject>()
             .HasOne(wo => wo.Template)
-            .WithOne()
-            .HasPrincipalKey<WorkspaceObject>(e => e.IdTemplate).HasForeignKey<ObjectTemplate>(e => e.Id);
+            .WithMany(ot => ot.WorkspaceObjects)
+            .HasForeignKey(wo => wo.IdTemplate);
 
         modelBuilder.Entity<WorkspaceAmenity>()
             .HasOne(wo => wo.Template)
-            .WithOne()
-            .HasPrincipalKey<WorkspaceAmenity>(e => e.IdTemplate).HasForeignKey<AmenityTemplate>(e => e.Id);
+            .WithMany(ot => ot.WorkspaceAmenities)
+            .HasForeignKey(wo => wo.IdTemplate);
        
         modelBuilder.Entity<Workspace>()
             .HasMany(e => e.Images).WithOne()

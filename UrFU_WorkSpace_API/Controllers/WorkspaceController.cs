@@ -67,6 +67,6 @@ public class WorkspaceController : Controller
         if (!ModelState.IsValid || !isSaved)
             return BadRequest(ModelState);
 
-        return Created();
+        return Ok(workspace.Id);
     }
 }
