@@ -15,7 +15,8 @@ public class ReviewService
     public double RecalculateRating(int idWorkspace)
     {
         var reviews = Repository.GetByIdWorkspace(idWorkspace);
-        return double.Round(reviews.Select(x => x.Estimation).Sum() / reviews.Count(), 1);
+        var count = !reviews.Any() ? 1 : reviews.Count();
+        return double.Round(reviews.Select(x => x.Estimation).Sum() / count, 1);
     }
 
     public IEnumerable<Review> GetReviews(int idWorkspace)

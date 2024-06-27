@@ -9,4 +9,6 @@ public interface IWorkspaceRepository
     public Task<Workspace> GetWorkspaceAsync(int idWorkspace);
 
     public Task<int> UpdateRating(double rating, int idWorkspace);
+
+    public Task<List<Workspace>> GetAllWorkspacesAsync();
 }

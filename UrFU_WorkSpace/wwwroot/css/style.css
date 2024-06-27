@@ -686,7 +686,7 @@ body {
   align-items: center;
   height: 30px;
   width: 30px;
-  background-color: var(--color-blue);
+  background-color:  var(--color-red);
   border-radius: 25px;
 }
 
@@ -927,7 +927,7 @@ body {
 	top: -10px;
 	width: 33%;
 	height: 10px;
-	background-color: var(--color-blue);
+	background-color:  var(--color-red);
 }
 
 .modal-second-page::before {
@@ -939,7 +939,7 @@ body {
 	top: -10px;
 	width: 66%;
 	height: 10px;
-	background-color: var(--color-blue);
+	background-color:  var(--color-red);
 }
 
 .modal__input {
@@ -994,16 +994,16 @@ body {
 }
 
 .selected-style {
-	background-color: var(--color-blue);
+	background-color:  var(--color-red);
 	color: var(--color-white);
-	border-color: var(--color-blue);
+	border-color:  var(--color-red);
 }
 
 .selected-time{
   align-self: flex-start;
   font-size: 20px;
   font-weight: 600;
-  color: var(--color-blue);
+  color:  var(--color-red);
   margin-bottom: 20px;
 }
 
@@ -1202,7 +1202,7 @@ input[type="file"] {
 
 .constructor-comfort__text{
   padding: 7px 14px;
-  color: var(--color-red);
+  color: rgb(128, 128, 128);
   font-size: 16px;
   font-weight: 400;
 }
@@ -1212,15 +1212,15 @@ input[type="file"] {
   height: 36px;
   object-fit: contain;
   border-radius: 11px;
-  background-color: var(--color-red);
+  background-color: rgb(128, 128, 128);
 }
 
 .constructor-comfort__img.active{
-  background-color: rgb(31, 8, 165);
+  background-color: var(--color-red);
 }
 
 .constructor-comfort__text.active{
-  color: rgb(31, 8, 165);
+  color: var(--color-red);
 }
 
 .redactor__title{
