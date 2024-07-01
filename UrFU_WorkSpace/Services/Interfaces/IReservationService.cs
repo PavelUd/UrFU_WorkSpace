@@ -10,5 +10,7 @@ public interface IReservationService
     public Task<Reservation> Reserve(int idWorkspace, IFormCollection form);
 
     public Task<List<Reservation>> GetReservations(int idWorkspace, DateOnly date);
+    public bool VerifyReservation(string code, int id, int idWorkspace);
+    public Task<List<Reservation>> GetUserReservations(int idUser);
 
 }

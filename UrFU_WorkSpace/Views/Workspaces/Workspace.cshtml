@@ -11,7 +11,7 @@
       <section class="book__hero">
         <h2 class="section__title">
           @Model.Institute
-          <span class="blue">
+          <span class="red">
             @Model.Name
           </span>
         </h2>
@@ -83,7 +83,7 @@
           <div class="location__wrapper--2">
             <div class="location__text">
               <div>
-                <span class="location--beauty">Адрес:</span> г. Екатеринбург, Кировский район Втузгородок м-н,  ул. Мира, 32, левое крыло, 1 этаж.
+                <span class="location--beauty">Адрес:</span>@Model.Address 
               </div>
               <div class="location__text--wrap">
                 <span class="location--beauty">Соцсети:</span>
@@ -92,7 +92,7 @@
                 </a>
               </div>
             </div>
-            <h2 class="section__title">
+            <h2 class="section__title section__margin">
               Режим работы
             </h2>
             <ul class="list-reset location__list">
@@ -125,28 +125,16 @@
 
       <section class="reviews">
         <div class="reviews__head">
-          <h2 class="section__title review__title">
-            Отзывы о пространстве
-          </h2>
-          <button class="btn-reset btn review__btn" id="reviewButton" href="#"> 
-            Написать отзыв
-          </button>
-        </div>
-        <div class="review__wrapper" style="margin-bottom: 2rem" id="reviewForm" hidden>
-          <form method="post" action="/workspaces/@Model.Id/add-review">
-          <div class="review__head">
-            <span class="review__author" id="formName"></span>
-            <span class="review__date" id="formDate">
-            </span>
+                  <h2 class="section__title mb0">
+                  <span class="red scobka">[ </span>Отзывы о пространстве <span class="red">@Model.Name</span><span class="red scobka"> ]</span>
+                  </h2>
+                  <button class="btn-reset btn review__btn" id="reviewButton" href="#"> 
+                    Написать отзыв
+                  </button>
           </div>
-          <label style="color:black ">Введите текст сообщения</label>
-          <input  class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
-          <button class="btn btn-success" type="submit">Save</button>
-          </form>
-        </div>
           @foreach (var review in Model.Reviews)
           {
-            <div class="review__wrapper" style="margin-bottom: 2rem">
+            <div class="review__wrapper">
             <div class="review__head">
               <span class="review__author">
                 @review.UserName
@@ -163,8 +151,7 @@
             </div>
             <span class="review__text">
               @review.Message
-            </span>
-                    </div>
+            </span></div>
           }
       </section>
       <div class="modal fade" id="bookModal" tabindex="-1" aria-labelledby="bookModalLabel" aria-hidden="true">
@@ -284,7 +271,26 @@
 </div>
 </main>
 <script>
-window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv"));
+var prevNode = null;
+var prevColor = null;
+function click(e, node) {
+                    var shape = node.findObject("SHAPE");
+                    if (shape == null || node.data.isReserve){
+                        return;
+                    }
+
+                    if(prevNode){
+                        prevNode.findObject("SHAPE").bn = prevColor;
+                        myDiagram.model.setDataProperty(prevNode.data, "source", prevColor);
+                    }
+
+                    prevColor = shape.bn;
+                    prevNode= node;
+
+                    shape.bn = '';
+                    document.getElementById("selected-object").value = node.data.key;
+                }
+window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv", click));
 window.addEventListener('DOMContentLoaded',() =>{ 
   init("showDiagram");
   loadObjects("showDiagram", @Json.Serialize(Model.Objects));

@@ -9,12 +9,20 @@ namespace UrFU_WorkSpace_API.Helpers;
 public class MappingProfiles : Profile
 {
     private readonly IUserRepository _userRepository;
+    private readonly IWorkspaceRepository _workspaceRepository;
 
-    public MappingProfiles(IUserRepository userRepository)
+    public MappingProfiles(IUserRepository userRepository, IWorkspaceRepository workspaceRepository)
     {
         _userRepository = userRepository;
+        _workspaceRepository = workspaceRepository;
         CreateMap<Review, ReviewDto>()
             .BeforeMap((src, dest)
                 => dest.UserName = userRepository.FindByCondition(x => x.Id == src.IdUser).First().Login);
+        
+        CreateMap<VerificationCode, VerificationCodeDto>()
+            .BeforeMap((src, dest)
+                => dest.IdCreator = workspaceRepository.FindByCondition(x => x.Id == src.IdWorkspace).First().IdCreator)
+            .BeforeMap((src, dest)
+                => dest.WorkspaceName = workspaceRepository.FindByCondition(x => x.Id == src.IdWorkspace).First().Name);
     }
 }

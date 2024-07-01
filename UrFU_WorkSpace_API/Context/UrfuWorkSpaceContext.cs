@@ -23,13 +23,13 @@ public partial class UrfuWorkSpaceContext : DbContext
     {
         modelBuilder.Entity<WorkspaceObject>()
             .HasOne(wo => wo.Template)
-            .WithOne()
-            .HasPrincipalKey<WorkspaceObject>(e => e.IdTemplate).HasForeignKey<ObjectTemplate>(e => e.Id);
+            .WithMany(ot => ot.WorkspaceObjects)
+            .HasForeignKey(wo => wo.IdTemplate);
 
         modelBuilder.Entity<WorkspaceAmenity>()
             .HasOne(wo => wo.Template)
-            .WithOne()
-            .HasPrincipalKey<WorkspaceAmenity>(e => e.IdTemplate).HasForeignKey<AmenityTemplate>(e => e.Id);
+            .WithMany(ot => ot.WorkspaceAmenities)
+            .HasForeignKey(wo => wo.IdTemplate);
        
         modelBuilder.Entity<Workspace>()
             .HasMany(e => e.Images).WithOne()
@@ -62,6 +62,7 @@ public partial class UrfuWorkSpaceContext : DbContext
         modelBuilder.Entity<Workspace>().Navigation(e => e.Amenities).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.OperationMode).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.Images).AutoInclude();
+        modelBuilder.Entity<VerificationCode>();
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
@@ -76,4 +77,5 @@ public partial class UrfuWorkSpaceContext : DbContext
     public DbSet<Workspace> Workspaces { get; set; }
     public DbSet<WorkspaceWeekday> OperationMode { get; set; }
     public DbSet<ObjectTemplate> ObjectTemplates { get; set; }
+    public DbSet<VerificationCode> VerificationCodes { get; set; }
 }

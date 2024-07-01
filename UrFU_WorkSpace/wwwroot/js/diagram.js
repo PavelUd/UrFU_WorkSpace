@@ -1,4 +1,4 @@
-function init(divName, size) {
+function init(divName, clickFunction = () => {}) {
 
     const $ = go.GraphObject.make;
 
@@ -68,23 +68,7 @@ function init(divName, size) {
             },
             { dragComputation: stayInFixedArea },
             {
-                click: function(e, node) {
-                    var shape = node.findObject("SHAPE");
-                    if (shape == null || node.data.isReserve){
-                        return;
-                    }
-
-                    if(prevNode){
-                        prevNode.findObject("SHAPE").bn = prevColor;
-                        myDiagram.model.setDataProperty(prevNode.data, "source", prevColor);
-                    }
-
-                    prevColor = shape.bn;
-                    prevNode= node;
-
-                    shape.bn = '';
-                    document.getElementById("selected-object").value = node.data.key;
-                },
+                click: clickFunction,
             },
             new go.Binding('desiredSize', 'size', go.Size.parse),
             new go.Binding('position', 'pos', go.Point.parse).makeTwoWay(go.Point.stringify),

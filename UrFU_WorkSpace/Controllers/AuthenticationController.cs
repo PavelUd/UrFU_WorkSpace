@@ -19,6 +19,13 @@ public class AuthenticationController(ILogger<AuthenticationController> logger, 
         return isUserExist ? Ok() : Ok("Такой пользователь уже есть");
     }
     
+    [Route("/log-out")]
+    [HttpPost]
+    public void ClearJwtToken()
+    {
+        httpContextAccessor.HttpContext.Session.Clear();
+    }
+    
     [HttpPost]
     public async Task<IActionResult> SendCode(IFormCollection form)
     {

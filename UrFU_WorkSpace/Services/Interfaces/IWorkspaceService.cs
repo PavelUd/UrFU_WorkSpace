@@ -13,7 +13,7 @@ public interface IWorkspaceService
 
     public int UpdateWorkspaceRating(int idWorkspace, double rating);
     
-    public bool CreateWorkspace(int idUser, Dictionary<string, object> baseInfo,
+    public int CreateWorkspace(int idUser, Dictionary<string, object> baseInfo,
         List<(string, string)> operationModeJson, List<int> idTemplates, string jsonObjects,
         IFormFileCollection uploads,
         IWebHostEnvironment appEnvironment);
@@ -21,4 +21,6 @@ public interface IWorkspaceService
     public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType,int idTemplate);
 
     public List<WorkspaceObject> GetReservedObjects(TimeOnly start, TimeOnly end, int idWorkspace, DateTime date,int idTemplate);
+
+    public Task<List<Workspace>> GetAllWorkspaces();
 }

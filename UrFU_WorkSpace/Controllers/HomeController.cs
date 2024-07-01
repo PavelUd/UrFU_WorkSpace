@@ -18,35 +18,17 @@ public class HomeController
 {
     private readonly Uri _baseAddress;
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _configuration;
-    private IAmenityService _amenityService;
-    private IObjectService _objectService;
+    private readonly IWorkspaceService _workspaceService;
 
-    public HomeController(ILogger<HomeController> logger, IConfiguration configuration, IAmenityService amenityService, IObjectService objectService)
+    public HomeController(ILogger<HomeController> logger,IWorkspaceService workspaceService)
     {
-        _objectService = objectService;
-        _amenityService = amenityService;
         _logger = logger;
-        _configuration = configuration;
-        _baseAddress = new Uri(configuration["apiAddress"]);
+        _workspaceService = workspaceService;
     }
 
     public IActionResult Index()
-    { 
-        var amenityTemplates = _amenityService.GetAmenityTemplates().Result;
-        var objectTemplates = _objectService.GetObjectTemplates().Result;
-        ViewBag.Amenities = amenityTemplates;
-        ViewBag.Objects =objectTemplates;
-        var workspaces = new List<Workspace>();
-        var responseMessage = HttpRequestSender.SendRequest(_baseAddress + "/workspaces", RequestMethod.Get);
-        var settings = new JsonSerializerSettings();
-        settings.Converters.Add(new TimeOnlyJsonConverter());
-        if (!responseMessage.Result.IsSuccessStatusCode)
-        {
-            return View(workspaces);
-        }
-        var data = responseMessage.Result.Content.ReadAsStringAsync().Result;
-        workspaces = JsonConvert.DeserializeObject<List<Workspace>>(data, settings);
+    {
+        var workspaces = _workspaceService.GetAllWorkspaces().Result;
         return View(workspaces);
     }
 

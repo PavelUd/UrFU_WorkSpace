@@ -1,6 +1,7 @@
 using System.Text.Json;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
 
@@ -17,6 +18,15 @@ public class ReservationController : Controller
     {
         this.reservationRepository = reservationRepository;
         this.mapper = mapper;
+    }
+    
+    [HttpPatch("{id}/confirm")]
+    public IActionResult Confirm(int id)
+    {
+        var i = reservationRepository.FindByCondition(x => x.IdReservation == id)
+            .ExecuteUpdate(b => b.SetProperty(x => x.IsConfirmed, true));
+
+        return Ok();
     }
 
     [HttpGet]

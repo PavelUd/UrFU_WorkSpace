@@ -15,7 +15,6 @@ const sendTimeSlotsRequest = (evt) => {
         objectType: objectType
     })
         .then(code => createSlotTimeElements(code))
-        .catch(error => console.error(error));
     };
 
 const getCheckbox = (times, i) =>{

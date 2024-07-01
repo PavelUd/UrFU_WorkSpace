@@ -6,9 +6,11 @@ namespace UrFU_WorkSpace.Services;
 public class ReservationService : IReservationService
 {
     public IReservationRepository Repository;
+    private IVerificationCodeService _verificationCodeService;
     
-    public ReservationService(IReservationRepository repository)
+    public ReservationService(IReservationRepository repository, IVerificationCodeService verificationCodeService)
     {
+        _verificationCodeService = verificationCodeService;
         Repository = repository;
     }
 
@@ -17,7 +19,21 @@ public class ReservationService : IReservationService
         return await Repository.GetReservations(idWorkspace, date);
     }
     
-    
+    public async Task<List<Reservation>> GetUserReservations(int idUser)
+    {
+        return await Repository.GetUserReservations(idUser);
+    }
+
+    public bool VerifyReservation(string code, int id, int idWorkspace)
+    {
+        var isOk = _verificationCodeService.GetCodes().Result.Any(x =>x.Code == code.ToUpper() && x.IdWorkspace == idWorkspace);
+        if (isOk)
+        {
+            Repository.ConfirmReservation(id);
+        }
+
+        return isOk;
+    }
     
     public List<WorkspaceObject> UpdateReservationStatus(TimeOnly start, TimeOnly end, List<Reservation> reservations, List<WorkspaceObject> objects)
     {
