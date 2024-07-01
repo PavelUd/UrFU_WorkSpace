@@ -1,8 +1,5 @@
 import {decodeJwtToken} from "./utils.js";
 
-const form = document.getElementById("reviewForm")
-let name = document.getElementById("formName")
-let date = document.getElementById("formDate")
 const formStars = document.getElementById("formStars")
 const starsCount = document.getElementById("starsCount")
 const dateInput = document.getElementById("dateInput")
@@ -11,7 +8,6 @@ const toggleForm =() =>{
         return;
     }
     let token = decodeJwtToken(sessionStorage.token);
-    name.textContent = token["Login"]
     parseCurrentDate();
     $('#addReviewModal').modal('show');
 }
