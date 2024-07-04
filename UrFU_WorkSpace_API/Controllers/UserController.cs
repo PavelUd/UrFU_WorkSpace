@@ -1,4 +1,6 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
@@ -10,30 +12,35 @@ namespace UrFU_WorkSpace_API.Controllers;
 [ApiController]
 public class UserController : Controller
 {
-        private readonly IUserService _userService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserService UserService;
 
-        public UserController(IUserRepository userRepository, IUserService userService)
+        public UserController(IUserService userService)
         { 
-            _userRepository = userRepository;
-            _userService = userService;
+            UserService = userService;
         }
         
         [HttpGet]
+        [ProducesResponseType(500)]
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public IActionResult GetUsers()
         {
-            var users = _userRepository.FindAll();
+            var users = UserService.GetAllUsers();
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             return Ok(users);
         }
         [HttpGet("{idUser}")]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult GetUser(int idUser)
         {
-            var user = _userRepository.FindByCondition(x => x.Id == idUser);
+            var user = UserService.GetUsersByCondition(x => x.Id == idUser).FirstOrDefault();
+            if (user == null)
+            {
+                return NotFound("Нет такого пользователя");
+            }
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -43,42 +50,33 @@ public class UserController : Controller
         
         [HttpPost("register")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public IActionResult RegisterUser([FromBody] User userCreate)
+        [ProducesResponseType(500)]
+        [ProducesResponseType(409)]
+        public async Task<IActionResult> Register([FromBody] User user)
         {
-          var response = _userService.Register(userCreate);
             
-            if(response == null || response.Result.Token == "")
-            {
-                ModelState.AddModelError("", "Что-то пошло не так");
-                return StatusCode(500, ModelState);
-            }
-
-            return Ok(response);
-        }
-
-        [HttpPost("check-user-existence")]
-        [ProducesResponseType(200)]
-        public IActionResult CheckUserExistence([FromBody] UserCheckRequest user)
-        {
-            return Ok(!_userService.IsUserExists(user));
+          var response = await UserService.Register(user);
+          return StatusCode((int)response.StatusCode, response);
         }
 
         [HttpPost("login")]
         [ProducesResponseType(200)]
         public IActionResult LoginUser([FromBody] AuthenticateRequest model)
         {
-            var response = _userService.Authenticate(model);
-            if (response.Token == "")
-            {
-                return BadRequest();
-            }
-            if(response == null)
-            {
-                ModelState.AddModelError("", "Что-то пошло не так");
-                return StatusCode(500, ModelState);
-            }
+            var response = UserService.Authenticate(model);
+            return StatusCode((int)response.StatusCode, response);
+        }
+        
+        [HttpPatch("{idUser}/update-access-level")]
+        [ProducesResponseType(200)]
 
-            return Ok(response);
+        public IActionResult UpdateAccessLevel(int idUser, int accessLevel)
+        {
+            if (!UserService.GetUsersByCondition(x => x.Id == idUser).Any())
+            {
+                return NotFound("Пользователь не найден");
+            }
+            UserService.UpdateAccessLevel(idUser, accessLevel);
+            return Ok();
         }
 }
