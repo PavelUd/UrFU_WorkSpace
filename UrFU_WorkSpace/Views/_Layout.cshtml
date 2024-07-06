@@ -117,7 +117,7 @@
         </form>
         
         <div class="register__question" style="text-align: center; padding-top: 10px">Нет аккаунта? 
-          <a data-bs-toggle="modal" href="#" data-bs-target="#registerModal">Зарегестрируйтесь</a>
+          <a data-bs-toggle="modal" href="#" class = "register-btn" data-bs-target="#registerModal">Зарегестрируйтесь</a>
           </div>
       </div>
       
@@ -208,12 +208,16 @@
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/gojs/go.js"></script>
+<script src="~/js/const.js" type="module"></script>
 <script src="~/js/diagram.js"></script>
 <script src="~/js/scripts.js"></script>
+<script src="~/js/Clients/base-client.js" type="module"></script>
+<script src="~/js/Clients/authentication-client.js" type="module"></script>
+<script src="~/js/utils.js" type="module"></script>
 <script src="~/js/utils.js" type="module"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="~/js/site.js" asp-append-version="true"></script>
-  <script src="~/js/authentication-scripts.js" asp-append-version="true" type="module"></script>
+  <script src="~/js/authentication-service.js" asp-append-version="true" type="module"></script>
   @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

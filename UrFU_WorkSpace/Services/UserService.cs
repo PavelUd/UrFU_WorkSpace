@@ -9,27 +9,28 @@ using UrFU_WorkSpace.Services.Interfaces;
 
 namespace UrFU_WorkSpace.Services;
 
-public class AuthenticationService : IAuthenticationService
+public class UserClient : IUserService
 {
-    private IAuthenticationRepository _authenticationRepository;
+    private IUserRepository _userRepository;
     private string Pattern = @"^[a-zA-Z0-9._%+-]+@urfu\.me$";
     
-    public AuthenticationService(IAuthenticationRepository authenticationRepository)
+    public UserClient(IUserRepository userRepository)
     {
-        _authenticationRepository = authenticationRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<AuthenticateResponse> Register(IFormCollection form)
     {
         var dictionary = new Dictionary<string, object>()
         {
-            { "firstName", form["firstName"].ToString() },
-            { "lastName", form["secondName"].ToString() },
+            { "firstName", form["first-name"].ToString() },
+            { "lastName", form["second-name"].ToString() },
             { "email", form["email"].ToString() },
             { "login", form["login"].ToString() },
             { "password", form["password"].ToString() }
         };
-        return await _authenticationRepository.Register(dictionary);
+        var response = await _userRepository.Register(dictionary);
+        return response;
     }
     
     public async Task<AuthenticateResponse> Login(IFormCollection form)
@@ -39,7 +40,7 @@ public class AuthenticationService : IAuthenticationService
             { "login", form["login"].ToString() },
             { "password", form["password"].ToString() }
         };
-        return await _authenticationRepository.Login(dictionary);
+        return await _userRepository.Login(dictionary);
 
     }
     
@@ -73,5 +74,36 @@ public class AuthenticationService : IAuthenticationService
             client.Disconnect(true);
             client.Dispose();
         }
+    }
+
+    public AuthenticateResponse VerifyUser(int idUser, string userCode, string verificationCode)
+    {
+        if (verificationCode != userCode)
+        {
+            return new AuthenticateResponse()
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Message = "Неверный Код"
+            };
+        }
+        
+        var isSaved = UpdateAccessLevel(idUser, 1).Result;
+        if (!isSaved)
+        {
+            return new AuthenticateResponse()
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Message = "Статутс не обновлен"
+            };
+        }
+        return new AuthenticateResponse()
+        {
+            StatusCode = HttpStatusCode.OK
+        };
+    }
+    
+    public async Task<bool> UpdateAccessLevel(int idUser, int newAccessLevel)
+    {
+       return await _userRepository.UpdateAccessLevel(idUser, newAccessLevel);
     }
 }

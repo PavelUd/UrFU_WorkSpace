@@ -36,7 +36,7 @@ public class UserService : IUserService
         var user = users.FirstOrDefault(x => (x.Login == authenticate.Login) && x.Password == authenticate.Password);
         
         return user == null ? 
-            new AuthenticateResponse(HttpStatusCode.NotFound,message: "Пользователь не найден") : 
+            new AuthenticateResponse(HttpStatusCode.Unauthorized,message: "Пользователь не найден") : 
             new AuthenticateResponse(HttpStatusCode.OK,token: _configuration.GenerateJwtToken(user));
     }
     

@@ -16,7 +16,7 @@ builder.Services.AddScoped<IOperationModeRepository, OperationModeRepository>(sp
 builder.Services.AddScoped<IImageRepository,ImageRepository>(sp => new ImageRepository(baseAddress));
 builder.Services.AddScoped<IAmenityRepository,AmenityRepository>(sp => new AmenityRepository(baseAddress));
 builder.Services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>(sp => new  VerificationCodeRepository(baseAddress));
-builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>(sp => new  AuthenticationRepository(baseAddress));
+builder.Services.AddScoped<IUserRepository, UserRepository>(sp => new  UserRepository(baseAddress));
 builder.Services.AddScoped<IAmenityService,AmenityService>();
 
 builder.Services.AddScoped<IObjectService, ObjectService>();
@@ -25,7 +25,7 @@ builder.Services.AddScoped<IOperationModeService, OperationModeService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
-builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IUserService, UserClient>();
 builder.Services.AddScoped<ReviewService>(sp => new ReviewService(new ReviewRepository(baseAddress)));
 
 builder.Services.AddHttpContextAccessor();

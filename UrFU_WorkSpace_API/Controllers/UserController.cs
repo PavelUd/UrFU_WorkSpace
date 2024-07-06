@@ -32,7 +32,6 @@ public class UserController : Controller
         }
         [HttpGet("{idUser}")]
         [ProducesResponseType(500)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult GetUser(int idUser)
         {
@@ -51,7 +50,6 @@ public class UserController : Controller
         [HttpPost("register")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        [ProducesResponseType(409)]
         public async Task<IActionResult> Register([FromBody] User user)
         {
             

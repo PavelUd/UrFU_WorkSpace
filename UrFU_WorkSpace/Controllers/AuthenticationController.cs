@@ -14,12 +14,12 @@ public class AuthenticationController : Controller
     private readonly ILogger<AuthenticationController> Logger;
     private IConfiguration Configuration;
     private IHttpContextAccessor HttpContextAccessor;
-    private IAuthenticationService AuthenticationService;
-
-   public AuthenticationController(ILogger<AuthenticationController> logger,IAuthenticationService authenticationService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+    private IUserService UserService;
+    
+   public AuthenticationController(ILogger<AuthenticationController> logger,IUserService userService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
    {
        Logger = logger;
-       AuthenticationService = authenticationService;
+       UserService = userService;
        HttpContextAccessor = httpContextAccessor;
        Configuration = configuration;
    }
@@ -30,39 +30,43 @@ public class AuthenticationController : Controller
     {
         HttpContextAccessor.HttpContext.Session.Clear();
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> SendCode(IFormCollection form)
+    public async Task<IActionResult> VerifyUser(IFormCollection form)
     {
-        var code = await AuthenticationService.SendEmailAsync(form["email"].ToString(), "Администация Сайта");
-        return int.TryParse(code, out var number) ? Ok(number) : Problem(code);
+        var idUser = int.Parse(form["idUser"]);
+        var userCode = form["code"].ToString();
+        var correctCode = HttpContextAccessor.HttpContext.Session.GetString("Code");
+        
+        var response = UserService.VerifyUser(idUser, userCode, correctCode);
+        HttpContextAccessor.HttpContext.Session.Remove("Code");
+        return Ok(response);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Register(IFormCollection form)
     {
-        if (form["code"].ToString() != form["correctCode"])
-        {
-            return BadRequest("Неправильный Код");
-        }
-        var response = await AuthenticationService.Register(form);
+        var response = await UserService.Register(form);
         if (response.StatusCode != HttpStatusCode.OK)
         {
-            return StatusCode((int)response.StatusCode, response.Message);
+            return Ok(response);
         }
+
+        var code = await UserService.SendEmailAsync(form["email"].ToString(), "Администация Сайта");
         HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
+        HttpContextAccessor.HttpContext.Session.SetString("Code", code);
         return Ok(response.Token);
     }
     
     
     
     [HttpPost]
-    public async Task<IActionResult> Login(IFormCollection form)
+    public async Task<IActionResult> Login(IFormCollection form) 
     {
-        var response = await AuthenticationService.Login(form);
+        var response = await UserService.Login(form);
         if (response.StatusCode != HttpStatusCode.OK)
         {
-            return StatusCode((int)response.StatusCode, response.Message);
+            return Ok(response);
         }
         HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
         return Ok(response.Token);
