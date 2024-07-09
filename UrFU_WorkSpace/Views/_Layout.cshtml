@@ -1,5 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @using UrFU_WorkSpace.Helpers
+
+@{
+  var token = ViewContext.HttpContext.Session.GetString("JwtToken");
+  var user = JwtTokenDecoder.Decode(token);
+}
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -22,11 +27,24 @@
       <span class="navbar-text">
         <a href="#" class="nav__link">Контакты</a>
       </span>
+      @{
+        if (user != null)
+        {
+          <div id="lk">
+            <a style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn" href="/users/@user.Id">
+                        <img src="/img/account.svg" alt="Лк"> @user.Login
+                      </a>
+          </div>
+        }
+        else
+        {
           <div id="lk">
             <button class="btn-reset btn nav__btn" style="margin-right: 5rem" data-bs-toggle="modal" data-bs-target="#loginModal">
               Войти
             </button>
           </div>
+        }
+      }
     </div>
   </div>
 </nav>

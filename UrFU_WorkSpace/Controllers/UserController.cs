@@ -6,7 +6,7 @@ using UrFU_WorkSpace.Services.Interfaces;
 
 namespace UrFU_WorkSpace.Controllers;
 
-public class PersonalCabinetController : Controller
+public class UserController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private HttpContext _context;
@@ -16,9 +16,10 @@ public class PersonalCabinetController : Controller
     private IVerificationCodeService VerificationCodeService;
     private IWebHostEnvironment _appEnvironment;
     private IReservationService ReservationService;
+    private IWorkspaceService WorkspaceService;
 
-    public PersonalCabinetController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service, IAmenityService amenityService, IObjectService objectService,
-        IVerificationCodeService verificationCodeService, IReservationService reservationService)
+    public UserController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service, IAmenityService amenityService, IObjectService objectService,
+        IVerificationCodeService verificationCodeService, IReservationService reservationService, IWorkspaceService workspaceService)
     {
         _context = httpContextAccessor.HttpContext;
         ObjectService = objectService;
@@ -27,6 +28,7 @@ public class PersonalCabinetController : Controller
         _logger = logger;
         _appEnvironment = appEnvironment;
         Service = service;
+        WorkspaceService = workspaceService;
         ReservationService = reservationService;
     }
     [Route("{idUser}/verification-codes")]
@@ -81,7 +83,7 @@ public class PersonalCabinetController : Controller
     [Route("/workspace-create")]
     public IActionResult CreateWorkspace(IFormCollection form, IFormFileCollection uploads)
     {
-        var idUser =int.Parse(JwtTokenDecoder.GetUserId(_context.Session.GetString("JwtToken")));
+        var idUser =JwtTokenDecoder.GetUserId(_context.Session.GetString("JwtToken"));
         
         var baseInfo = new Dictionary<string, object>()
         {
@@ -110,9 +112,40 @@ public class PersonalCabinetController : Controller
         return Redirect("/");
     }
     
-    [Route("/users/1")]
-    public IActionResult Profile()
+    [Route("/users/{idUser}")]
+    public IActionResult Profile(int idUser)
     {
-        return View("Profile"); 
+        var token = HttpContext.Session.GetString("JwtToken");
+        var user = JwtTokenDecoder.Decode(token);
+        return View("Profile", user); 
+    }
+    
+    [Route("/users/{idUser}/workspaces")]
+    public async Task<IActionResult> UserWorkspaces(int idUser)
+    {
+        var workspaces = await WorkspaceService.GetAllWorkspaces();
+        return View("UserWorkspaces", workspaces.Where(x => x.IdCreator == idUser)); 
+    }
+    
+    [Route("/users/{idUser}/reservations")]
+    public async Task<IActionResult> UserReservations(int idUser)
+    {
+        var views = new List<ReservationView>();
+        var reservations =await ReservationService.GetUserReservations(idUser);
+        var workspaces = await WorkspaceService.GetAllWorkspaces();
+        foreach (var reservation in reservations)
+        {
+            var workspace = workspaces.FirstOrDefault(x => x.Id == reservation.IdWorkspace);
+            var view = new ReservationView()
+            {
+                Reservation = reservation,
+                Name = workspace.Name,
+                Image = workspace.Images.FirstOrDefault(),
+                WorkspaceObject = workspace.Objects.FirstOrDefault(x => x.Id == reservation.IdObject)
+
+            };
+            views.Add(view);
+        }
+        return View("UserReservations", views); 
     }
 }

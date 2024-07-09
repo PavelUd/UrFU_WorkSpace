@@ -1,14 +1,53 @@
+ @model List<ReservationView>
+ @{
+   Layout = "UserLayout";
+ }
+ <section class="cabinet__section">
+   <h3 class="section__title cabinet-section__title">
+     Мои бронирования
+   </h3>
 
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+   <div class="reservations__wrapper">
+     <ul class="list-reset reservations__list">
+       @foreach (var reservation in Model)
+       {
+         <li class="reservation">
+           <ul class="list-reset reservation__params">
+             <li class="reservation__param">
+               @{
+                  var image = @reservation.Image;
+                   if (image != null)
+                      <img class="cabinet__cowork-img" src="@image.Url" alt="Фото">
+                  }
+             </li>
+             <li class="reservation__param">
+               <span class="reservation__name">
+                 @reservation.Name
+               </span>
+             </li>
+             <li class="reservation__param">
+               <span class="reservation__time">
+                 @reservation.Reservation.TimeStart - @reservation.Reservation.TimeEnd
+               </span>
+             </li>
+             <li class="reservation__param">
+               <span class="reservation__type">
+                 @reservation.WorkspaceObject.Template.Category
+               </span>
+             </li>
+             <li class="reservation__param">
+               <button class="btn-reset btn btn__accept-reservation">
+                 Подтвердить
+               </button>
+             </li>
+             <li class="reservation__param">
+               <button class="btn-reset btn btn__reset-reservation">
+                 <img src="~/img/reset.png" alt="Отменить">
+               </button>
+             </li>
+           </ul>
+         </li>
+       }
+     </ul>
+   </div>
+ </section>

@@ -1,14 +1,30 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using UrFU_WorkSpace.Models;
 
 namespace UrFU_WorkSpace.Helpers;
 
 public static class JwtTokenDecoder
 {
     
-    public static Dictionary<string, string> Decode(string token)
+    public static User? Decode(string? token)
     {
-        return new JwtSecurityTokenHandler().ReadJwtToken(token).Claims.ToDictionary(t => t.Type,t => t.Value);
+        if (token == null)
+        {
+            return null;
+        }
+        var userStr= new JwtSecurityTokenHandler().ReadJwtToken(token).Claims.ToDictionary(t => t.Type,t => t.Value);
+        
+        return new User()
+        {
+            Id = int.Parse(userStr["Id"]),
+            Login = userStr["Login"],
+            AccessLevel = int.Parse(userStr["AccessLevel"]),
+            Email = userStr["Email"],
+            FirstName = userStr["FirstName"],
+            LastName = userStr["LastName"]
+        };
+
     }
 
     public static string GetUserName(string token)
@@ -18,7 +34,7 @@ public static class JwtTokenDecoder
             return "";
         }
         var info = Decode(token);
-        return info["Login"];
+        return info.Login;
     }
 
     public static int GetUserAccessLevel(string token)
@@ -28,17 +44,17 @@ public static class JwtTokenDecoder
             return 0;
         }
         var info = Decode(token);
-        return int.Parse(info["AccessLevel"]);
+        return info.AccessLevel;
     }
     
-    public static string GetUserId(string token)
+    public static int GetUserId(string token)
     {
         if (token == null)
         {
-            return "";
+            return 0;
         }
         var info = Decode(token);
-        return info["Id"];
+        return info.Id;
     }
     
 }

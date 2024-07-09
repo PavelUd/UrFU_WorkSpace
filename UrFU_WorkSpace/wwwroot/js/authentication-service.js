@@ -14,10 +14,10 @@ const verifyModal = document.getElementById('verifyCodeModal');
 
 let code;
 
-const getActiveLoginBtn = (login) => {
-    return `<div style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn">
+const getActiveLoginBtn = (login, id) => {
+    return `<a style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn" href="/users/${id}">
                <img src="/img/account.svg" alt="Лк"> ${login}
-            </div>`
+            </a>`
 }
 
 const login = async (evt) => {
@@ -27,7 +27,7 @@ const login = async (evt) => {
             let token = await authenticationClient.login(data);
             sessionStorage.setItem("token", token);
             const user = decodeJwtToken(token);
-            loginBtn.innerHTML = getActiveLoginBtn(user.Login);
+            loginBtn.innerHTML = getActiveLoginBtn(user.Login, user.Id);
             $(loginModal).modal('hide');
         }
         catch (e){

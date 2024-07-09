@@ -18,6 +18,7 @@ public static class UserHelper
                     new Claim("Login", user.Login),
                     new Claim("Email", user.Email),
                     new Claim("FirstName", user.FirstName),
+                    new Claim("LastName", user.LastName),
                     new Claim("AccessLevel", user.AccessLevel.ToString())}),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(
