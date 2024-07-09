@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Личный кабинет</title>
+</head>
+<body class="page">
+  <div class="container">
+    <header class="header-outer">
+      <div class="header-inner">
+        <a href="./index.html">
+          <img class="header__logo" src="img/Logo.png" alt="Лого" >
+        </a>
+        <nav class="nav">
+          <ul class="nav__list list-reset">
+            <li class="nav__elem">
+              <a href="./register.html" class="nav__link">Контакты</a>
+            </li>
+          </ul>
+          <button class="btn-reset btn nav__btn">
+            <img src="./img/account.svg" alt="Лк">
+            <a href="./personal-cabinet-reservations.html">Личный кабинет</a>
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main class="main">
+      <div class="cabinet__hero">
+        <div class="user__wrapper">
+          <span class="user__avatar">
+            П
+          </span>
+          <span class="user__name">
+            <a href="">Пользователь</a>
+          </span>
+          <span class="user__leave">
+            <a href="">Выход</a>
+          </span>
+        </div>
+
+        <h2 class="section__title cabinet__title">
+          Личный кабинет
+        </h2>
+      </div>
+
+      <nav class="nav cabinet__nav">
+        <ul class="list-reset nav__list">
+          <li >
+            <a href="./personal-cabinet-profile.html">Профиль</a>
+          </li>
+          <li >
+            <a href="./personal-cabinet-reservations.html">Мои бронирования</a>
+          </li>
+          <li class="nav-active">
+            <a href="./personal-cabinet-coworks.html">Мои коворкинги</a>
+          </li>
+        </ul>
+      </nav>
+
+      <section class="cabinet__section">
+        <h3 class="section__title cabinet-section__title">
+          Мои коворкинги
+        </h3>
+
+        <div class="coworks__wrap">
+          <ul class="list-reset coworks__list">
+            <li class="cabinet__cowork">
+              <div class="cowork__left-wrap">
+                <img class="cabinet__cowork-img" src="./img/cowork__cabinet.png" alt="Фото">
+                <button class="btn-reset btn cabinet__btn">
+                  Рейтинг: 5.0
+                </button>
+              </div>
+              <div class="cowork__right-wrap">
+                <span class="institute__cowork">
+                  ИРИТ-РТФ
+                </span>
+                <span class="place__cowork">
+                  Ул. Мира, 32
+                </span>
+                <span class="name__cowork">
+                  Р-044
+                </span>
+                <div class="cowork__edit-btns">
+                  <a href=""><img class="cowork__edit-btn" src="./img/cowork__pencil.png" alt="Редактировать"></a>
+                  <a href=""><img class="cowork__edit-btn" src="./img/delete.png" alt="Удалить"></a>
+                </div>
+              </div>
+            </li>
+            <li class="cabinet__cowork">
+              <div class="cowork__left-wrap">
+                <img class="cabinet__cowork-img" src="./img/cowork__cabinet-2.png" alt="Фото">
+                <button class="btn-reset btn cabinet__btn">
+                  Рейтинг: 5.0
+                </button>
+              </div>
+              <div class="cowork__right-wrap">
+                <span class="institute__cowork">
+                  ИРИТ-РТФ
+                </span>
+                <span class="place__cowork">
+                  Ул. Мира, 32
+                </span>
+                <span class="name__cowork">
+                  Радиоточка
+                </span>
+                <div class="cowork__edit-btns">
+                  <a href=""><img class="cowork__edit-btn" src="./img/cowork__pencil.png" alt="Редактировать"></a>
+                  <a href=""><img class="cowork__edit-btn" src="./img/delete.png" alt="Удалить"></a>
+                </div>
+              </div>
+            </li>
+            <li class="cabinet__cowork">
+              <img class="cabinet__plus" src="./img/cabinet__plus.png" alt="">
+            </li>
+          </ul>
+        </div>
+
+
+      </section>
+
+    <div class="cookie__container">
+      <article class="cookie__message">
+        <span class="cookie__text">
+          Мы используем куки, как и любой сайт в интернете
+        </span>
+        <button class="btn-reset btn__cookie">
+          ОК
+        </button>
+      </article>
+    </div>
+    
+    <div class="chat">
+      <img src="./img/chat.png" alt="Чат">
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="footer__description">
+      <h2 class="section__title footer__title">
+        Контакты
+      </h2>
+      <a class="footer__contacts" href="mailto:Support@gmail.com">
+        Support@gmail.com
+      </a>
+    </div>
+  </footer>
+  </div>
+</body>
+</html>

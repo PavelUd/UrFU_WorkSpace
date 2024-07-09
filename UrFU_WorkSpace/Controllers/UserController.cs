@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
+using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services.Interfaces;
 
 namespace UrFU_WorkSpace.Controllers;
 
-public class UserController : Controller
+public class PersonalCabinetController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private HttpContext _context;
@@ -16,7 +17,7 @@ public class UserController : Controller
     private IWebHostEnvironment _appEnvironment;
     private IReservationService ReservationService;
 
-    public UserController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service, IAmenityService amenityService, IObjectService objectService,
+    public PersonalCabinetController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service, IAmenityService amenityService, IObjectService objectService,
         IVerificationCodeService verificationCodeService, IReservationService reservationService)
     {
         _context = httpContextAccessor.HttpContext;
@@ -107,5 +108,11 @@ public class UserController : Controller
             VerificationCodeService.AddCode(idWorkspace);
         }
         return Redirect("/");
+    }
+    
+    [Route("/users/1")]
+    public IActionResult Profile()
+    {
+        return View("Profile"); 
     }
 }
