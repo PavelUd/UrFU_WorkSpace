@@ -1,0 +1,43 @@
+@using UrFU_WorkSpace.Helpers
+@{
+  Layout = "~/Views/_Layout.cshtml";
+  var token = ViewContext.HttpContext.Session.GetString("JwtToken");
+  var idUser = JwtTokenDecoder.GetUserId(token);
+  var login = JwtTokenDecoder.GetUserName(token);
+}
+<html lang="en">
+<main class="main">
+  <div class="cabinet__hero">
+    <div class="user__wrapper">
+      <span class="user__avatar">
+        @login[0]
+      </span>
+      <span class="user__name">
+        <a href="">@login</a>
+      </span>
+      <span class="user__leave">
+        <a href="">Выход</a>
+      </span>
+    </div>
+
+    <h2 class="section__title cabinet__title">
+      Личный кабинет
+    </h2>
+  </div>
+
+  <nav class="nav cabinet__nav">
+    <ul class="list-reset nav__list">
+      <li>
+        <a href="/users/@idUser">Профиль</a>
+      </li>
+      <li>
+        <a href="/users/@idUser/reservations">Мои бронирования</a>
+      </li>
+      <li>
+        <a href="/users/@idUser/workspaces">Мои коворкинги</a>
+      </li>
+    </ul>
+  </nav>
+  @RenderBody();
+</main>
+</html>

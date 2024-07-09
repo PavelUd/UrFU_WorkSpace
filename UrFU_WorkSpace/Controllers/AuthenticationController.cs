@@ -1,71 +1,74 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
+using UrFU_WorkSpace.Services.Interfaces;
 
 namespace UrFU_WorkSpace.Controllers;
 
-public class AuthenticationController(ILogger<AuthenticationController> logger, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
-    : Controller
+
+
+public class AuthenticationController : Controller
 {
-    private readonly ILogger<AuthenticationController> _logger = logger;
-    private IConfiguration _configuration;
+    private readonly ILogger<AuthenticationController> Logger;
+    private IConfiguration Configuration;
+    private IHttpContextAccessor HttpContextAccessor;
+    private IUserService UserService;
     
-    [HttpPost]
-    public async Task<IActionResult> CheckUserExistence(IFormCollection form)
-    {
-        var user = new User(httpContextAccessor.HttpContext, configuration);
-        var isUserExist = await user.CheckUserExistence(form);
-        return isUserExist ? Ok() : Ok("Такой пользователь уже есть");
-    }
+   public AuthenticationController(ILogger<AuthenticationController> logger,IUserService userService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+   {
+       Logger = logger;
+       UserService = userService;
+       HttpContextAccessor = httpContextAccessor;
+       Configuration = configuration;
+   }
     
     [Route("/log-out")]
     [HttpPost]
     public void ClearJwtToken()
     {
-        httpContextAccessor.HttpContext.Session.Clear();
+        HttpContextAccessor.HttpContext.Session.Clear();
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> SendCode(IFormCollection form)
+    public async Task<IActionResult> VerifyUser(IFormCollection form)
     {
-        var user = new User(httpContextAccessor.HttpContext, configuration);
-        var code = await user.SendEmailAsync(form["email"].ToString(), "Администация Сайта");
-        return int.TryParse(code, out var number) ? Ok(number) : Problem(code);
+        var idUser = int.Parse(form["idUser"]);
+        var userCode = form["code"].ToString();
+        var correctCode = HttpContextAccessor.HttpContext.Session.GetString("Code");
+        
+        var response = UserService.VerifyUser(idUser, userCode, correctCode);
+        HttpContextAccessor.HttpContext.Session.Remove("Code");
+        return Ok(response);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Register(IFormCollection form)
     {
-        if (form["code"].ToString() != form["correctCode"])
+        var response = await UserService.Register(form);
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            return BadRequest("Неправильный Код");
+            return Ok(response);
         }
-        var user = new User(httpContextAccessor.HttpContext, configuration);
-        await user.Register(form);
-        var token = httpContextAccessor.HttpContext.Session.GetString("JwtToken");
-        if (token != null)
-        {
-            
-            return Ok(token);
-        }
-        return BadRequest("Register failed");
+
+        var code = await UserService.SendEmailAsync(form["email"].ToString(), "Администация Сайта");
+        HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
+        HttpContextAccessor.HttpContext.Session.SetString("Code", code);
+        return Ok(response.Token);
     }
     
+    
+    
     [HttpPost]
-    public async Task<IActionResult> Login(IFormCollection form)
+    public async Task<IActionResult> Login(IFormCollection form) 
     {
-        var user = new User(httpContextAccessor.HttpContext, configuration);
-        var message = await user.Login(form);
-        var token = httpContextAccessor.HttpContext.Session.GetString("JwtToken");
-        if (token != null)
+        var response = await UserService.Login(form);
+        if (response.StatusCode != HttpStatusCode.OK)
         {
-            return Ok(token);
+            return Ok(response);
         }
-        if(message != "")
-        {
-            return BadRequest(message); 
-        }
-        return StatusCode(500, "Login failed");
+        HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
+        return Ok(response.Token);
     }
 }

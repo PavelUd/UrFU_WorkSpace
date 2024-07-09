@@ -58,7 +58,7 @@ public class WorkspacesController : Controller
         
        await _reviewService.AddReview(new Models.Review()
         {
-            IdUser = int.Parse(idUser),
+            IdUser = idUser,
             IdWorkspace = idWorkspace,
             Message = text,
             Estimation = int.Parse(stars),

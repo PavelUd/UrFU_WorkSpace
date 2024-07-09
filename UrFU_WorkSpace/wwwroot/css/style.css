@@ -1359,6 +1359,7 @@ input[type="file"] {
 
 .cabinet__hero{
   padding: 14px 163px 0 163px;
+  background: url(../img/cabinet-background.png) no-repeat;
   background-size: cover;
 }
 
@@ -1619,7 +1620,6 @@ input[type="file"] {
   content: "";
   width: 35px;
   height: 35px;
-  margin-right: 5px;
 }
 
 .cowork__edit-btns{
