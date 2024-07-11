@@ -1,9 +1,17 @@
 @using UrFU_WorkSpace.Helpers
+@using Microsoft.AspNetCore.Http;
 @{
   Layout = "~/Views/_Layout.cshtml";
   var token = ViewContext.HttpContext.Session.GetString("JwtToken");
   var idUser = JwtTokenDecoder.GetUserId(token);
   var login = JwtTokenDecoder.GetUserName(token);
+  var action = ViewContext.RouteData.Values["action"];
+  var navItems = new Dictionary<string, Tuple<string, string>>()
+  {
+    { "Profile", new Tuple<string, string>("/users/" + idUser, "Профиль") },
+    { "UserReservations", new Tuple<string, string>("/users/" + idUser + "/reservations", "Мои бронирования") },
+    { "UserWorkspaces", new Tuple<string, string>("/users/" + idUser + "/workspaces", "Мои коворкинги") },
+  };
 }
 <html lang="en">
 <main class="main">
@@ -13,10 +21,10 @@
         @login[0]
       </span>
       <span class="user__name">
-        <a href="">@login</a>
+        <a href="/users/@idUser">@login</a>
       </span>
       <span class="user__leave">
-        <a href="">Выход</a>
+        <a class="log-out" style="cursor: pointer">Выход</a>
       </span>
     </div>
 
@@ -27,17 +35,17 @@
 
   <nav class="nav cabinet__nav">
     <ul class="list-reset nav__list">
-      <li>
-        <a href="/users/@idUser">Профиль</a>
-      </li>
-      <li>
-        <a href="/users/@idUser/reservations">Мои бронирования</a>
-      </li>
-      <li>
-        <a href="/users/@idUser/workspaces">Мои коворкинги</a>
-      </li>
+      @foreach (var navItem in navItems)
+      {
+        var cl = navItem.Key == (string)action! ? "nav-active" : "";
+        <li>
+          <a class="@cl" href="@navItem.Value.Item1">@navItem.Value.Item2</a>
+        </li>
+      }
     </ul>
   </nav>
   @RenderBody();
 </main>
+<script src="~/js/user-service.js" type="module"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </html>

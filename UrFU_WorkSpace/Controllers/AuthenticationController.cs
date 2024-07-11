@@ -23,13 +23,6 @@ public class AuthenticationController : Controller
        HttpContextAccessor = httpContextAccessor;
        Configuration = configuration;
    }
-    
-    [Route("/log-out")]
-    [HttpPost]
-    public void ClearJwtToken()
-    {
-        HttpContextAccessor.HttpContext.Session.Clear();
-    }
 
     [HttpPost]
     public async Task<IActionResult> VerifyUser(IFormCollection form)
@@ -71,4 +64,10 @@ public class AuthenticationController : Controller
         HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
         return Ok(response.Token);
     }
+    
+    [HttpPost]
+    public void LogOut()
+    {
+        HttpContextAccessor.HttpContext?.Session.Remove("JwtToken");
+    } 
 }

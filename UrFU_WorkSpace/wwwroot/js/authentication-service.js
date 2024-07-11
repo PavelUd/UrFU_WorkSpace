@@ -3,7 +3,7 @@ import AuthenticationClient from "./Clients/authentication-client.js";
 
 const errorLoginContainer = document.getElementById("login-error-message");
 const registerBtn = document.querySelector('.register-btn');
-const authenticationClient = new AuthenticationClient("Authentication");
+const authenticationClient = new AuthenticationClient("/Authentication");
 const loginBtn = document.getElementById('lk');
 const loginModal = document.querySelector('#loginModal');
 const emailContainer = document.getElementById("verifyEmail");
@@ -11,6 +11,8 @@ const registerModal = document.getElementById("registerModal");
 const registerForm = registerModal.querySelector('form');
 const registerErrorContainer = document.getElementById("error-message");
 const verifyModal = document.getElementById('verifyCodeModal');
+const logOutBtn = document.querySelector('.log-out');
+
 
 let code;
 
@@ -75,6 +77,12 @@ const register = async  (evt) => {
     catch(e){
         registerErrorContainer.textContent = e;
     }
+}
+
+export const logOut = async () => {
+    await authenticationClient.logOut();
+    sessionStorage.removeItem("token");
+    window.location.href = '/';
 }
 
 registerForm.addEventListener('submit', register);
