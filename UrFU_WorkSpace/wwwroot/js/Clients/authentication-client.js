@@ -32,8 +32,9 @@ export default class AuthenticationClient extends BaseClient{
 
     async logOut(){
         await this._load({
-            url: 'log-out',
-            method : Method.POST,
+            url: 'LogOut',
+            method : 'POST',
+            data: {}
         });
     }
 }
