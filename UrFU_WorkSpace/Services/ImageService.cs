@@ -22,7 +22,7 @@ public class ImageService : IImageService
             {
                 Id = id,
                 Url = url,
-                IdWorkspace = idOwner
+                IdOwner = idOwner
             };
             images.Add(image);
         }

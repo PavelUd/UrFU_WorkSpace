@@ -28,8 +28,6 @@ public class WorkspaceObject : IWorkspaceComponent
     
     [Column("width")]
     public int Width { get; set; }
-    
-    [JsonIgnore]
-    [JsonProperty("Template")]
-    public ObjectTemplate? Template { get; set; }
+
+    public ObjectTemplate? Template;
 }

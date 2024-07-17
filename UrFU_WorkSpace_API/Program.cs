@@ -1,9 +1,6 @@
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 using UrFU_WorkSpace_API;
-using UrFU_WorkSpace_API.Context;
-using UrFU_WorkSpace_API.Interfaces;
-using UrFU_WorkSpace_API.Repository;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 public class Program
 {
@@ -16,6 +13,11 @@ public class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseStartup<Startup>();
+                webBuilder.UseStartup<Startup>().ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.SetMinimumLevel(LogLevel.Trace);
+                    })
+                    .UseNLog();
             });
 }

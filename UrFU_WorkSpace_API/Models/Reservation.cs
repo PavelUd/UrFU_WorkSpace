@@ -6,11 +6,11 @@ using UrFU_WorkSpace_API.Helpers;
 
 namespace UrFU_WorkSpace_API.Models;
 [Table("workspace_reservations")]
-public class Reservation
+public class Reservation : IModel
 {
         [Key]
         [Column("reservation_id")]
-        public int IdReservation { get; set; }
+        public int Id { get; set; }
         
         [Column("object_id")]
         public int IdObject { get; set; }

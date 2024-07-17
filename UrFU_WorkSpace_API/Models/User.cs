@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace UrFU_WorkSpace_API.Models;
 
 [Table("users")] 
-public class User
+public class User: IModel
 {
     [Key][Column("user_id")]
     public int Id { get; set; }

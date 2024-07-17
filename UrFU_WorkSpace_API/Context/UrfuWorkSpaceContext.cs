@@ -21,14 +21,34 @@ public partial class UrfuWorkSpaceContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Image>()
+            .HasDiscriminator(t => t.TypeOwner)
+            .HasValue<Image>(-1)
+            .HasValue<WorkspaceImage>((int)OwnerType.Workspace)
+            .HasValue<ObjectImage>((int)OwnerType.Object)
+            .HasValue<AmenityImage>((int)OwnerType.Amenity);
+        
         modelBuilder.Entity<WorkspaceObject>()
             .HasOne(wo => wo.Template)
-            .WithMany(ot => ot.WorkspaceObjects)
+            .WithMany()
             .HasForeignKey(wo => wo.IdTemplate);
 
+        modelBuilder.Entity<ObjectTemplate>()
+            .HasOne(e => e.Image)
+            .WithOne()
+            .HasForeignKey<ObjectImage>(e => e.IdOwner)
+            .IsRequired(); 
+        
+        modelBuilder.Entity<AmenityTemplate>()
+            .HasOne(e => e.Image)
+            .WithOne()
+            .HasForeignKey<AmenityImage>(e => e.IdOwner)
+            .IsRequired();
+            
+        
         modelBuilder.Entity<WorkspaceAmenity>()
             .HasOne(wo => wo.Template)
-            .WithMany(ot => ot.WorkspaceAmenities)
+            .WithMany()
             .HasForeignKey(wo => wo.IdTemplate);
        
         modelBuilder.Entity<Workspace>()
@@ -55,6 +75,9 @@ public partial class UrfuWorkSpaceContext : DbContext
             .HasForeignKey(e => e.IdWorkspace)
             .IsRequired();
         
+        
+        modelBuilder.Entity<AmenityTemplate>().Navigation(e=> e.Image).AutoInclude();
+        modelBuilder.Entity<ObjectTemplate>().Navigation(e=> e.Image).AutoInclude();
         modelBuilder.Entity<WorkspaceAmenity>().Navigation(e => e.Template).AutoInclude();
         modelBuilder.Entity<WorkspaceObject>().Navigation(e => e.Template).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.Objects).AutoInclude();

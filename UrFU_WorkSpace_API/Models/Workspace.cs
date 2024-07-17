@@ -6,7 +6,7 @@ using UrFU_WorkSpace_API.Enums;
 namespace UrFU_WorkSpace_API.Models;
 
 [Table("workspaces")]
-public class Workspace
+public class Workspace: IModel
 {
     [Key] [Column("workspace_id")] public int Id { get; set; }
     
@@ -18,7 +18,7 @@ public class Workspace
 
     [Column("institute")] public string Institute { get; set; }
     
-    public IEnumerable<Image> Images { get; set;}
+    public IEnumerable<WorkspaceImage> Images { get; set;}
     public IEnumerable<WorkspaceObject> Objects { get; set;}
     public IEnumerable<WorkspaceAmenity> Amenities { get; set;}
     public IEnumerable<WorkspaceWeekday> OperationMode { get; set;}

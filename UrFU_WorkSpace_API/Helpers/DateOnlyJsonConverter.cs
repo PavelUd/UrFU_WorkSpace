@@ -1,18 +1,18 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace UrFU_WorkSpace_API.Helpers;
 
-public class DateOnlyJsonConverter: JsonConverter<DateOnly>
+public class DateOnlyJsonConverter : JsonConverter<DateOnly>
 {
     private readonly string Format = "yyyy-MM-dd";
-    
-    public override void Write(Utf8JsonWriter writer, DateOnly date, JsonSerializerOptions options)
+    public override void WriteJson(JsonWriter writer, DateOnly value, JsonSerializer serializer)
     {
-        writer.WriteStringValue(date.ToString(Format));
+        writer.WriteValue(value.ToString(Format));
     }
-    public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+
+    public override DateOnly ReadJson(JsonReader reader, Type objectType, DateOnly existingValue, bool hasExistingValue,
+        JsonSerializer serializer)
     {
-        return DateOnly.ParseExact(reader.GetString(), Format);
+        return DateOnly.ParseExact(reader.Value.ToString(), Format);
     }
 }

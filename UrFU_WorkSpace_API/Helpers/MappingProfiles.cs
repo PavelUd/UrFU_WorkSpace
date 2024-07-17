@@ -18,7 +18,14 @@ public class MappingProfiles : Profile
         CreateMap<Review, ReviewDto>()
             .BeforeMap((src, dest)
                 => dest.UserName = userRepository.FindByCondition(x => x.Id == src.IdUser).First().Login);
-        
+
+        CreateMap<Image, WorkspaceImage>();
+        CreateMap<Image, AmenityImage>();
+        CreateMap<Image, ObjectImage>();
+        CreateMap<ModifyWorkspaceDto, Workspace>()
+            .ForMember(dest => dest.Images, opt => opt.Ignore());
+        CreateMap<BaseInfo, Workspace>();
+        CreateMap<Workspace, BaseInfo>();
         CreateMap<VerificationCode, VerificationCodeDto>()
             .BeforeMap((src, dest)
                 => dest.IdCreator = workspaceRepository.FindByCondition(x => x.Id == src.IdWorkspace).First().IdCreator)

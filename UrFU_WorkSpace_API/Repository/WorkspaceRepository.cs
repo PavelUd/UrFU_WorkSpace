@@ -12,26 +12,4 @@ namespace UrFU_WorkSpace_API.Repository;
 public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<Workspace>(context), IWorkspaceRepository
 {
     
-    public IEnumerable<Image> GetWorkspaceImages(int workspaceId)
-   {
-       return FindByCondition(x => x.Id == workspaceId).First().Images;
-   }
-
-    public IEnumerable<WorkspaceObject> GetWorkspaceObjects(int workspaceId)
-   {
-       return FindByCondition(x => x.Id == workspaceId).First().Objects;
-   }
-
-
-   public IEnumerable<WorkspaceAmenity> GetWorkspaceAmenities(int workspaceId)
-   {
-       return FindByCondition(x => x.Id == workspaceId).First().Amenities;
-   }
-
-   public IEnumerable<WorkspaceWeekday> GetWorkspaceOperationMode(int workspaceId)
-   {
-       return FindByCondition(x => x.Id == workspaceId).First().OperationMode;
-   }
-
-
 }

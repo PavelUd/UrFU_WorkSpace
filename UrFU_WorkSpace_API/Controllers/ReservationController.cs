@@ -23,7 +23,7 @@ public class ReservationController : Controller
     [HttpPatch("{id}/confirm")]
     public IActionResult Confirm(int id)
     {
-        var i = reservationRepository.FindByCondition(x => x.IdReservation == id)
+        var i = reservationRepository.FindByCondition(x => x.Id == id)
             .ExecuteUpdate(b => b.SetProperty(x => x.IsConfirmed, true));
 
         return Ok();
@@ -55,6 +55,28 @@ public class ReservationController : Controller
             return BadRequest(ModelState);
 
         return Ok(reservation);
+    }
+    
+    [HttpDelete("{id}/delete")]
+    public IActionResult DeleteReservation(int id)
+    {
+        var reservation = reservationRepository.FindByCondition(x => x.Id == id).FirstOrDefault();
+        
+        if (reservation == null)
+        {
+            return BadRequest("Не найдено брнирование");
+        }
+        var now = DateTime.Now;
+        var reservationTime = reservation.Date.ToDateTime(reservation.TimeStart);
+
+        if (now >= reservationTime.AddHours(-12))
+        {
+            return BadRequest("Отмена брони возможна за 12 часов до забронированного времени");
+        }
+        
+        reservationRepository.Delete(reservation);
+        reservationRepository.Save();
+        return Ok();
     }
  
     private static IEnumerable<Reservation> GetFilteredReservations(int? idUser, int? idWorkspace,
