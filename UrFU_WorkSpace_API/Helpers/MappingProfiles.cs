@@ -24,8 +24,7 @@ public class MappingProfiles : Profile
         CreateMap<Image, ObjectImage>();
         CreateMap<ModifyWorkspaceDto, Workspace>()
             .ForMember(dest => dest.Images, opt => opt.Ignore());
-        CreateMap<BaseInfo, Workspace>();
-        CreateMap<Workspace, BaseInfo>();
+        CreateMap<BaseInfo, Workspace>().ReverseMap();
         CreateMap<VerificationCode, VerificationCodeDto>()
             .BeforeMap((src, dest)
                 => dest.IdCreator = workspaceRepository.FindByCondition(x => x.Id == src.IdWorkspace).First().IdCreator)

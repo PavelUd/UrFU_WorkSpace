@@ -80,10 +80,6 @@ public partial class UrfuWorkSpaceContext : DbContext
         modelBuilder.Entity<ObjectTemplate>().Navigation(e=> e.Image).AutoInclude();
         modelBuilder.Entity<WorkspaceAmenity>().Navigation(e => e.Template).AutoInclude();
         modelBuilder.Entity<WorkspaceObject>().Navigation(e => e.Template).AutoInclude();
-        modelBuilder.Entity<Workspace>().Navigation(e => e.Objects).AutoInclude();
-
-        modelBuilder.Entity<Workspace>().Navigation(e => e.Amenities).AutoInclude();
-        modelBuilder.Entity<Workspace>().Navigation(e => e.OperationMode).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.Images).AutoInclude();
         modelBuilder.Entity<VerificationCode>();
     }

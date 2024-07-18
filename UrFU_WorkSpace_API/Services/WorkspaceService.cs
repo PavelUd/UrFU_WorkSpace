@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
@@ -33,21 +34,25 @@ public class WorkspaceService
         Mapper = mapper;
     }
 
-    public Result<IEnumerable<Workspace>> GetWorkspaces(int? idUser)
+    public Result<IEnumerable<Workspace>> GetWorkspaces(int? idUser, bool isFull)
     {
         var workspaces = WorkspaceRepository.FindAll();
-        if (idUser != null)
+        if (idUser != 0)
         {
             workspaces = workspaces.Where(x => x.IdCreator == idUser);
         }
-        
+        workspaces = isFull ? WorkspaceRepository.IncludeFullInfo(workspaces) : workspaces;
         return !workspaces.Any() ? Result.Fail<IEnumerable<Workspace>>(ErrorHandler.RenderError(ErrorType.WorkspacesNotFound)) 
             : Result.Ok<IEnumerable<Workspace>>(workspaces);
     }
 
-    public Result<Workspace> GetWorkspaceById(int idWorkspace)
+    public Result<Workspace> GetWorkspaceById(int idWorkspace, bool isFull)
     {
-        var workspace = WorkspaceRepository.FindByCondition(x => x.Id == idWorkspace).FirstOrDefault();
+        var workspaces = WorkspaceRepository.FindByCondition(x => x.Id == idWorkspace);
+        var workspace = isFull
+            ? WorkspaceRepository.IncludeFullInfo(workspaces).FirstOrDefault()
+            : workspaces.FirstOrDefault();
+        
         var arg = new Dictionary<string, string>
         {
             { "idWorkspace", idWorkspace.ToString() }
@@ -94,16 +99,15 @@ public class WorkspaceService
         var workspace = Mapper.Map<Workspace>(modifyWorkspace);
         workspace.Images = images.Select(x => Mapper.Map<WorkspaceImage>(x)).ToList().AsEnumerable();
         workspace.Id = id;
-        
-        return Result.Ok(workspace);
+         return Result.Ok(workspace);
     }
     
     public Result<Workspace> PutWorkspace(ModifyWorkspaceDto modifyWorkspace, int idWorkspace)
     {
 
-        var oldWorkspaceResult = GetWorkspaceById(idWorkspace);
+        var oldWorkspaceResult = GetWorkspaceById(idWorkspace, true);
 
-        if (!oldWorkspaceResult .IsSuccess)
+        if (!oldWorkspaceResult.IsSuccess)
         {
             return Result.Fail<Workspace>(oldWorkspaceResult.Error);
         }
@@ -117,12 +121,12 @@ public class WorkspaceService
 
     public Result<None> DeleteWorkspace(int id)
     { 
-        return GetWorkspaceById(id).Then(WorkspaceRepository.Delete);
+        return GetWorkspaceById(id, true).Then(WorkspaceRepository.Delete);
     }
     
     public Result<None> UpdateBaseInfo(int idWorkspace, JsonPatchDocument<BaseInfo> workspaceComponent)
     {
-        return GetWorkspaceById(idWorkspace)
+        return GetWorkspaceById(idWorkspace, false)
             .Then(x => Mapper.Map<BaseInfo>(x))
             .Then(b =>
             {
