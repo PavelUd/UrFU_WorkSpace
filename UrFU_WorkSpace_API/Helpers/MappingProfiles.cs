@@ -15,6 +15,8 @@ public class MappingProfiles : Profile
     {
         _userRepository = userRepository;
         _workspaceRepository = workspaceRepository;
+
+        CreateMap<ModifyUserDto, User>();
         CreateMap<Review, ReviewDto>()
             .BeforeMap((src, dest)
                 => dest.UserName = userRepository.FindByCondition(x => x.Id == src.IdUser).First().Login);

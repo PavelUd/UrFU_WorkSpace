@@ -11,7 +11,7 @@ public class TemplateService<T> where T : IModel
 {
     private IBaseRepository<T> TemplateRepository;
 
-    public TemplateService(IBaseRepository<T> templateRepository)
+    public  TemplateService(IBaseRepository<T> templateRepository)
     {
         this.TemplateRepository = templateRepository;
     }

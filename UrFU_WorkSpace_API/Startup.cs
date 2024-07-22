@@ -7,6 +7,7 @@ using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Repository;
 using UrFU_WorkSpace_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,6 +27,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddMemoryCache();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
@@ -51,7 +53,6 @@ public class Startup
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles(services.BuildServiceProvider().GetService<IUserRepository>(), services.BuildServiceProvider().GetService<IWorkspaceRepository>())));
         services.AddAuthentication(x =>
         {
-            
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(x =>
@@ -76,6 +77,7 @@ public class Startup
             settings.Converters.Add(new DateOnlyJsonConverter());
             settings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
         });
+
         
         services.AddDbContext<UrfuWorkSpaceContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("Connection")));
@@ -87,6 +89,32 @@ public class Startup
                 Version = "v1",
                 Title = "Co-Working API",
                 Description = "API Сервиса бронирования коворкингов УрФУ",
+            });
+            
+            options.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Description = "Введите строку авторизации следующим образом: `Bearer созданный JWT Токен`",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                        Reference = new OpenApiReference
+                        {
+                            Id = "Bearer",
+                            Type = ReferenceType.SecurityScheme
+                        }
+                    },
+                    new List<string>()
+                }
             });
             
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -109,7 +137,7 @@ public class Startup
         
         app.UseSwagger();
         app.UseSwaggerUI();
-        
+        app.UseMiddleware<JwtMiddleware>();
         app.UseAuthentication();
         app.UseRouting();
         app.UseAuthorization();

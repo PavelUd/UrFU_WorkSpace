@@ -12,5 +12,8 @@ public enum ErrorType
     
     IncorrectCountWeekdays,
     InvalidDayOfWeek,
+    UserConflict,
+    UserNotFound,
+    IncorrectConfirmCode
     
 }

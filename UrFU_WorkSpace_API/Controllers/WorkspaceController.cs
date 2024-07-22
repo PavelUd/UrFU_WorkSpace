@@ -1,8 +1,10 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using UrFU_WorkSpace_API.Dto;
+using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
@@ -15,7 +17,7 @@ namespace UrFU_WorkSpace_API.Controllers;
 
 public class WorkspaceController : Controller
 {
-    private readonly IWorkspaceRepository WorkspaceRepository;
+
     private readonly WorkspaceService _workspaceService;
     private ILogger<WorkspaceController> Logger;
     public IMapper mapper { get; set; }
@@ -25,12 +27,10 @@ public class WorkspaceController : Controller
         Converters = { new TimeOnlyJsonConverter() },
     };
 
-    public WorkspaceController(IWorkspaceRepository workspaceRepository, 
-        WorkspaceService workspaceService,
+    public WorkspaceController(WorkspaceService workspaceService,
         ILogger<WorkspaceController> logger,  
         IMapper mapper)
     {
-        WorkspaceRepository = workspaceRepository;
         _workspaceService = workspaceService;
         this.mapper = mapper;
         Logger = logger;
@@ -162,6 +162,7 @@ public class WorkspaceController : Controller
     ///- <term><c>idCreator</c></term>
     ///- <term><c>institute</c></term>
     /// </remarks>
+    [Authorize(Roles =  nameof(Role.Admin))]
     [HttpPatch("{idWorkspace}")]
     public IActionResult PatchWorkspace([FromBody] JsonPatchDocument<BaseInfo> workspaceComponent, [FromRoute]int idWorkspace)
     {
@@ -199,7 +200,9 @@ public class WorkspaceController : Controller
     /// - <description>Номер дня недели не может быть больше 7 (максимальное количество дней в неделе).</description>
     /// - <description>в объктах не нужно устанавливать поле id и idWorkspace</description>
     /// </remarks>
+     
     [HttpPost]
+    [Authorize(Roles =  nameof(Role.Admin))]
     [ProducesResponseType(200, Type = typeof(int))]
     public IActionResult CreateWorkspace([FromForm] ModifyWorkspaceDto workspace)
     {
@@ -227,7 +230,7 @@ public class WorkspaceController : Controller
      /// <para>Все поля коворкинга будут полностью переписаны новыми значениями, предоставленными в запросе.</para>
      /// </remarks>
     
-    
+     [Authorize(Roles =  nameof(Role.Admin))]
      [ProducesResponseType(204)]
      [ProducesResponseType(400, Type = typeof(Error))]
      [HttpPut("{idWorkspace}")]
@@ -258,6 +261,7 @@ public class WorkspaceController : Controller
     ///     Id Коворкинга
     /// </param>
     
+    [Authorize(Roles =  nameof(Role.Admin))]
     [ProducesResponseType(204)]
     [ProducesResponseType(404, Type = typeof(Error))]
     [ProducesResponseType(500, Type = typeof(Error))]

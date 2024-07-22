@@ -7,7 +7,7 @@ namespace UrFU_WorkSpace_API.Services.WorkspaceComponentsServices;
 
 public class WorkspaceAmenitiesService : WorkspaceComponentService<WorkspaceAmenity>
 {
-    private TemplateService<AmenityTemplate>  TemplateService;
+    private TemplateService<AmenityTemplate> TemplateService;
     
     public WorkspaceAmenitiesService(IBaseRepository<WorkspaceAmenity> repository, TemplateService<AmenityTemplate> templateService) : base(repository)
     {

@@ -14,10 +14,7 @@ public abstract class WorkspaceComponentService<T> : IWorkspaceComponentService<
         Repository = repository;
     }
 
-    public virtual Result<None> ValidateComponents(IEnumerable<T> components)
-    {
-        return Result.Ok();
-    }
+    public abstract Result<None> ValidateComponents(IEnumerable<T> components);
 
     public  Result<IEnumerable<T>> GetComponents(int idWorkspace)
     {

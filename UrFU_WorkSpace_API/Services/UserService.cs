@@ -1,15 +1,16 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Net;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Connections;
+using System.Net.Mail;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Caching.Memory;
+using MimeKit;
+using Org.BouncyCastle.Asn1.Cmp;
+using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Repository;
+using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace UrFU_WorkSpace_API.Services;
 
@@ -17,11 +18,14 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
-    
-    public UserService(IUserRepository userRepository, IConfiguration configuration)
+    private readonly IMemoryCache _memoryCache;
+    private readonly TimeSpan _codeExpiration = TimeSpan.FromMinutes(10);
+
+    public UserService(IUserRepository userRepository, IConfiguration configuration, IMemoryCache memoryCache)
     {
         _userRepository = userRepository;
         _configuration = configuration;
+        _memoryCache = memoryCache;
     }
 
     public IEnumerable<User> GetAllUsers()
@@ -29,65 +33,103 @@ public class UserService : IUserService
         return _userRepository.FindAll();
     }
     
-    public AuthenticateResponse Authenticate(AuthenticateRequest authenticate)
+    public Result<string> Authenticate(AuthenticateRequest authenticate)
     {
 
         var users = _userRepository.FindAll();
-        var user = users.FirstOrDefault(x => (x.Login == authenticate.Login) && x.Password == authenticate.Password);
+        var user = users.FirstOrDefault(x => x.Login == authenticate.Login && x.Password == authenticate.Password);
         
         return user == null ? 
-            new AuthenticateResponse(HttpStatusCode.Unauthorized,message: "Пользователь не найден") : 
-            new AuthenticateResponse(HttpStatusCode.OK,token: _configuration.GenerateJwtToken(user));
+            new Result<string>(ErrorHandler.RenderError(ErrorType.UserNotFound)) : 
+            JwtTokenHelper.GenerateJwtToken( _configuration, user);
     }
     
-    public async Task<AuthenticateResponse> Register(User user)
+    public Result<string> Register(User user)
     {
-       var statusCode = AddUser(user);
-       if (statusCode != HttpStatusCode.Created)
-       {
-           var message = statusCode == HttpStatusCode.Conflict
-               ? "Такой пользователь уже существует"
-               : "пользователь не сохранился";
-           return new AuthenticateResponse(statusCode, message);
-       }
-       return  Authenticate(new AuthenticateRequest
-       {
-           Login = user.Login,
-           Password = user.Password
-       });
+        var isUserExist = IsUserExist(user);
+        if (!isUserExist)
+        {
+            return Result.Fail<string>(ErrorHandler.RenderError(ErrorType.UserConflict));
+        }
+        
+        return JwtTokenHelper.GenerateJwtToken( _configuration, user);
     }
 
-    public IEnumerable<User> GetUsersByCondition(Expression<Func<User, bool>> expression)
+    public IQueryable<User> GetUsersByCondition(Expression<Func<User, bool>> expression)
     {
-        return _userRepository.FindByCondition(expression).AsEnumerable();
+        return _userRepository.FindByCondition(expression);
     }
 
-    public void UpdateAccessLevel(int idUser, int newAccessLevel)
+    private bool IsUserExist(User user)
     {
-        _userRepository.FindByCondition(x => x.Id == idUser)
-            .ExecuteUpdate(b => b.SetProperty(x => x.AccessLevel, newAccessLevel));
-
+        var oldUser = GetUsersByCondition(u => u.Email == user.Email  || u.Login == user.Login).FirstOrDefault();
+   
+        return oldUser == null;
+    }
+    
+    public Result<None> SendConfirmEmail(int code, string email)
+    {
+        var emailMessage = GetConfirmMessage(code, email);
+        using var client = new SmtpClient();
+        try
+        {
+            client.Connect("smtp.gmail.com", 465, true);
+            client.Authenticate(_configuration["Email"], _configuration["Password"]);
+            client.Send(emailMessage);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<None>(new Error(e.Message));
+        }
+        finally
+        {
+            client.Disconnect(true);
+            client.Dispose();
+            emailMessage.Dispose();
+        }
     }
 
-    private HttpStatusCode AddUser(User user)
+    public void SaveUserInfo(User user, int code)
     {
-        user.AccessLevel = 0;
-        var exitingUser = GetUsersByCondition(u => u.Email.Trim().ToUpper() == user.Email.TrimEnd().ToUpper() 
-                                                  || u.Login.Trim().ToUpper() == user.Login.TrimEnd().ToUpper()).FirstOrDefault();
+        var codeKey = user.Login + " code";
+        _memoryCache.Set(user.Login, user,  _codeExpiration);
+        _memoryCache.Set(codeKey, code, _codeExpiration);
+    }
 
-        if (exitingUser == null)
+    public Result<None> Confirm(string login, int code)
+    {
+        _memoryCache.TryGetValue(login, out User? user);
+        _memoryCache.TryGetValue(login + " code", out int storedCode);
+        if (user == null)
         {
-            _userRepository.Create(user);
+            return Result.Fail<None>(ErrorHandler.RenderError(ErrorType.UserNotFound));
         }
-        else if (exitingUser.AccessLevel == 0)
+        if (code != storedCode)
         {
-            user.Id = exitingUser.Id;
-            _userRepository.Update(user);
+            return Result.Fail<None>(ErrorHandler.RenderError(ErrorType.IncorrectConfirmCode));
         }
-        else
+        
+        user.AccessLevel = 1;
+        var result = Result.Ok(user).Then(_userRepository.Create);
+        _memoryCache.Remove(login);
+        _memoryCache.Remove(login + " code");
+        return result.IsSuccess ? Result.Ok() : Result.Fail<None>(result.Error);
+
+
+    }
+    
+    private MimeMessage GetConfirmMessage(int code, string email)
+    {
+        const string name = "Администрация сайта";
+        var emailMessage = new MimeMessage();
+        emailMessage.From.Add(new MailboxAddress(name, _configuration["Email"]));
+        emailMessage.To.Add(new MailboxAddress("", email));
+        emailMessage.Subject = name;
+        emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
         {
-            return HttpStatusCode.Conflict;
-        }
-        return _userRepository.Save() ? HttpStatusCode.Created : HttpStatusCode.BadRequest;
+            Text = code.ToString()
+        };
+        return emailMessage;
     }
 }

@@ -18,6 +18,9 @@ public static class ErrorHandler
         {ErrorType.TemplateNotFound,new Error("Шаблон с id {value} не найден",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.NotFound) },
         {ErrorType.InvalidDayOfWeek,new Error("Номер для дня недели не может быть больше 7",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.UnprocessableContent) },
         {ErrorType.IncorrectCountWeekdays,new Error("Количество объектов в Режиме работы дожно быть не более 7",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.UnprocessableContent) },
+        { ErrorType.UserConflict, new Error("Такой пользователь уже существует", ErrorType.UserConflict, HttpStatusCode.Conflict) },
+        { ErrorType.UserNotFound, new Error("Пользователь не найден", ErrorType.UserNotFound, HttpStatusCode.NotFound) },
+        {ErrorType.IncorrectConfirmCode, new Error("Код подтверждения неверный", ErrorType.IncorrectConfirmCode, HttpStatusCode.UnprocessableContent)}
     };
 
     public static Error RenderError(ErrorType type, Dictionary<string, string>? args = default)

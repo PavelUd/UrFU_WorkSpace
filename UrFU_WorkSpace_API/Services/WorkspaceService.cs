@@ -18,7 +18,7 @@ public class WorkspaceService
     private readonly IWorkspaceComponentService<WorkspaceObject> ObjectService;
     private readonly IWorkspaceComponentService<WorkspaceWeekday> OperationModeService;
     private readonly ImageService ImageService;
-    public IMapper Mapper { get; set; }
+    private IMapper Mapper { get; set; }
     
     public WorkspaceService(IWorkspaceRepository workspaceRepository, 
         IWorkspaceComponentService<WorkspaceAmenity> amenityRepository, 
@@ -65,7 +65,6 @@ public class WorkspaceService
     
     public Result<IEnumerable<WorkspaceWeekday>> GetOperationMode(int idWorkspace)
     {
-
         return OperationModeService.GetComponents(idWorkspace);
     }
 
@@ -85,22 +84,6 @@ public class WorkspaceService
             .Then(_ =>ConstructWorkspace(modifyWorkspace))
             .Then(WorkspaceRepository.Create);
     }
-
-    private Result<None> ValidateWorkspaceComponents(ModifyWorkspaceDto workspace)
-    {
-        return ObjectService.ValidateComponents(workspace.Objects)
-            .Then(_ => OperationModeService.ValidateComponents(workspace.OperationMode))
-            .Then(_ => AmenityService.ValidateComponents(workspace.Amenities));
-    }
-
-    private Result<Workspace> ConstructWorkspace(ModifyWorkspaceDto modifyWorkspace, int id = 0)
-    {
-        var images = ImageService.ConstructImages(modifyWorkspace.ImageFiles);
-        var workspace = Mapper.Map<Workspace>(modifyWorkspace);
-        workspace.Images = images.Select(x => Mapper.Map<WorkspaceImage>(x)).ToList().AsEnumerable();
-        workspace.Id = id;
-         return Result.Ok(workspace);
-    }
     
     public Result<Workspace> PutWorkspace(ModifyWorkspaceDto modifyWorkspace, int idWorkspace)
     {
@@ -115,13 +98,6 @@ public class WorkspaceService
         return ValidateWorkspaceComponents(modifyWorkspace)
             .Then(_ => ConstructWorkspace(modifyWorkspace, idWorkspace))
             .Then(x => WorkspaceRepository.Replace(oldWorkspaceResult.Value, x));
-    }
-
-
-
-    public Result<None> DeleteWorkspace(int id)
-    { 
-        return GetWorkspaceById(id, true).Then(WorkspaceRepository.Delete);
     }
     
     public Result<None> UpdateBaseInfo(int idWorkspace, JsonPatchDocument<BaseInfo> workspaceComponent)
@@ -138,16 +114,27 @@ public class WorkspaceService
             .Then(WorkspaceRepository.Update);
     }
     
-    private static Result<IEnumerable<T>> GetWorkspaceComponent<T>(IBaseRepository<T> repository,int idWorkspace) where T : IWorkspaceComponent
-    {
-        var message = ErrorHandler.RenderError(ErrorType.WorkspaceComponentNotFound);
-        var entities = repository.FindByCondition(x => x.IdWorkspace == idWorkspace);
-        return !entities.Any() ?
-            Result.Fail<IEnumerable<T>>(message) 
-            : Result.Ok(entities.AsEnumerable());
+    public Result<None> DeleteWorkspace(int id)
+    { 
+        return GetWorkspaceById(id, true).Then(WorkspaceRepository.Delete);
     }
     
     
     
     
+    private Result<None> ValidateWorkspaceComponents(ModifyWorkspaceDto workspace)
+    {
+        return ObjectService.ValidateComponents(workspace.Objects)
+            .Then(_ => OperationModeService.ValidateComponents(workspace.OperationMode))
+            .Then(_ => AmenityService.ValidateComponents(workspace.Amenities));
+    }
+
+    private Result<Workspace> ConstructWorkspace(ModifyWorkspaceDto modifyWorkspace, int id = 0)
+    {
+        var images = ImageService.ConstructImages(modifyWorkspace.ImageFiles);
+        var workspace = Mapper.Map<Workspace>(modifyWorkspace);
+        workspace.Images = images.Select(x => Mapper.Map<WorkspaceImage>(x)).ToList().AsEnumerable();
+        workspace.Id = id;
+        return Result.Ok(workspace);
+    }
 }
