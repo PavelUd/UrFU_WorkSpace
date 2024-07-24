@@ -32,104 +32,14 @@ public class UserService : IUserService
     {
         return _userRepository.FindAll();
     }
-    
-    public Result<string> Authenticate(AuthenticateRequest authenticate)
-    {
-
-        var users = _userRepository.FindAll();
-        var user = users.FirstOrDefault(x => x.Login == authenticate.Login && x.Password == authenticate.Password);
-        
-        return user == null ? 
-            new Result<string>(ErrorHandler.RenderError(ErrorType.UserNotFound)) : 
-            JwtTokenHelper.GenerateJwtToken( _configuration, user);
-    }
-    
-    public Result<string> Register(User user)
-    {
-        var isUserExist = IsUserExist(user);
-        if (!isUserExist)
-        {
-            return Result.Fail<string>(ErrorHandler.RenderError(ErrorType.UserConflict));
-        }
-        
-        return JwtTokenHelper.GenerateJwtToken( _configuration, user);
-    }
 
     public IQueryable<User> GetUsersByCondition(Expression<Func<User, bool>> expression)
     {
         return _userRepository.FindByCondition(expression);
     }
 
-    private bool IsUserExist(User user)
+    public Result<int> CreateUser(User user)
     {
-        var oldUser = GetUsersByCondition(u => u.Email == user.Email  || u.Login == user.Login).FirstOrDefault();
-   
-        return oldUser == null;
-    }
-    
-    public Result<None> SendConfirmEmail(int code, string email)
-    {
-        var emailMessage = GetConfirmMessage(code, email);
-        using var client = new SmtpClient();
-        try
-        {
-            client.Connect("smtp.gmail.com", 465, true);
-            client.Authenticate(_configuration["Email"], _configuration["Password"]);
-            client.Send(emailMessage);
-            return Result.Ok();
-        }
-        catch (Exception e)
-        {
-            return Result.Fail<None>(new Error(e.Message));
-        }
-        finally
-        {
-            client.Disconnect(true);
-            client.Dispose();
-            emailMessage.Dispose();
-        }
-    }
-
-    public void SaveUserInfo(User user, int code)
-    {
-        var codeKey = user.Login + " code";
-        _memoryCache.Set(user.Login, user,  _codeExpiration);
-        _memoryCache.Set(codeKey, code, _codeExpiration);
-    }
-
-    public Result<None> Confirm(string login, int code)
-    {
-        _memoryCache.TryGetValue(login, out User? user);
-        _memoryCache.TryGetValue(login + " code", out int storedCode);
-        if (user == null)
-        {
-            return Result.Fail<None>(ErrorHandler.RenderError(ErrorType.UserNotFound));
-        }
-        if (code != storedCode)
-        {
-            return Result.Fail<None>(ErrorHandler.RenderError(ErrorType.IncorrectConfirmCode));
-        }
-        
-        user.AccessLevel = 1;
-        var result = Result.Ok(user).Then(_userRepository.Create);
-        _memoryCache.Remove(login);
-        _memoryCache.Remove(login + " code");
-        return result.IsSuccess ? Result.Ok() : Result.Fail<None>(result.Error);
-
-
-    }
-    
-    private MimeMessage GetConfirmMessage(int code, string email)
-    {
-        const string name = "Администрация сайта";
-        var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress(name, _configuration["Email"]));
-        emailMessage.To.Add(new MailboxAddress("", email));
-        emailMessage.Subject = name;
-        emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
-        {
-            Text = code.ToString()
-        };
-        return emailMessage;
+        return _userRepository.Create(user);
     }
 }

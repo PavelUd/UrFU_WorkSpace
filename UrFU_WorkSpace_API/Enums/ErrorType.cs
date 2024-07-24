@@ -14,6 +14,9 @@ public enum ErrorType
     InvalidDayOfWeek,
     UserConflict,
     UserNotFound,
-    IncorrectConfirmCode
+    IncorrectConfirmCode,
+    ReservationNotFound,
+    BadAuthRequest,
+    InvalidGrantType
     
 }

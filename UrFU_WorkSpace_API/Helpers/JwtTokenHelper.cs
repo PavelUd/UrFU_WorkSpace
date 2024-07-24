@@ -26,7 +26,7 @@ public static class JwtTokenHelper
                     new Claim("AccessLevel", user.AccessLevel.ToString()),
                     new Claim(ClaimTypes.Role, GetRole(user.AccessLevel).ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(90),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

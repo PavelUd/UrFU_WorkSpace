@@ -33,14 +33,7 @@ public class ReservationController : Controller
     [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
     public IActionResult GetReservations(int? idUser, int? idWorkspace, DateTime date)
     {
-        IEnumerable<Reservation> reservations = date != DateTime.MinValue 
-            ? reservationRepository.FindByCondition(r => r.Date == new DateOnly(date.Year, date.Month, date.Day)) 
-            : reservationRepository.FindAll();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        return Ok(GetFilteredReservations(idUser, idWorkspace, reservations));
+        return Ok();
     }
     
     [HttpPost("reserve")]
@@ -77,17 +70,5 @@ public class ReservationController : Controller
         reservationRepository.Delete(reservation);
         reservationRepository.Save();
         return Ok();
-    }
- 
-    private static IEnumerable<Reservation> GetFilteredReservations(int? idUser, int? idWorkspace,
-        IEnumerable<Reservation> reservations)
-    {
-        return (idUser, idWorkspace) switch
-        {
-            (null, not null) => reservations.Where(x => x.IdWorkspace == idWorkspace),
-            (not null, not null) => reservations.Where(x => x.IdWorkspace == idWorkspace && x.IdUser == idUser),
-            (not null, null) => reservations.Where(x => x.IdUser == idUser),
-            _ => reservations
-        };
     }
 }

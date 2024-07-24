@@ -43,6 +43,7 @@ public class Startup
         services.AddScoped<IObjectTemplateRepository, ObjectTemplateRepository>();
         services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>();
         services.AddScoped<ImageService>();
+        services.AddScoped<AuthenticationService>();
         services.AddScoped<IWorkspaceComponentService<WorkspaceAmenity>, WorkspaceAmenitiesService>();
         services.AddScoped<IWorkspaceComponentService<WorkspaceObject>, WorkspaceObjectsService>();
         services.AddScoped<IWorkspaceComponentService<WorkspaceWeekday>, OperationModeService>();

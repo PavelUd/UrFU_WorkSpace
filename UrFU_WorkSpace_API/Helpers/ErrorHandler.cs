@@ -20,7 +20,10 @@ public static class ErrorHandler
         {ErrorType.IncorrectCountWeekdays,new Error("Количество объектов в Режиме работы дожно быть не более 7",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.UnprocessableContent) },
         { ErrorType.UserConflict, new Error("Такой пользователь уже существует", ErrorType.UserConflict, HttpStatusCode.Conflict) },
         { ErrorType.UserNotFound, new Error("Пользователь не найден", ErrorType.UserNotFound, HttpStatusCode.NotFound) },
-        {ErrorType.IncorrectConfirmCode, new Error("Код подтверждения неверный", ErrorType.IncorrectConfirmCode, HttpStatusCode.UnprocessableContent)}
+        {ErrorType.IncorrectConfirmCode, new Error("Код подтверждения неверный", ErrorType.IncorrectConfirmCode, HttpStatusCode.UnprocessableContent)},
+        {ErrorType.ReservationNotFound, new Error("Бронирование с {id} Не найдено брнирование", ErrorType.ReservationNotFound, HttpStatusCode.NotFound)},
+        {ErrorType.BadAuthRequest, new Error("Пароль и логин должны быть заполнены", ErrorType.BadAuthRequest, HttpStatusCode.BadRequest)},
+        {ErrorType.InvalidGrantType, new Error("Неизвестный тип авторизации", ErrorType.InvalidGrantType, HttpStatusCode.BadRequest)}
     };
 
     public static Error RenderError(ErrorType type, Dictionary<string, string>? args = default)
