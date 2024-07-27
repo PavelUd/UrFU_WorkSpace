@@ -1,25 +1,18 @@
 version: "3.9"
 services:
-  webapp:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 5090:8080
-    networks:
-      - nettw
-
   api:
-    build: 
+    build:
       context: UrFU_WorkSpace_API
       dockerfile: Dockerfile
     depends_on:
       - postgres
     ports:
       - 5260:8080
+    volumes:
+      - data-protection-keys:/root/.aspnet/DataProtection-Keys
     networks:
-      - nettw
-      
+      - mynetwork
+
   postgres:
     image: postgres:16
     environment:
@@ -29,13 +22,15 @@ services:
       PGDATA: "/var/lib/postgresql/data/pgdata"
     ports:
       - 5432:5432
+    volumes:
+      - habrdb-data:/var/lib/postgresql/data/pgdata
     networks:
-      - nettw
-    
+      - mynetwork
+
 volumes:
   habrdb-data:
-  pgadmin-data:
-  
+  data-protection-keys:
+
 networks:
-  nettw:
+  mynetwork:
     driver: bridge
