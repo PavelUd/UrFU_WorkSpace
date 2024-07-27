@@ -9,22 +9,17 @@ namespace UrFU_WorkSpace_API.Models;
 [Table("workspace_operation_mode")]
 public class WorkspaceWeekday : IWorkspaceComponent
 {
-    [Key] 
-    [Column("weekday_id")] 
-    public int Id { get; set; }
-
-    [Column("workspace_id")] 
-    public int IdWorkspace { get; set; }
-    
     [JsonConverter(typeof(TimeOnlyJsonConverter))]
     [Column("time_start")]
     public TimeOnly TimeStart { get; set; }
-        
-    [JsonConverter(typeof(TimeOnlyJsonConverter))]
-    [Column("time_end")] 
-    public TimeOnly TimeEnd { get; set; }
-    
-    [Column("day_of_week")] 
-    public int WeekDayNumber { get; set; }
 
+    [JsonConverter(typeof(TimeOnlyJsonConverter))]
+    [Column("time_end")]
+    public TimeOnly TimeEnd { get; set; }
+
+    [Column("day_of_week")] public int WeekDayNumber { get; set; }
+
+    [Key] [Column("weekday_id")] public int Id { get; set; }
+
+    [Column("workspace_id")] public int IdWorkspace { get; set; }
 }

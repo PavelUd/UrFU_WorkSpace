@@ -1,9 +1,5 @@
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 using UrFU_WorkSpace_API;
-using UrFU_WorkSpace_API.Context;
-using UrFU_WorkSpace_API.Interfaces;
-using UrFU_WorkSpace_API.Repository;
 
 public class Program
 {
@@ -11,11 +7,18 @@ public class Program
     {
         CreateHostBuilder(args).Build().Run();
     }
-        
-    private static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseStartup<Startup>();
+                webBuilder.UseStartup<Startup>().ConfigureLogging(logging =>
+                    {
+                        logging.ClearProviders();
+                        logging.SetMinimumLevel(LogLevel.Trace);
+                    })
+                    .UseNLog();
             });
+    }
 }

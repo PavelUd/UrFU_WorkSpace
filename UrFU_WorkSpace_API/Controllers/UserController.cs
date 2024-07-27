@@ -1,80 +1,63 @@
-using System.Net;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Services;
 
 namespace UrFU_WorkSpace_API.Controllers;
 
+[Tags("Пользователи")]
 [Route("api/users")]
 [ApiController]
 public class UserController : Controller
 {
-        private readonly IUserService UserService;
+    private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
-        { 
-            UserService = userService;
-        }
-        
-        [HttpGet]
-        [ProducesResponseType(500)]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
-        public IActionResult GetUsers()
-        {
-            var users = UserService.GetAllUsers();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+    public UserController(IUserService userService, IMapper mapper)
+    {
+        _userService = userService;
+        Mapper = mapper;
+    }
 
-            return Ok(users);
-        }
-        [HttpGet("{idUser}")]
-        [ProducesResponseType(500)]
-        [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult GetUser(int idUser)
-        {
-            var user = UserService.GetUsersByCondition(x => x.Id == idUser).FirstOrDefault();
-            if (user == null)
-            {
-                return NotFound("Нет такого пользователя");
-            }
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+    public IMapper Mapper { get; set; }
 
-            return Ok(user);
-        }
+    /// <summary>
+    ///     Получить Список Пользователей.
+    /// </summary>
+    /// <response code="500">Произошла ошибка сервера</response>
+    [Authorize(Roles = nameof(Role.Admin))]
+    [HttpGet]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
+    public IActionResult GetUsers()
+    {
+        var users = _userService.GetAllUsers();
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        
-        [HttpPost("register")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        public async Task<IActionResult> Register([FromBody] User user)
-        {
-            
-          var response = await UserService.Register(user);
-          return StatusCode((int)response.StatusCode, response);
-        }
+        return Ok(users);
+    }
 
-        [HttpPost("login")]
-        [ProducesResponseType(200)]
-        public IActionResult LoginUser([FromBody] AuthenticateRequest model)
-        {
-            var response = UserService.Authenticate(model);
-            return StatusCode((int)response.StatusCode, response);
-        }
-        
-        [HttpPatch("{idUser}/update-access-level")]
-        [ProducesResponseType(200)]
+    /// <summary>
+    ///     Получить Пользователя по id.
+    /// </summary>
+    /// <param name="idUser">
+    ///     id пользователя.
+    /// </param>
+    /// <response code="500">Произошла ошибка сервера</response>
+    [Authorize(Roles = nameof(Role.Admin))]
+    [HttpGet("{idUser}")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200, Type = typeof(User))]
+    public IActionResult GetUser(int idUser)
+    {
+        var user = _userService.GetUsersByCondition(x => x.Id == idUser).FirstOrDefault();
+        if (user == null) 
+            return NotFound("Нет такого пользователя");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        public IActionResult UpdateAccessLevel(int idUser, int accessLevel)
-        {
-            if (!UserService.GetUsersByCondition(x => x.Id == idUser).Any())
-            {
-                return NotFound("Пользователь не найден");
-            }
-            UserService.UpdateAccessLevel(idUser, accessLevel);
-            return Ok();
-        }
+        return Ok(user);
+    }
 }
