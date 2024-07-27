@@ -1,55 +1,60 @@
 using System.Net;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Helpers;
 
-public static class ErrorHandler
+public class ErrorHandler
 {
-    private static readonly Dictionary<ErrorType, Error> Errors = new()
-    {
-        {ErrorType.WorkspacesNotFound,new Error("Коворкинги не найдены",ErrorType.WorkspacesNotFound, HttpStatusCode.NotFound) },
-        {ErrorType.WorkspaceNotFound,new Error("Коворкиг с id {idWorkspace} не найден",ErrorType.WorkspaceNotFound, HttpStatusCode.NotFound) },
-        {ErrorType.WorkspaceComponentNotFound,new Error("Компонет коворкинга не найден",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.NotFound) },
-        {ErrorType.InvalidPosition,new Error("Позиция на оси {name}, равное {value}, не должна быть меньше 0",ErrorType.InvalidPosition, HttpStatusCode.UnprocessableContent) },
-        {ErrorType.InvalidSize,new Error("{name}, равная {value}, не должна быть меньше 1",ErrorType.InvalidSize, HttpStatusCode.UnprocessableContent) },
-        {ErrorType.TemplateNotFound,new Error("Шаблон с id {value} не найден",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.NotFound) },
-        {ErrorType.InvalidDayOfWeek,new Error("Номер для дня недели не может быть больше 7",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.UnprocessableContent) },
-        {ErrorType.IncorrectCountWeekdays,new Error("Количество объектов в Режиме работы дожно быть не более 7",ErrorType.WorkspaceComponentNotFound, HttpStatusCode.UnprocessableContent) },
-        { ErrorType.UserConflict, new Error("Такой пользователь уже существует", ErrorType.UserConflict, HttpStatusCode.Conflict) },
-        { ErrorType.UserNotFound, new Error("Пользователь не найден", ErrorType.UserNotFound, HttpStatusCode.NotFound) },
-        {ErrorType.IncorrectConfirmCode, new Error("Код подтверждения неверный", ErrorType.IncorrectConfirmCode, HttpStatusCode.UnprocessableContent)},
-        {ErrorType.ReservationNotFound, new Error("Бронирование с {id} Не найдено брнирование", ErrorType.ReservationNotFound, HttpStatusCode.NotFound)},
-        {ErrorType.BadAuthRequest, new Error("Пароль и логин должны быть заполнены", ErrorType.BadAuthRequest, HttpStatusCode.BadRequest)},
-        {ErrorType.InvalidGrantType, new Error("Неизвестный тип авторизации", ErrorType.InvalidGrantType, HttpStatusCode.BadRequest)}
-    };
+    private readonly Dictionary<ErrorType, Error> _errors = new();
+    private readonly ILogger<ErrorHandler> _logger;
 
-    public static Error RenderError(ErrorType type, Dictionary<string, string>? args = default)
+    public ErrorHandler(string jsonFilePath, ILogger<ErrorHandler> logger)
     {
-        if (!Errors.TryGetValue(type, out Error baseError)) 
+        _logger = logger;
+        LoadErrorsFromJson(jsonFilePath);
+    }
+    
+    private void LoadErrorsFromJson(string jsonFilePath)
+    {
+        try
+        {
+            var json = File.ReadAllText(jsonFilePath);
+            var errorList = JsonConvert.DeserializeObject<List<Error>>(json);
+
+            foreach (var error in errorList)
+            {
+                _errors[error.Code] = error;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading errors from JSON");
+        }
+    }
+
+    public Error RenderError(ErrorType type, Dictionary<string, string>? args = default)
+    {
+        if (!_errors.TryGetValue(type, out var baseError))
             return new Error("Неизвестная ошибка");
 
-        if (args != null)
-        {
-            baseError.Message = FormatError(baseError.Message, args);
-        }
-        
-        return baseError;
+        if (args != null) baseError.Message = FormatError(baseError.Message, args);
 
+        return baseError;
     }
 
     private static string FormatError(string errorTemplate, IReadOnlyDictionary<string, string>? userInputs)
     {
         var regex = new Regex(@"\{(\w+)\}");
-            
+
         var formattedError = regex.Replace(errorTemplate, match =>
         {
             var key = match.Groups[1].Value;
-            return userInputs.TryGetValue(key, out string value) ? value : match.Value;
+            return userInputs.TryGetValue(key, out var value) ? value : match.Value;
         });
-        
+
         return formattedError;
     }
 }

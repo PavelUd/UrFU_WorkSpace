@@ -1,5 +1,3 @@
-using UrFU_WorkSpace_API.Enums;
-using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
 
@@ -7,16 +5,18 @@ namespace UrFU_WorkSpace_API.Services;
 
 public class ImageService
 {
-    private string HostName = "hi";
     private const string ImageDirectoryPath = "images/";
 
-    private readonly IBaseRepository<Image> Repository;
-    public ImageService(IBaseRepository<Image> repository)
+    private readonly IBaseRepository<Image> _repository;
+    private readonly string _hostName;
+
+    public ImageService(IBaseRepository<Image> repository, string hostName)
     {
-        Repository = repository;
+        _repository = repository;
+        _hostName = hostName;
     }
-    
-    
+
+
     private static void Save(IFormFile imageFile, string path)
     {
         using var fileStream = new FileStream(path.ToUpper(), FileMode.Create);
@@ -32,8 +32,8 @@ public class ImageService
             Save(imageFile, path);
             images.Add(new Image
             {
-                Url = HostName + "/api/" + path,
-                IdOwner = idOwner,
+                Url = _hostName + "/api/" + path,
+                IdOwner = idOwner
             });
         }
 

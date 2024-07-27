@@ -1,24 +1,26 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore.Metadata;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Interfaces;
-using IModel = UrFU_WorkSpace_API.Models.IModel;
+using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Services;
 
 public class TemplateService<T> where T : IModel
 {
-    private IBaseRepository<T> TemplateRepository;
+    private readonly IBaseRepository<T> _templateRepository;
+    private readonly ErrorHandler _errorHandler;
 
-    public  TemplateService(IBaseRepository<T> templateRepository)
+    public TemplateService(IBaseRepository<T> templateRepository, ErrorHandler errorHandler)
     {
-        this.TemplateRepository = templateRepository;
+        _templateRepository = templateRepository;
+        _errorHandler = errorHandler;
     }
 
     public Result<T> GetTemplateById(int id)
     {
-        var template = TemplateRepository.FindByCondition(x => x.Id == id).FirstOrDefault();
-        return template == null ? Result.Fail<T>(ErrorHandler.RenderError(ErrorType.TemplateNotFound)) : Result.Ok(template);
+        var template = _templateRepository.FindByCondition(x => x.Id == id).FirstOrDefault();
+        return template == null
+            ? Result.Fail<T>(_errorHandler.RenderError(ErrorType.TemplateNotFound))
+            : Result.Ok(template);
     }
 }

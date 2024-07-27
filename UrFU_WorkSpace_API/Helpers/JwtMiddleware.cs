@@ -4,8 +4,8 @@ namespace UrFU_WorkSpace_API.Helpers;
 
 public class JwtMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly IConfiguration _configuration;
+    private readonly RequestDelegate _next;
 
     public JwtMiddleware(RequestDelegate next, IConfiguration configuration)
     {

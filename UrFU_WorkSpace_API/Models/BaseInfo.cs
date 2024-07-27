@@ -1,6 +1,6 @@
 namespace UrFU_WorkSpace_API.Models;
 
-public class BaseInfo
+public abstract class BaseInfo
 {
     public string Name { get; set; }
 
@@ -8,11 +8,9 @@ public class BaseInfo
 
     public double Rating { get; set; }
 
-   public string Institute { get; set; }
-   
-   public string Address { get; set; }
+    public string Institute { get; set; }
 
-   public int Privacy { get; set; }
+    public int Privacy { get; set; }
 
-   public int IdCreator { get; set; }
+    public int IdCreator { get; set; }
 }

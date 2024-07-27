@@ -7,18 +7,20 @@ namespace UrFU_WorkSpace_API.Services.WorkspaceComponentsServices;
 
 public class WorkspaceAmenitiesService : WorkspaceComponentService<WorkspaceAmenity>
 {
-    private TemplateService<AmenityTemplate> TemplateService;
-    
-    public WorkspaceAmenitiesService(IBaseRepository<WorkspaceAmenity> repository, TemplateService<AmenityTemplate> templateService) : base(repository)
+    private readonly TemplateService<AmenityTemplate> _templateService;
+
+    public WorkspaceAmenitiesService(IBaseRepository<WorkspaceAmenity> repository,
+        TemplateService<AmenityTemplate> templateService, ErrorHandler errorHandler) : base(repository, errorHandler)
     {
-        TemplateService = templateService;
+        _templateService = templateService;
     }
+
     public override Result<None> ValidateComponents(IEnumerable<WorkspaceAmenity> components)
     {
         var result = Result.Ok();
         foreach (var component in components)
         {
-            result = ValidateParam(TemplateService.GetTemplateById(component.IdTemplate).IsSuccess,
+            result = ValidateParam(_templateService.GetTemplateById(component.IdTemplate).IsSuccess,
                 ErrorType.TemplateNotFound, component.IdTemplate);
             if (!result.IsSuccess)
                 break;

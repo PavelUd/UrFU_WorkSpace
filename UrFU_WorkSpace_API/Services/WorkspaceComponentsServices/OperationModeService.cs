@@ -8,11 +8,11 @@ namespace UrFU_WorkSpace_API.Services;
 
 public class OperationModeService : WorkspaceComponentService<WorkspaceWeekday>
 {
-    public OperationModeService(IBaseRepository<WorkspaceWeekday> repository) : base(repository)
+    public OperationModeService(IBaseRepository<WorkspaceWeekday> repository, ErrorHandler errorHandler) : base(repository, errorHandler)
     {
     }
-    
-    public override  Result<None> ValidateComponents(IEnumerable<WorkspaceWeekday> components)
+
+    public override Result<None> ValidateComponents(IEnumerable<WorkspaceWeekday> components)
     {
         var result = ValidateParam<None>(components.Count() < 7, ErrorType.IncorrectCountWeekdays);
         foreach (var component in components)

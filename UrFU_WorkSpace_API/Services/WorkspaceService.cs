@@ -1,137 +1,149 @@
-using System.Linq.Expressions;
-using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
+using UrFU_WorkSpace_API.Helpers.Events;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
+using UrFU_WorkSpace_API.Services.Interfaces;
 
 namespace UrFU_WorkSpace_API.Services;
 
-public class WorkspaceService
+public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
 {
-    private readonly IWorkspaceRepository WorkspaceRepository;
-    private readonly IWorkspaceComponentService<WorkspaceAmenity> AmenityService;
-    private readonly IWorkspaceComponentService<WorkspaceObject> ObjectService;
-    private readonly IWorkspaceComponentService<WorkspaceWeekday> OperationModeService;
-    private readonly ImageService ImageService;
-    private IMapper Mapper { get; set; }
-    
-    public WorkspaceService(IWorkspaceRepository workspaceRepository, 
-        IWorkspaceComponentService<WorkspaceAmenity> amenityRepository, 
-        IWorkspaceComponentService<WorkspaceObject> objectRepository, 
-        IWorkspaceComponentService<WorkspaceWeekday> operationModeRepository, ImageService imageService,
-        IMapper mapper)
+    private readonly IWorkspaceComponentService<WorkspaceAmenity> _amenityService;
+    private readonly IEventPublisher _eventPublisher;
+    private readonly ImageService _imageService;
+    private readonly IWorkspaceComponentService<WorkspaceObject> _objectService;
+    private readonly IWorkspaceComponentService<WorkspaceWeekday> _operationModeService;
+    private readonly IWorkspaceRepository _workspaceRepository;
+    private readonly ErrorHandler _errorHandler;
+
+    public WorkspaceService(
+        IWorkspaceRepository workspaceRepository,
+        IWorkspaceComponentService<WorkspaceAmenity> amenityRepository,
+        IWorkspaceComponentService<WorkspaceObject> objectRepository,
+        IWorkspaceComponentService<WorkspaceWeekday> operationModeRepository,
+        ImageService imageService,
+        IMapper mapper,
+        IEventPublisher eventPublisher, 
+        ErrorHandler errorHandler)
     {
-        WorkspaceRepository = workspaceRepository;
-        AmenityService = amenityRepository;
-        ObjectService = objectRepository;
-        OperationModeService = operationModeRepository;
-        ImageService = imageService;
+        _workspaceRepository = workspaceRepository;
+        _amenityService = amenityRepository;
+        _objectService = objectRepository;
+        _operationModeService = operationModeRepository;
+        _imageService = imageService;
         Mapper = mapper;
+        _eventPublisher = eventPublisher;
+        _errorHandler = errorHandler;
     }
+
+    private IMapper Mapper { get; }
 
     public Result<IEnumerable<Workspace>> GetWorkspaces(int? idUser, bool isFull)
     {
-        var workspaces = WorkspaceRepository.FindAll();
-        if (idUser != 0)
-        {
-            workspaces = workspaces.Where(x => x.IdCreator == idUser);
-        }
-        workspaces = isFull ? WorkspaceRepository.IncludeFullInfo(workspaces) : workspaces;
-        return !workspaces.Any() ? Result.Fail<IEnumerable<Workspace>>(ErrorHandler.RenderError(ErrorType.WorkspacesNotFound)) 
+        var workspaces = _workspaceRepository.FindAll();
+        if (idUser != 0) workspaces = workspaces.Where(x => x.IdCreator == idUser);
+        workspaces = isFull ? _workspaceRepository.IncludeFullInfo(workspaces) : workspaces;
+        return !workspaces.Any()
+            ? Result.Fail<IEnumerable<Workspace>>(_errorHandler.RenderError(ErrorType.WorkspacesNotFound))
             : Result.Ok<IEnumerable<Workspace>>(workspaces);
     }
 
     public Result<Workspace> GetWorkspaceById(int idWorkspace, bool isFull)
     {
-        var workspaces = WorkspaceRepository.FindByCondition(x => x.Id == idWorkspace);
+        var workspaces = _workspaceRepository.FindByCondition(x => x.Id == idWorkspace);
         var workspace = isFull
-            ? WorkspaceRepository.IncludeFullInfo(workspaces).FirstOrDefault()
+            ? _workspaceRepository.IncludeFullInfo(workspaces).FirstOrDefault()
             : workspaces.FirstOrDefault();
-        
+
         var arg = new Dictionary<string, string>
         {
             { "idWorkspace", idWorkspace.ToString() }
         };
-        
+
         return workspace != null
             ? Result.Ok(workspace)
-            : Result.Fail<Workspace>(ErrorHandler.RenderError(ErrorType.WorkspaceNotFound, arg));
+            : Result.Fail<Workspace>(_errorHandler.RenderError(ErrorType.WorkspaceNotFound, arg));
     }
-    
+
     public Result<IEnumerable<WorkspaceWeekday>> GetOperationMode(int idWorkspace)
     {
-        return OperationModeService.GetComponents(idWorkspace);
+        return _operationModeService.GetComponents(idWorkspace);
     }
 
     public Result<IEnumerable<WorkspaceAmenity>> GetAmenities(int idWorkspace)
     {
-        return  AmenityService.GetComponents(idWorkspace);
+        return _amenityService.GetComponents(idWorkspace);
     }
 
     public Result<IEnumerable<WorkspaceObject>> GetObjects(int idWorkspace)
     {
-        return  ObjectService.GetComponents(idWorkspace);
+        return _objectService.GetComponents(idWorkspace);
     }
 
     public Result<int> CreateWorkspace(ModifyWorkspaceDto modifyWorkspace)
     {
         return ValidateWorkspaceComponents(modifyWorkspace)
-            .Then(_ =>ConstructWorkspace(modifyWorkspace))
-            .Then(WorkspaceRepository.Create);
+            .Then(_ => ConstructWorkspace(modifyWorkspace))
+            .Then(_workspaceRepository.Create);
     }
-    
+
     public Result<Workspace> PutWorkspace(ModifyWorkspaceDto modifyWorkspace, int idWorkspace)
     {
-
         var oldWorkspaceResult = GetWorkspaceById(idWorkspace, true);
 
-        if (!oldWorkspaceResult.IsSuccess)
-        {
-            return Result.Fail<Workspace>(oldWorkspaceResult.Error);
-        }
-        
+        if (!oldWorkspaceResult.IsSuccess) return Result.Fail<Workspace>(oldWorkspaceResult.Error);
+
         return ValidateWorkspaceComponents(modifyWorkspace)
             .Then(_ => ConstructWorkspace(modifyWorkspace, idWorkspace))
-            .Then(x => WorkspaceRepository.Replace(oldWorkspaceResult.Value, x));
+            .Then(x => _workspaceRepository.Replace(oldWorkspaceResult.Value, x).AsResult()
+                .Then(w => PublishWorkspaceChanges(oldWorkspaceResult.Value, w)
+                    .Then(_ => w))
+            );
     }
-    
-    public Result<None> UpdateBaseInfo(int idWorkspace, JsonPatchDocument<BaseInfo> workspaceComponent)
+
+    public Result<None> PatchWorkspace(int idWorkspace, JsonPatchDocument<BaseInfo> workspaceComponent)
     {
         return GetWorkspaceById(idWorkspace, false)
             .Then(x => Mapper.Map<BaseInfo>(x))
             .Then(b =>
             {
                 workspaceComponent.ApplyTo(b);
-                var workspace= Mapper.Map<Workspace>(b);
+                var workspace = Mapper.Map<Workspace>(b);
                 workspace.Id = idWorkspace;
                 return workspace;
             })
-            .Then(WorkspaceRepository.Update);
+            .Then(_workspaceRepository.Update);
     }
-    
+
     public Result<None> DeleteWorkspace(int id)
-    { 
-        return GetWorkspaceById(id, true).Then(WorkspaceRepository.Delete);
+    {
+        return GetWorkspaceById(id, true)
+            .Then(_ => _eventPublisher.Publish(new WorkspaceDeletedEvent(id)));
     }
-    
-    
-    
-    
+
+
+    private Result<None> PublishWorkspaceChanges(Workspace oldWorkspace, Workspace newWorkspace)
+    {
+        var weekdays = newWorkspace.OperationMode.Except(oldWorkspace.OperationMode).TakeWhile(d => d.Id != 0);
+        var objects = oldWorkspace.Objects.Except(newWorkspace.Objects);
+        _eventPublisher.Publish(new WorkspaceUpdatedEvent(weekdays, objects));
+        return Result.Ok();
+    }
+
     private Result<None> ValidateWorkspaceComponents(ModifyWorkspaceDto workspace)
     {
-        return ObjectService.ValidateComponents(workspace.Objects)
-            .Then(_ => OperationModeService.ValidateComponents(workspace.OperationMode))
-            .Then(_ => AmenityService.ValidateComponents(workspace.Amenities));
+        return _objectService.ValidateComponents(workspace.Objects)
+            .Then(_ => _operationModeService.ValidateComponents(workspace.OperationMode))
+            .Then(_ => _amenityService.ValidateComponents(workspace.Amenities));
     }
 
     private Result<Workspace> ConstructWorkspace(ModifyWorkspaceDto modifyWorkspace, int id = 0)
     {
-        var images = ImageService.ConstructImages(modifyWorkspace.ImageFiles);
+        var images = _imageService.ConstructImages(modifyWorkspace.ImageFiles);
         var workspace = Mapper.Map<Workspace>(modifyWorkspace);
         workspace.Images = images.Select(x => Mapper.Map<WorkspaceImage>(x)).ToList().AsEnumerable();
         workspace.Id = id;

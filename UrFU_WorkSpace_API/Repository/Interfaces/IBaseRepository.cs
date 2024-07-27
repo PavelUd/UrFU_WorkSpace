@@ -1,6 +1,4 @@
 using System.Linq.Expressions;
-using UrFU_WorkSpace_API.Helpers;
-using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Interfaces;
 
@@ -12,5 +10,6 @@ public interface IBaseRepository<T>
     void Update(T entity);
     void Delete(T entity);
     public T Replace(T oldEntity, T entity);
+    public void DeleteRange(IEnumerable<T> reservations);
     bool Save();
 }

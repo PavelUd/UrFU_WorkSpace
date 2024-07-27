@@ -1,4 +1,3 @@
-using System.Net;
 using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Helpers;
@@ -68,15 +67,14 @@ public static class Result
             return Fail<T>(error ?? new Error(e.Message));
         }
     }
-    
+
     public static Result<T> Of<T>(Func<Result<T>> f)
     {
         return f();
     }
-    
-    
-    
-    public static Result<None> OfAction(Action f,  Error? error = null)
+
+
+    public static Result<None> OfAction(Action f, Error? error = null)
     {
         try
         {
@@ -88,7 +86,7 @@ public static class Result
             return Fail<None>(error ?? new Error(e.Message));
         }
     }
-    
+
     public static Result<TOutput> Then<TInput, TOutput>(
         this Result<TInput> input,
         Func<TInput, TOutput> continuation)
@@ -118,7 +116,7 @@ public static class Result
             ? continuation(input.Value)
             : Fail<TOutput>(input.Error);
     }
-    
+
     public static Result<None> Then<TInput>(
         this Result<None> input, TInput param,
         Action<TInput> continuation)
@@ -140,17 +138,13 @@ public static class Result
     {
         if (input.IsSuccess) return input;
         return Fail<TInput>(replaceError(input.Error));
-
     }
-    
+
     public static Result<TInput> RefineError<TInput>(
         this Result<TInput> input,
         Error error)
     {
-        if (input.Error == null)
-        {
-            input.ReplaceError((e) => error);
-        }
+        if (input.Error == null) input.ReplaceError(e => error);
         input.Error.SubError = error;
         return input;
     }

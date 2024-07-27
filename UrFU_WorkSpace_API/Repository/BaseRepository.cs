@@ -6,7 +6,7 @@ using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Repository;
 
-public class BaseRepository<T> : IBaseRepository<T>  where T : class, IModel
+public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
 {
     protected UrfuWorkSpaceContext _context;
 
@@ -19,7 +19,7 @@ public class BaseRepository<T> : IBaseRepository<T>  where T : class, IModel
     {
         return _context.Set<T>().Where(expression).AsNoTracking();
     }
-    
+
     public IQueryable<T> FindAll()
     {
         return _context.Set<T>().AsNoTracking();
@@ -37,7 +37,7 @@ public class BaseRepository<T> : IBaseRepository<T>  where T : class, IModel
         _context.Set<T>().Update(entity);
         _context.SaveChanges();
     }
-    
+
     public T Replace(T oldEntity, T entity)
     {
         _context.Set<T>().Remove(oldEntity);
@@ -51,10 +51,16 @@ public class BaseRepository<T> : IBaseRepository<T>  where T : class, IModel
         _context.Set<T>().Remove(entity);
         _context.SaveChanges();
     }
-    
+
     public bool Save()
     {
         var saved = _context.SaveChanges();
         return saved > 0 ? true : false;
+    }
+
+    public void DeleteRange(IEnumerable<T> reservations)
+    {
+        _context.Set<T>().RemoveRange(reservations);
+        _context.SaveChanges();
     }
 }

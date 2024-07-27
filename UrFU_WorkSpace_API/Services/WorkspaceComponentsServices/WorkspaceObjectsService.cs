@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Interfaces;
@@ -8,13 +7,14 @@ namespace UrFU_WorkSpace_API.Services.WorkspaceComponentsServices;
 
 public class WorkspaceObjectsService : WorkspaceComponentService<WorkspaceObject>
 {
-    private TemplateService<ObjectTemplate>  TemplateService;
-    
-    public WorkspaceObjectsService(IBaseRepository<WorkspaceObject> repository, TemplateService<ObjectTemplate> templateService) : base(repository)
+    private readonly TemplateService<ObjectTemplate> _templateService;
+
+    public WorkspaceObjectsService(IBaseRepository<WorkspaceObject> repository,
+        TemplateService<ObjectTemplate> templateService, ErrorHandler errorHandler) : base(repository, errorHandler)
     {
-        TemplateService = templateService;
+        _templateService = templateService;
     }
-    
+
     public override Result<None> ValidateComponents(IEnumerable<WorkspaceObject> components)
     {
         var result = Result.Ok();
@@ -24,7 +24,8 @@ public class WorkspaceObjectsService : WorkspaceComponentService<WorkspaceObject
                 .Then(_ => ValidateParam(component.Y > 0, ErrorType.InvalidPosition, component.Y, "Y"))
                 .Then(_ => ValidateParam(component.Width >= 1, ErrorType.InvalidSize, component.Width, "Ширина"))
                 .Then(_ => ValidateParam(component.Height >= 1, ErrorType.InvalidSize, component.Height, "Высота"))
-                .Then(_ => ValidateParam(TemplateService.GetTemplateById(component.IdTemplate).IsSuccess, ErrorType.TemplateNotFound, component.IdTemplate));
+                .Then(_ => ValidateParam(_templateService.GetTemplateById(component.IdTemplate).IsSuccess,
+                    ErrorType.TemplateNotFound, component.IdTemplate));
             if (!result.IsSuccess)
                 break;
         }
