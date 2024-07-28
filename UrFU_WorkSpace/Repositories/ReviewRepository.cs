@@ -19,7 +19,7 @@ public class ReviewRepository
         var message = HttpRequestSender.SendRequest(BaseAddress + "/reviews", RequestMethod.Get)
             .Result.Content
             .ReadAsStringAsync().Result;
-        return JsonConvert.DeserializeObject<IEnumerable<Review>>(message)!.ToList() ?? new List<Review>();
+        return (JsonConvert.DeserializeObject<IEnumerable<Review>>(message) ?? Array.Empty<Review>()).ToList();
     }
 
     public Review? GetById(int id)

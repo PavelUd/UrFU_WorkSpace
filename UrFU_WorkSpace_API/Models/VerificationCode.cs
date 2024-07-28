@@ -6,7 +6,7 @@ using UrFU_WorkSpace_API.Helpers;
 namespace UrFU_WorkSpace_API.Models;
 
 [Table("verification_code")] 
-public class VerificationCode
+public class VerificationCode: IModel
 {
     [Key][Column("id_code")]
     public int Id { get; set; }

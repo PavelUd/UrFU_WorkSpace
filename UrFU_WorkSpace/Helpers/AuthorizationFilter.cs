@@ -44,7 +44,7 @@ public class AuthorizeAttribute : TypeFilterAttribute
         private static bool IsCorrectUserId(string token,AuthorizationFilterContext context)
         {
             var correctId = GetIdUser(context.HttpContext);
-            var currentId = int.Parse(JwtTokenDecoder.GetUserId(token));
+            var currentId = JwtTokenDecoder.GetUserId(token);
 
             return correctId == null || currentId == correctId;
         }

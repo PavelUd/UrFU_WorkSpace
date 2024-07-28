@@ -1,7 +1,8 @@
+using UrFU_WorkSpace_API.Models;
+
 namespace UrFU_WorkSpace_API.Interfaces;
 
-public interface IWorkspaceComponent
+public interface IWorkspaceComponent : IModel
 {
-    public int Id { get; set; }
     public int IdWorkspace { get; set; }
 }

@@ -120,4 +120,9 @@ public class WorkspaceService : IWorkspaceService
 
        return timeSlots;
    }
+
+   public async Task<List<Workspace>> GetAllWorkspaces()
+   {
+       return await Repository.GetAllWorkspacesAsync();
+   }
 }

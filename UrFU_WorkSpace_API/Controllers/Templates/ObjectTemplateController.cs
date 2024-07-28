@@ -4,5 +4,7 @@ using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Controllers.Templates;
 
+[Tags("Шаблоны Объектов")]
 [Route("api/templates/objects")]
-public class ObjectTemplateController(IObjectTemplateRepository repository) : TemplateController<ObjectTemplate>(repository);
+public class ObjectTemplateController
+    (IBaseRepository<ObjectTemplate> repository) : TemplateController<ObjectTemplate>(repository);

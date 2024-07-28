@@ -125,28 +125,16 @@
 
       <section class="reviews">
         <div class="reviews__head">
-          <h2 class="section__title review__title">
-            Отзывы о пространстве
-          </h2>
-          <button class="btn-reset btn review__btn" id="reviewButton" href="#"> 
-            Написать отзыв
-          </button>
-        </div>
-        <div class="review__wrapper" style="margin-bottom: 2rem" id="reviewForm" hidden>
-          <form method="post" action="/workspaces/@Model.Id/add-review">
-          <div class="review__head">
-            <span class="review__author" id="formName"></span>
-            <span class="review__date" id="formDate">
-            </span>
+                  <h2 class="section__title mb0">
+                  <span class="red scobka">[ </span>Отзывы о пространстве <span class="red">@Model.Name</span><span class="red scobka"> ]</span>
+                  </h2>
+                  <button class="btn-reset btn review__btn" id="reviewButton" href="#"> 
+                    Написать отзыв
+                  </button>
           </div>
-          <label style="color:black ">Введите текст сообщения</label>
-          <input  class="form-control-lg review__text" style="border: none; outline: transparent; background: transparent; width: 100%;">
-          <button class="btn btn-success" type="submit">Save</button>
-          </form>
-        </div>
           @foreach (var review in Model.Reviews)
           {
-            <div class="review__wrapper" style="margin-bottom: 2rem">
+            <div class="review__wrapper">
             <div class="review__head">
               <span class="review__author">
                 @review.UserName

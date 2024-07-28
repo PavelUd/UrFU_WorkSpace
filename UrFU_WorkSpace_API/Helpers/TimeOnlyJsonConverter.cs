@@ -1,18 +1,21 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Globalization;
+using Newtonsoft.Json;
 
 namespace UrFU_WorkSpace_API.Helpers;
 
 public class TimeOnlyJsonConverter : JsonConverter<TimeOnly>
 {
-    private readonly string[] Formats = { "HH:mm", "h:mm tt", "HH:mm:ss" };
-    
-    public override void Write(Utf8JsonWriter writer, TimeOnly date, JsonSerializerOptions options)
+    private readonly string[] Formats = { "hh:mm", "HH:mm", "h:mm tt", "HH:mm:ss" };
+
+    public override void WriteJson(JsonWriter writer, TimeOnly value, JsonSerializer serializer)
     {
-        writer.WriteStringValue(date.ToString(Formats[0]));
+        writer.WriteValue(value.ToString(Formats[0]));
     }
-    public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+
+    public override TimeOnly ReadJson(JsonReader reader, Type objectType, TimeOnly existingValue, bool hasExistingValue,
+        JsonSerializer serializer)
     {
-        return TimeOnly.ParseExact(reader.GetString(), Formats);
+        var timeString = reader.Value.ToString();
+        return TimeOnly.ParseExact(timeString, Formats, CultureInfo.InvariantCulture);
     }
 }

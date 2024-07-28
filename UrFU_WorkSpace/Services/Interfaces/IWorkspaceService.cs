@@ -21,4 +21,6 @@ public interface IWorkspaceService
     public List<TimeSlot> GetWorkspaceTimeSlots(int idWorkspace, DateTime date, TimeType timeType,int idTemplate);
 
     public List<WorkspaceObject> GetReservedObjects(TimeOnly start, TimeOnly end, int idWorkspace, DateTime date,int idTemplate);
+
+    public Task<List<Workspace>> GetAllWorkspaces();
 }

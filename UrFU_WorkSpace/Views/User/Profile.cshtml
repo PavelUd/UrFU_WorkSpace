@@ -1,0 +1,21 @@
+@model User;
+@{
+  Layout = "UserLayout";
+}
+ <section class="cabinet__section">
+        <h3 class="section__title cabinet-section__title">
+          Профиль
+        </h3>
+
+        <div class="profile__wrapper">
+          <h3 class="profile__name">
+            @Model.Login (@Model.FirstName, @Model.LastName)
+          </h3>
+          <span class="profile__mail-title">
+            Электронная почта
+          </span>
+          <span class="profile__mail">
+            @Model.Email
+          </span>
+        </div>
+      </section>

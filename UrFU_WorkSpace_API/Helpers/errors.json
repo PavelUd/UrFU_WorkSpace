@@ -1,0 +1,87 @@
+ [
+    {
+      "Code": 0,
+      "Message": "Коворкинги не найдены",
+      "HttpStatusCode": 404
+    },
+    {
+      "Code": 1,
+      "Message": "Коворкиг с id {idWorkspace} не найден",
+      "HttpStatusCode": 404
+    },
+    {
+      "Code": 2,
+      "Message": "Компонет коворкинга не найден",
+      "HttpStatusCode": 404
+    },
+    {
+      "Code": 3,
+      "Message": "Позиция на оси {name}, равное {value}, не должна быть меньше 0",
+      "HttpStatusCode": 422
+    },
+    {
+      "Code": 4,
+      "Message": "{name}, равная {value}, не должна быть меньше 1",
+      "HttpStatusCode": 422
+    },
+    {
+      "Code": 5,
+      "Message": "Шаблон с id {value} не найден",
+      "HttpStatusCode": 404
+    },
+    {
+      "Code": 6,
+      "Message": "Номер для дня недели не может быть больше 7",
+      "HttpStatusCode": 422
+    },
+    {
+      "Code": 7,
+      "Message": "Количество объектов в Режиме работы дожно быть не более 7",
+      "HttpStatusCode": 422
+    },
+    {
+      "Code": 8,
+      "Message": "Такой пользователь уже существует",
+      "HttpStatusCode": 409
+    },
+    {
+      "Code": 9,
+      "Message": "Пользователь не найден",
+      "HttpStatusCode": 404
+    },
+    {
+      "Code": 10,
+      "Message": "Код подтверждения неверный",
+      "HttpStatusCode": 422
+    },
+    {
+      "Code": 11,
+      "Message": "Бронирование не найдено брнирование",
+      "HttpStatusCode": 404
+    },
+    {
+      "Code": 12,
+      "Message": "Пароль и логин должны быть заполнены",
+      "HttpStatusCode": 400
+    },
+    {
+      "Code": 13,
+      "Message": "Неизвестный тип авторизации",
+      "HttpStatusCode": 400
+    },
+    {
+      "Code": 14,
+      "Message": "Неправильно указана дата или время начала больше конца",
+      "HttpStatusCode": 400
+    },
+    {
+      "Code": 15,
+      "Message": "Отмена и создание брони возможна за 12 часов до забронированного времени",
+      "HttpStatusCode": 422
+    },
+    {
+      "Code": 16,
+      "Message": "Нельзя подтвердить чужую бронь",
+      "HttpStatusCode": 422
+    }
+  ]

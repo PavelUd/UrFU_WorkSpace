@@ -1,84 +1,63 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Services;
 
 namespace UrFU_WorkSpace_API.Controllers;
 
+[Tags("Пользователи")]
 [Route("api/users")]
 [ApiController]
 public class UserController : Controller
 {
-        private readonly IUserService _userService;
-        private readonly IUserRepository _userRepository;
+    private readonly IUserService _userService;
 
-        public UserController(IUserRepository userRepository, IUserService userService)
-        { 
-            _userRepository = userRepository;
-            _userService = userService;
-        }
-        
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
-        public IActionResult GetUsers()
-        {
-            var users = _userRepository.FindAll();
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+    public UserController(IUserService userService, IMapper mapper)
+    {
+        _userService = userService;
+        Mapper = mapper;
+    }
 
-            return Ok(users);
-        }
-        [HttpGet("{idUser}")]
-        [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult GetUser(int idUser)
-        {
-            var user = _userRepository.FindByCondition(x => x.Id == idUser);
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+    public IMapper Mapper { get; set; }
 
-            return Ok(user);
-        }
+    /// <summary>
+    ///     Получить Список Пользователей.
+    /// </summary>
+    /// <response code="500">Произошла ошибка сервера</response>
+    [Authorize(Roles = nameof(Role.Admin))]
+    [HttpGet]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
+    public IActionResult GetUsers()
+    {
+        var users = _userService.GetAllUsers();
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        
-        [HttpPost("register")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public IActionResult RegisterUser([FromBody] User userCreate)
-        {
-          var response = _userService.Register(userCreate);
-            
-            if(response == null || response.Result.Token == "")
-            {
-                ModelState.AddModelError("", "Что-то пошло не так");
-                return StatusCode(500, ModelState);
-            }
+        return Ok(users);
+    }
 
-            return Ok(response);
-        }
+    /// <summary>
+    ///     Получить Пользователя по id.
+    /// </summary>
+    /// <param name="idUser">
+    ///     id пользователя.
+    /// </param>
+    /// <response code="500">Произошла ошибка сервера</response>
+    [Authorize(Roles = nameof(Role.Admin))]
+    [HttpGet("{idUser}")]
+    [ProducesResponseType(500)]
+    [ProducesResponseType(200, Type = typeof(User))]
+    public IActionResult GetUser(int idUser)
+    {
+        var user = _userService.GetUsersByCondition(x => x.Id == idUser).FirstOrDefault();
+        if (user == null) 
+            return NotFound("Нет такого пользователя");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        [HttpPost("check-user-existence")]
-        [ProducesResponseType(200)]
-        public IActionResult CheckUserExistence([FromBody] UserCheckRequest user)
-        {
-            return Ok(!_userService.IsUserExists(user));
-        }
-
-        [HttpPost("login")]
-        [ProducesResponseType(200)]
-        public IActionResult LoginUser([FromBody] AuthenticateRequest model)
-        {
-            var response = _userService.Authenticate(model);
-            if (response.Token == "")
-            {
-                return BadRequest();
-            }
-            if(response == null)
-            {
-                ModelState.AddModelError("", "Что-то пошло не так");
-                return StatusCode(500, ModelState);
-            }
-
-            return Ok(response);
-        }
+        return Ok(user);
+    }
 }

@@ -1,61 +1,37 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
+using System.Linq.Expressions;
+using Microsoft.Extensions.Caching.Memory;
 using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Repository;
 
 namespace UrFU_WorkSpace_API.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
+    private readonly TimeSpan _codeExpiration = TimeSpan.FromMinutes(10);
     private readonly IConfiguration _configuration;
-    
-    public UserService(IUserRepository userRepository, IConfiguration configuration)
+    private readonly IMemoryCache _memoryCache;
+    private readonly IBaseRepository<User> _userRepository;
+
+    public UserService(IBaseRepository<User> userRepository, IConfiguration configuration, IMemoryCache memoryCache)
     {
         _userRepository = userRepository;
         _configuration = configuration;
+        _memoryCache = memoryCache;
     }
 
-    public AuthenticateResponse Authenticate(AuthenticateRequest authenticate)
+    public IEnumerable<User> GetAllUsers()
     {
-
-        var users = _userRepository.FindAll();
-        var user = users
-            .FirstOrDefault(x => (x.Login == authenticate.Login) && x.Password == authenticate.Password);
-        if (user == null)
-        {
-            return new AuthenticateResponse("");
-        }
-        var token = _configuration.GenerateJwtToken(user);
-        return new AuthenticateResponse(token);
+        return _userRepository.FindAll();
     }
 
-    public async Task<AuthenticateResponse> Register(User user)
+    public IQueryable<User> GetUsersByCondition(Expression<Func<User, bool>> expression)
     {
-        _userRepository.Create(user);
-       var isSaved = _userRepository.Save();
-       if (!isSaved)
-       {
-           return  new AuthenticateResponse("");
-       }
-        var response = Authenticate(new AuthenticateRequest
-        {
-            Login = user.Login,
-            Password = user.Password
-        });
-        return response;
+        return _userRepository.FindByCondition(expression);
     }
-    
-    public bool IsUserExists(UserCheckRequest user)
+
+    public Result<int> CreateUser(User user)
     {
-        return  _userRepository.FindAll()
-            .Any(u => u.Email.Trim().ToUpper() == user.Email.TrimEnd().ToUpper() 
-                      || u.Login.Trim().ToUpper() == user.Login.TrimEnd().ToUpper());
+        return _userRepository.Create(user);
     }
-    
-    
 }

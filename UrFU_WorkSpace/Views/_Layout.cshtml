@@ -1,5 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @using UrFU_WorkSpace.Helpers
+
+@{
+  var token = ViewContext.HttpContext.Session.GetString("JwtToken");
+  var user = JwtTokenDecoder.Decode(token);
+}
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -22,11 +27,24 @@
       <span class="navbar-text">
         <a href="#" class="nav__link">Контакты</a>
       </span>
+      @{
+        if (user != null)
+        {
+          <div id="lk">
+            <a style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn" href="/users/@user.Id">
+                        <img src="/img/account.svg" alt="Лк"> @user.Login
+                      </a>
+          </div>
+        }
+        else
+        {
           <div id="lk">
             <button class="btn-reset btn nav__btn" style="margin-right: 5rem" data-bs-toggle="modal" data-bs-target="#loginModal">
               Войти
             </button>
           </div>
+        }
+      }
     </div>
   </div>
 </nav>
@@ -34,16 +52,15 @@
 <div class="container">
   @RenderBody()
   <footer class="footer">
-    <img class="footer__logo" src="~/img/logo-footer.png" alt="Логотип">
-    <div class="footer__description">
-      <h2 class="section__title footer__title">
-        Контакты
-      </h2>
-      <a class="footer__contacts" href="mailto:kovorkingiurfu@gmail.com">
-        kovorkingiurfu@gmail.com
-      </a>
-    </div>
-  </footer>
+        <div class="footer__description">
+          <h2 class="section__title footer__title">
+            Контакты
+          </h2>
+          <a class="footer__contacts" href="mailto:kovorkingiurfu@gmail.com">
+            Support@gmail.com
+          </a>
+        </div>
+      </footer>
 </div>
 <div class="modal fade" id="constructorModal" tabindex="-1" aria-labelledby="constructorModal" aria-hidden="true">
 <div class="modal-dialog constructor">
@@ -118,7 +135,7 @@
         </form>
         
         <div class="register__question" style="text-align: center; padding-top: 10px">Нет аккаунта? 
-          <a data-bs-toggle="modal" href="#" data-bs-target="#registerModal">Зарегестрируйтесь</a>
+          <a data-bs-toggle="modal" href="#" class = "register-btn" data-bs-target="#registerModal">Зарегестрируйтесь</a>
           </div>
       </div>
       
@@ -209,12 +226,16 @@
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/gojs/go.js"></script>
+<script src="~/js/const.js" type="module"></script>
 <script src="~/js/diagram.js"></script>
 <script src="~/js/scripts.js"></script>
+<script src="~/js/Clients/base-client.js" type="module"></script>
+<script src="~/js/Clients/authentication-client.js" type="module"></script>
+<script src="~/js/utils.js" type="module"></script>
 <script src="~/js/utils.js" type="module"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="~/js/site.js" asp-append-version="true"></script>
-  <script src="~/js/authentication-scripts.js" asp-append-version="true" type="module"></script>
+  <script src="~/js/authentication-service.js" asp-append-version="true" type="module"></script>
   @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

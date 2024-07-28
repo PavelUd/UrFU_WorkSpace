@@ -37,4 +37,13 @@ public class WorkspaceRepository : IWorkspaceRepository
         
         return JsonHelper.Deserialize<Workspace>(content);
     }
+
+    public async Task<List<Workspace>> GetAllWorkspacesAsync()
+    {
+        var responseMessage = HttpRequestSender.SendRequest(BaseAddress.ToString(), RequestMethod.Get).Result;
+        responseMessage.EnsureSuccessStatusCode();
+        var content = await responseMessage.Content.ReadAsStringAsync();
+        
+        return JsonHelper.Deserialize<List<Workspace>>(content);
+    }
 }

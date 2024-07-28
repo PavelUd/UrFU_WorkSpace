@@ -6,5 +6,5 @@ public class Image
     
     public string Url { get; set; }
     
-    public int IdWorkspace { get; set; }
+    public int IdOwner { get; set; }
 }

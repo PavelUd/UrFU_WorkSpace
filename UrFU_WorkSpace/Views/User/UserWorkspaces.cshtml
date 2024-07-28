@@ -1,0 +1,52 @@
+@model IEnumerable<Workspace>
+ @{
+   Layout = "UserLayout";
+ }
+
+  <section class="cabinet__section">
+    <h3 class="section__title cabinet-section__title">
+      Мои коворкинги
+    </h3>
+
+    <div class="coworks__wrap">
+      <ul class="list-reset coworks__list">
+        @foreach (var workspace in Model)
+        {
+          <li class="cabinet__cowork">
+            <div class="cowork__left-wrap">
+              @{
+                var image = @workspace.Images.FirstOrDefault();
+                if (image != null)
+                {
+                  <img class="cabinet__cowork-img" src="@image.Url" alt="Фото">
+                }
+              }
+              <button class="btn-reset btn">
+                Рейтинг: @workspace.Rating
+              </button>
+            </div>
+            <div class="cowork__right-wrap">
+              <span class="institute__cowork">
+                @workspace.Institute
+              </span>
+              <span class="place__cowork">
+                @workspace.Address
+              </span>
+              <span class="name__cowork">
+                @workspace.Name
+              </span>
+              <div class="cowork__edit-btns">
+                <a href=""><img class="cowork__edit-btn" src="~/img/cowork__pencil.png" alt="Редактировать"></a>
+                <a href=""><img class="cowork__edit-btn" src="~/img/delete.png" alt="Удалить"></a>
+              </div>
+            </div>
+          </li>
+        }
+          <li class="cabinet__cowork">
+            <img class="cabinet__plus" src="~/img/cabinet__plus.png" alt="">
+          </li>
+      </ul>
+    </div>
+
+
+  </section>
