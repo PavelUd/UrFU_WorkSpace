@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace UrFU_WorkSpace_API.Models;
 
@@ -17,6 +18,9 @@ public class AmenityTemplate
         
     [Column("category")]
     public string Category { get; set; }
+    
+    [JsonIgnore]
+    public ICollection<WorkspaceAmenity>? WorkspaceAmenities { get; set; }
     
         
 }

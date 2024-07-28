@@ -15,10 +15,10 @@ public class WorkspaceRepository : IWorkspaceRepository
         BaseAddress = new Uri(baseApiAddress + "/workspaces");
     }
 
-    public bool CreateWorkspaceAsync(Workspace baseInfo)
+    public int CreateWorkspaceAsync(Workspace baseInfo)
     {
         var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
-        return responseMessage.IsSuccessStatusCode;
+        return Convert.ToInt32(responseMessage.Content.ReadAsStringAsync().Result);
     }
     
     public async Task<int> UpdateRating(double rating, int idWorkspace)

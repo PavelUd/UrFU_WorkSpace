@@ -114,6 +114,7 @@ function createLK() {
         }
         toggleDropdown();
         getWorkspaceCodes();
+        
         getUserReservations()
         document.querySelector('.log-out').addEventListener('click', logOut);
         document.querySelector('#generateCodeBtn').addEventListener('click', generateNewCode);
@@ -155,6 +156,7 @@ function getUserReservations(){
     const user = decodeJwtToken(token)
     let currentDate = new Date().setHours(0, 0, 0, 0);
     $.post(`/${user.Id}/reservations`, {}).then(x => {
+        console.log(x);
         x.forEach(reservation =>{
             let reservationDate = new Date(reservation.date).setHours(0, 0, 0, 0);
             if (reservationDate < currentDate){

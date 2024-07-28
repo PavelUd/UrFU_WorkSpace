@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace UrFU_WorkSpace_API.Models;
 
@@ -13,5 +14,8 @@ namespace UrFU_WorkSpace_API.Models;
         [Column("category")] public string Category { get; set; }
 
         [Column("isReservable")] public bool IsReservable { get; set; }
+        
+        [JsonIgnore]
+        public ICollection<WorkspaceObject>? WorkspaceObjects { get; set; }
         
     }
