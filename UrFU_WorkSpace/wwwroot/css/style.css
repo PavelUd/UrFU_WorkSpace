@@ -964,7 +964,7 @@ body {
 	top: -10px;
 	width: 33%;
 	height: 10px;
-	background-color:  var(--color-red);
+	background-color: var(--color-red);
 }
 
 .modal-second-page::before {
@@ -976,7 +976,7 @@ body {
 	top: -10px;
 	width: 66%;
 	height: 10px;
-	background-color:  var(--color-red);
+	background-color: var(--color-red);
 }
 
 .modal__input {
@@ -1031,16 +1031,16 @@ body {
 }
 
 .selected-style {
-	background-color:  var(--color-red);
+	background-color: var(--color-red);
 	color: var(--color-white);
-	border-color:  var(--color-red);
+	border-color: var(--color-red);
 }
 
 .selected-time{
   align-self: flex-start;
   font-size: 20px;
   font-weight: 600;
-  color:  var(--color-red);
+  color: var(--color-red);
   margin-bottom: 20px;
 }
 
