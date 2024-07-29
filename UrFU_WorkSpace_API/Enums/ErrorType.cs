@@ -4,9 +4,7 @@ public enum ErrorType
 {
     ServerError = 17,
     
-    WorkspacesNotFound = 0,
     WorkspaceNotFound = 1,
-    WorkspaceComponentNotFound = 2,
     InvalidSize = 4,
     InvalidPosition = 3,
     TemplateNotFound = 5,

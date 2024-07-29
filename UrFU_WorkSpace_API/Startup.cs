@@ -8,10 +8,10 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using UrFU_WorkSpace_API.Context;
 using UrFU_WorkSpace_API.Helpers;
-using UrFU_WorkSpace_API.Helpers.Events;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
 using UrFU_WorkSpace_API.Repository;
+using UrFU_WorkSpace_API.Repository.Interfaces;
 using UrFU_WorkSpace_API.Services;
 using UrFU_WorkSpace_API.Services.Interfaces;
 using UrFU_WorkSpace_API.Services.WorkspaceComponentsServices;
@@ -33,7 +33,6 @@ public class Startup
         services.AddDbContext<UrfuWorkSpaceContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("Connection")));
         services.AddAutoMapper(cfg => cfg.AddProfile(new MappingProfiles()));
-        services.AddSingleton<IEventPublisher, EventPublisher>();
         services.AddSingleton(provider =>
         {
             var logger = provider.GetRequiredService<ILogger<ErrorHandler>>();
@@ -42,6 +41,7 @@ public class Startup
         
         
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+        services.AddScoped<IWorkspaceProvider, WorkspaceRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
@@ -67,8 +67,6 @@ public class Startup
         services.AddScoped(typeof(TemplateService<AmenityTemplate>));
         services.AddScoped(typeof(TemplateService<ObjectTemplate>));
         services.AddScoped<IWorkspaceComponentService<WorkspaceWeekday>, OperationModeService>();
-
-        services.AddScoped<IWorkspaceProvider, WorkspaceService>();
         services.AddScoped<ReservationService>();
         services.AddScoped<ReviewService>();
         services.AddScoped<IWorkspaceService, WorkspaceService>();
@@ -142,7 +140,10 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceScopeFactory serviceScopeFactory)
     {
         app.UseStaticFiles();
-
+        if(!Directory.Exists("/api/images"))
+        {
+            Directory.CreateDirectory("/api/images");
+        }
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(
@@ -157,16 +158,7 @@ public class Startup
         app.UseRouting();
         app.UseAuthorization();
         app.UseHttpsRedirection();
-        var eventPublisher = app.ApplicationServices.GetRequiredService<IEventPublisher>();
         var errorHandler = app.ApplicationServices.GetRequiredService<ErrorHandler>();
-        using (var serviceScope = app.ApplicationServices.CreateScope())
-        {
-            var serviceProvider = serviceScope.ServiceProvider;
-            
-            eventPublisher.Subscribe<WorkspaceUpdatedEvent>(serviceProvider.GetRequiredService<ReservationService>());
-            eventPublisher.Subscribe<WorkspaceUpdatedEvent>(serviceProvider.GetRequiredService<ReservationService>());
-            eventPublisher.Subscribe<WorkspaceDeletedEvent>(serviceProvider.GetRequiredService<ReviewService>());
-        }
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

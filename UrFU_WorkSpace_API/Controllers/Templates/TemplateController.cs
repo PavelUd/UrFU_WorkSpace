@@ -27,4 +27,44 @@ public class TemplateController<T> : Controller where T : class
 
         return Ok(templates);
     }
+
+    [HttpPost]
+    [ProducesResponseType(200, Type = typeof(bool))]
+    [ProducesResponseType(400)]
+    public IActionResult CreateComponents(T template)
+    {
+        Repository.Create(template);
+        var isSaved = Repository.Save();
+        if (!ModelState.IsValid || !isSaved)
+            return BadRequest(ModelState);
+
+        return Ok(isSaved);
+    }
+
+    [HttpPut]
+    [ProducesResponseType(200, Type = typeof(bool))]
+    [ProducesResponseType(400)]
+    public IActionResult UpdateComponents(T template)
+    {
+        Repository.Update(template);
+        var isSaved = Repository.Save();
+        if (!ModelState.IsValid || !isSaved)
+            return BadRequest(ModelState);
+
+        return Ok(isSaved);
+    }
+
+    [HttpDelete]
+    [ProducesResponseType(200, Type = typeof(bool))]
+    [ProducesResponseType(400)]
+    public IActionResult DeleteComponents(T template)
+    {
+        Repository.Delete(template);
+
+        var isSaved = Repository.Save();
+        if (!ModelState.IsValid || !isSaved)
+            return BadRequest(ModelState);
+
+        return Ok(isSaved);
+    }
 }

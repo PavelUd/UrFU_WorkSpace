@@ -30,6 +30,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
         _context.Set<T>().Add(entity);
         _context.SaveChanges();
         return entity.Id;
+        
     }
 
     public void Update(T entity)
@@ -37,14 +38,7 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
         _context.Set<T>().Update(entity);
         _context.SaveChanges();
     }
-
-    public T Replace(T oldEntity, T entity)
-    {
-        _context.Set<T>().Remove(oldEntity);
-        _context.Set<T>().Add(entity);
-        _context.SaveChanges();
-        return entity;
-    }
+    
 
     public void Delete(T entity)
     {

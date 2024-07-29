@@ -27,7 +27,7 @@ public class UserController : Controller
     /// </summary>
     /// <response code="500">Произошла ошибка сервера</response>
     [Authorize(Roles = nameof(Role.Admin))]
-    [HttpGet]
+    [HttpGet]  
     [ProducesResponseType(500)]
     [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
     public IActionResult GetUsers()

@@ -3,17 +3,15 @@ using Microsoft.AspNetCore.JsonPatch;
 using UrFU_WorkSpace_API.Dto;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
-using UrFU_WorkSpace_API.Helpers.Events;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
 using UrFU_WorkSpace_API.Services.Interfaces;
 
 namespace UrFU_WorkSpace_API.Services;
 
-public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
+public class WorkspaceService : IWorkspaceService
 {
     private readonly IWorkspaceComponentService<WorkspaceAmenity> _amenityService;
-    private readonly IEventPublisher _eventPublisher;
     private readonly ImageService _imageService;
     private readonly IWorkspaceComponentService<WorkspaceObject> _objectService;
     private readonly IWorkspaceComponentService<WorkspaceWeekday> _operationModeService;
@@ -27,7 +25,6 @@ public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
         IWorkspaceComponentService<WorkspaceWeekday> operationModeRepository,
         ImageService imageService,
         IMapper mapper,
-        IEventPublisher eventPublisher, 
         ErrorHandler errorHandler)
     {
         _workspaceRepository = workspaceRepository;
@@ -36,7 +33,6 @@ public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
         _operationModeService = operationModeRepository;
         _imageService = imageService;
         Mapper = mapper;
-        _eventPublisher = eventPublisher;
         _errorHandler = errorHandler;
     }
 
@@ -47,9 +43,7 @@ public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
         var workspaces = _workspaceRepository.FindAll();
         if (idUser != 0) workspaces = workspaces.Where(x => x.IdCreator == idUser);
         workspaces = isFull ? _workspaceRepository.IncludeFullInfo(workspaces) : workspaces;
-        return !workspaces.Any()
-            ? Result.Fail<IEnumerable<Workspace>>(_errorHandler.RenderError(ErrorType.WorkspacesNotFound))
-            : Result.Ok<IEnumerable<Workspace>>(workspaces);
+        return workspaces.AsEnumerable().AsResult();
     }
 
     public Result<Workspace> GetWorkspaceById(int idWorkspace, bool isFull)
@@ -99,10 +93,7 @@ public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
 
         return ValidateWorkspaceComponents(modifyWorkspace)
             .Then(_ => ConstructWorkspace(modifyWorkspace, idWorkspace))
-            .Then(x => _workspaceRepository.Replace(oldWorkspaceResult.Value, x).AsResult()
-                .Then(w => PublishWorkspaceChanges(oldWorkspaceResult.Value, w)
-                    .Then(_ => w))
-            );
+            .Then(x => _workspaceRepository.Replace(x));
     }
 
     public Result<None> PatchWorkspace(int idWorkspace, JsonPatchDocument<BaseInfo> workspaceComponent)
@@ -121,17 +112,7 @@ public class WorkspaceService : IWorkspaceProvider, IWorkspaceService
 
     public Result<None> DeleteWorkspace(int id)
     {
-        return GetWorkspaceById(id, true)
-            .Then(_ => _eventPublisher.Publish(new WorkspaceDeletedEvent(id)));
-    }
-
-
-    private Result<None> PublishWorkspaceChanges(Workspace oldWorkspace, Workspace newWorkspace)
-    {
-        var weekdays = newWorkspace.OperationMode.Except(oldWorkspace.OperationMode).TakeWhile(d => d.Id != 0);
-        var objects = oldWorkspace.Objects.Except(newWorkspace.Objects);
-        _eventPublisher.Publish(new WorkspaceUpdatedEvent(weekdays, objects));
-        return Result.Ok();
+        return GetWorkspaceById(id, false).Then(_workspaceRepository.Delete);
     }
 
     private Result<None> ValidateWorkspaceComponents(ModifyWorkspaceDto workspace)

@@ -40,6 +40,8 @@ public class ReviewController : Controller
     [Authorize(Roles = nameof(Role.Admin) + "," + nameof(Role.User))]
     public IActionResult AddReview([FromBody] Review review)
     {
+        var idUser = int.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Id")!.Value);
+        review.IdUser = idUser;
         var result = _reviewService.AddReview(review);
         return !result.IsSuccess
             ? StatusCode((int)result.Error.HttpStatusCode, result.Error)

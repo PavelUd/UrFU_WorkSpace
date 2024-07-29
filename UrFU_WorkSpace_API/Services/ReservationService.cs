@@ -1,14 +1,13 @@
 using System.Linq.Expressions;
 using UrFU_WorkSpace_API.Enums;
 using UrFU_WorkSpace_API.Helpers;
-using UrFU_WorkSpace_API.Helpers.Events;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
-using UrFU_WorkSpace_API.Services.Interfaces;
+using UrFU_WorkSpace_API.Repository.Interfaces;
 
 namespace UrFU_WorkSpace_API.Services;
 
-public class ReservationService : IEventHandler<WorkspaceDeletedEvent>, IEventHandler<WorkspaceUpdatedEvent>
+public class ReservationService
 {
     private readonly IWorkspaceProvider _workspaceProvider;
     private readonly IReservationRepository _repository;
@@ -31,7 +30,6 @@ public class ReservationService : IEventHandler<WorkspaceDeletedEvent>, IEventHa
         reservation.IdUser = idUser;
         return ValidateDate(reservation)
             .Then(_ => ValidateTimeFrame(reservation))
-            .Then(_ => _workspaceProvider.GetWorkspaceById(reservation.IdWorkspace, false))
             .Then(_ => _repository.Create(reservation));
     }
 
@@ -41,7 +39,7 @@ public class ReservationService : IEventHandler<WorkspaceDeletedEvent>, IEventHa
 
         var confirmResult = GetReservationById(idReservation)
             .Then(r => ValidateUser(r, idUser)
-                .Then(_ => _workspaceProvider.GetWorkspaceById(r.IdWorkspace, false))
+                .Then(_ => _workspaceProvider.FindByCondition(x =>  x.Id ==r.IdWorkspace).FirstOrDefault())
                 .Then(w => new Coordinate(w.Latitude, w.Longitude))
             )
             .Then(c => Utils.GetDistance(c, userCoordinate))
@@ -63,25 +61,6 @@ public class ReservationService : IEventHandler<WorkspaceDeletedEvent>, IEventHa
             .Then(reservation => ValidateDate(reservation)
                 .Then(_ => ValidateUser(reservation, idUser))
                 .Then(_ => _repository.Delete(reservation)));
-    }
-    
-    public Result<None> Handle(WorkspaceDeletedEvent @event)
-    {
-        return GetReservations(x => x.IdWorkspace == @event.WorkspaceId)
-            .Then(r => _repository.DeleteRange(r));
-    }
-
-    public Result<None> Handle(WorkspaceUpdatedEvent @event)
-    {
-        foreach (var obj in @event.Objects)
-            GetReservations(x => x.IdObject == obj.Id)
-                .Then(r => _repository.DeleteRange(r));
-
-        foreach (var weekday in @event.Weekdays)
-            GetReservations(x => x.TimeEnd > weekday.TimeEnd || x.TimeStart < weekday.TimeStart)
-                .Then(r => _repository.DeleteRange(r));
-
-        return Result.Ok();
     }
 
     private Result<Reservation> GetReservationById(int id)

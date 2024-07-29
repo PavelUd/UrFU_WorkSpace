@@ -19,11 +19,8 @@ public abstract class WorkspaceComponentService<T> : IWorkspaceComponentService<
 
     public Result<IEnumerable<T>> GetComponents(int idWorkspace)
     {
-        var message = _errorHandler.RenderError(ErrorType.WorkspaceComponentNotFound);
         var entities = _repository.FindByCondition(x => x.IdWorkspace == idWorkspace);
-        return !entities.Any()
-            ? Result.Fail<IEnumerable<T>>(message)
-            : Result.Ok(entities.AsEnumerable());
+        return entities.AsEnumerable().AsResult();
     }
 
     protected Result<None> ValidateParam<TParam>(bool condition, ErrorType errorType, TParam value = default,
