@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using UrFU_WorkSpace_API.Context;
 using UrFU_WorkSpace_API.Interfaces;
 using UrFU_WorkSpace_API.Models;
+using UrFU_WorkSpace_API.Services.Interfaces;
 
 namespace UrFU_WorkSpace_API.Repository;
 
-public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
+public class BaseRepository<T> : IBaseRepository<T>, IBaseProvider<T> where T : class, IModel
 {
     protected UrfuWorkSpaceContext _context;
 
@@ -37,6 +38,11 @@ public class BaseRepository<T> : IBaseRepository<T> where T : class, IModel
     {
         _context.Set<T>().Update(entity);
         _context.SaveChanges();
+    }
+
+    public bool ExistsById(int id)
+    {
+        return _context.Set<T>().Any(e => e.Id == id);
     }
     
 

@@ -2,7 +2,7 @@ namespace UrFU_WorkSpace_API.Enums;
 
 public enum ErrorType
 {
-    ServerError = 17,
+    ServerError = 0,
     
     WorkspaceNotFound = 1,
     InvalidSize = 4,
@@ -16,9 +16,10 @@ public enum ErrorType
     IncorrectConfirmCode = 10,
     BadAuthRequest = 12,
     InvalidGrantType = 13,
-    
+    InvalidAddReservation = 17,
     ReservationsNotFound = 11,
     IncorrectReservationOwner = 16,
-    InvalidCancelReservationTime = 14,
-    InvalidReservationDate = 15
+    InvalidReservationTime = 14,
+    InvalidCancelReservation = 15,
+    ReservationConflict = 18
 }

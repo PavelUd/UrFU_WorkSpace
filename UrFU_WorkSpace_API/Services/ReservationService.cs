@@ -28,8 +28,9 @@ public class ReservationService
     public Result<int> AddReservation(Reservation reservation, int idUser)
     {
         reservation.IdUser = idUser;
-        return ValidateDate(reservation)
-            .Then(_ => ValidateTimeFrame(reservation))
+        return Validate(reservation.TimeStart >= reservation.TimeEnd, ErrorType.InvalidReservationTime)
+            .Then(_ => Validate(IsReservationConflict(reservation), ErrorType.ReservationConflict))
+            .Then(_ => Validate(HasTimePassed(reservation, 0), ErrorType.InvalidAddReservation))
             .Then(_ => _repository.Create(reservation));
     }
 
@@ -38,7 +39,7 @@ public class ReservationService
         const int inaccuracy = 100;
 
         var confirmResult = GetReservationById(idReservation)
-            .Then(r => ValidateUser(r, idUser)
+            .Then(r => Validate(r.IdUser == idUser, ErrorType.IncorrectReservationOwner)
                 .Then(_ => _workspaceProvider.FindByCondition(x =>  x.Id ==r.IdWorkspace).FirstOrDefault())
                 .Then(w => new Coordinate(w.Latitude, w.Longitude))
             )
@@ -58,8 +59,8 @@ public class ReservationService
     public Result<None> DeleteReservation(int idReservation, int idUser)
     {
         return GetReservationById(idReservation)
-            .Then(reservation => ValidateDate(reservation)
-                .Then(_ => ValidateUser(reservation, idUser))
+            .Then(reservation => Validate(HasTimePassed(reservation, 12), ErrorType.InvalidCancelReservation)
+                .Then(_ => Validate(reservation.IdUser == idUser, ErrorType.IncorrectReservationOwner))
                 .Then(_ => _repository.Delete(reservation)));
     }
 
@@ -69,28 +70,23 @@ public class ReservationService
         return result ?? Result.Fail<Reservation>(_errorHandler.RenderError(ErrorType.ReservationsNotFound));
     }
 
-
-    private Result<None> ValidateTimeFrame(Reservation reservation)
-    {
-        return reservation.TimeStart >= reservation.TimeEnd
-            ? Result.Fail<None>(_errorHandler.RenderError(ErrorType.InvalidCancelReservationTime))
-            : Result.Ok();
-    }
-
-    private Result<None> ValidateUser(Reservation reservation, int idUser)
-    {
-        return reservation.IdUser != idUser
-            ? Result.Fail<None>(_errorHandler.RenderError(ErrorType.IncorrectReservationOwner))
-            : Result.Ok();
-    }
-
-    private Result<None> ValidateDate(Reservation reservation)
+    private static bool HasTimePassed(Reservation reservation, int hours)
     {
         var now = DateTime.Now;
         var reservationTime = reservation.Date.ToDateTime(reservation.TimeStart);
 
-        return now >= reservationTime.AddHours(-12)
-            ? Result.Fail<None>(_errorHandler.RenderError(ErrorType.InvalidCancelReservationTime))
-            : Result.Ok();
+        return now >= reservationTime.AddHours(-hours);
+    }
+
+    private Result<None> Validate(bool condition, ErrorType errorType)
+    {
+        return condition ? Result.Ok() : Result.Fail<None>(_errorHandler.RenderError(errorType));
+    }
+
+    private bool IsReservationConflict(Reservation reservation)
+    {
+        return _repository.FindByCondition(r => r.IdObject == reservation.IdObject 
+                                  && !(r.TimeStart >= reservation.TimeEnd || r.TimeEnd <= reservation.TimeStart) 
+                                  && reservation.Id != r.Id).Any();
     }
 }

@@ -48,19 +48,18 @@ public class WorkspaceService : IWorkspaceService
 
     public Result<Workspace> GetWorkspaceById(int idWorkspace, bool isFull)
     {
+        if (!_workspaceRepository.ExistsById(idWorkspace))
+        {
+            return Result.Fail<Workspace>(_errorHandler.RenderError(ErrorType.WorkspaceNotFound, 
+                new Dictionary<string, string>{ { "idWorkspace", idWorkspace.ToString() }}));
+        }
+        
         var workspaces = _workspaceRepository.FindByCondition(x => x.Id == idWorkspace);
         var workspace = isFull
-            ? _workspaceRepository.IncludeFullInfo(workspaces).FirstOrDefault()
-            : workspaces.FirstOrDefault();
+            ? _workspaceRepository.IncludeFullInfo(workspaces).First()
+            : workspaces.First();
 
-        var arg = new Dictionary<string, string>
-        {
-            { "idWorkspace", idWorkspace.ToString() }
-        };
-
-        return workspace != null
-            ? Result.Ok(workspace)
-            : Result.Fail<Workspace>(_errorHandler.RenderError(ErrorType.WorkspaceNotFound, arg));
+        return Result.Ok(workspace);
     }
 
     public Result<IEnumerable<WorkspaceWeekday>> GetOperationMode(int idWorkspace)
@@ -87,9 +86,12 @@ public class WorkspaceService : IWorkspaceService
 
     public Result<Workspace> PutWorkspace(ModifyWorkspaceDto modifyWorkspace, int idWorkspace)
     {
-        var oldWorkspaceResult = GetWorkspaceById(idWorkspace, true);
-
-        if (!oldWorkspaceResult.IsSuccess) return Result.Fail<Workspace>(oldWorkspaceResult.Error);
+        if (!_workspaceRepository.ExistsById(idWorkspace))
+        {
+            return Result.Fail<Workspace>(_errorHandler.RenderError(ErrorType.WorkspaceNotFound, 
+                new Dictionary<string, string>{ { "idWorkspace", idWorkspace.ToString() }}));
+        }
+        
 
         return ValidateWorkspaceComponents(modifyWorkspace)
             .Then(_ => ConstructWorkspace(modifyWorkspace, idWorkspace))
@@ -124,7 +126,7 @@ public class WorkspaceService : IWorkspaceService
 
     private Result<Workspace> ConstructWorkspace(ModifyWorkspaceDto modifyWorkspace, int id = 0)
     {
-        var images = _imageService.ConstructImages(modifyWorkspace.ImageFiles);
+        var images = _imageService.ConstructImages(modifyWorkspace.ImageFiles, (int)OwnerType.Workspace);
         var workspace = Mapper.Map<Workspace>(modifyWorkspace);
         workspace.Images = images.Select(x => Mapper.Map<WorkspaceImage>(x)).ToList().AsEnumerable();
         workspace.Id = id;

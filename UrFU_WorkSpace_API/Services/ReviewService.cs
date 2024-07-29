@@ -22,9 +22,7 @@ public class ReviewService
     {
         var reviews = _repository.FindAll();
         if (idWorkspace != 0)
-        {
             reviews = reviews.Where(x => x.IdWorkspace == idWorkspace);
-        }
 
         return reviews;
     }

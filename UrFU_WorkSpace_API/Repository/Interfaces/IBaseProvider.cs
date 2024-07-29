@@ -8,4 +8,5 @@ public interface IBaseProvider<T>
 {
     public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
     public IQueryable<T> FindAll();
+    public bool ExistsById(int id);
 }

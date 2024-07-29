@@ -7,7 +7,7 @@ namespace UrFU_WorkSpace_API.Models;
 [Table("workspace_objects")]
 public class WorkspaceObject : IWorkspaceComponent
 {
-    public ObjectTemplate? Template;
+    public Template? Template;
 
     [Column("template_id")] public int IdTemplate { get; set; }
 

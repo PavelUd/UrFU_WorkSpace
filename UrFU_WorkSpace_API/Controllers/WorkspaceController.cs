@@ -238,6 +238,10 @@ public class WorkspaceController : Controller
         workspace.Amenities = form["Amenities"].Select(JsonConvert.DeserializeObject<WorkspaceAmenity>);
         workspace.OperationMode = form["OperationMode"]
             .Select(x => JsonConvert.DeserializeObject<WorkspaceWeekday>(x, JsonSettings));
+        
+        if (!ModelState.IsValid)
+            return BadRequest();
+        
         var result = _workspaceService.CreateWorkspace(workspace);
 
         if (!result.IsSuccess)
@@ -246,7 +250,7 @@ public class WorkspaceController : Controller
             return StatusCode((int)error.HttpStatusCode, error);
         }
 
-        return Ok(result.Value);
+        return Created();
     }
 
     /// <summary>
@@ -266,10 +270,13 @@ public class WorkspaceController : Controller
         var form = Request.Form;
         workspace.Objects = form["Objects"].Select(JsonConvert.DeserializeObject<WorkspaceObject>);
         workspace.Amenities = form["Amenities"].Select(JsonConvert.DeserializeObject<WorkspaceAmenity>);
-        workspace.OperationMode = form["OperationMode"]
-            .Select(x => JsonConvert.DeserializeObject<WorkspaceWeekday>(x, JsonSettings));
-        var t = _workspaceService.PutWorkspace(workspace, idWorkspace);
-        if (!t.IsSuccess) return StatusCode((int)t.Error.HttpStatusCode, t.Error);
+        workspace.OperationMode = form["OperationMode"] .Select(x => JsonConvert.DeserializeObject<WorkspaceWeekday>(x, JsonSettings));
+        
+        var result = _workspaceService.PutWorkspace(workspace, idWorkspace);
+        
+        if (!result.IsSuccess) 
+            return StatusCode((int)result.Error.HttpStatusCode, result.Error);
+        
         return NoContent();
     }
 

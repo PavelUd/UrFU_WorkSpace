@@ -11,9 +11,9 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
 {
     public IQueryable<Workspace> IncludeFullInfo(IQueryable<Workspace> query)
     {
-        return query.Include(x => x.OperationMode)
-            .Include(x => x.Amenities)
-            .Include(x => x.Objects);
+        return query.Include(x => x.OperationMode).AsNoTracking()
+            .Include(x => x.Amenities).AsNoTracking()
+            .Include(x => x.Objects).AsNoTracking();
     }
     public Workspace Replace(Workspace entity)
     {

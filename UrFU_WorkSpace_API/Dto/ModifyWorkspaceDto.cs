@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Models;
 
 namespace UrFU_WorkSpace_API.Dto;
@@ -29,6 +30,8 @@ public class ModifyWorkspaceDto
     [Required] 
     public IEnumerable<WorkspaceWeekday?> OperationMode { get; set; }
 
+    [Display(Name = "Image")]
+    [AllowedExtensions(new[] { ".jpg", ".jpeg", ".png" })]
     public IEnumerable<IFormFile> ImageFiles { get; set; }
 
     public int Privacy { get; set; }

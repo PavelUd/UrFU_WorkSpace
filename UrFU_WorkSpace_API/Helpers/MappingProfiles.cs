@@ -10,10 +10,9 @@ public class MappingProfiles : Profile
     {
         CreateMap<ModifyUserDto, User>();
         CreateMap<Image, WorkspaceImage>();
-        CreateMap<Image, AmenityImage>();
-        CreateMap<Image, ObjectImage>();
-        CreateMap<ModifyWorkspaceDto, Workspace>()
-            .ForMember(dest => dest.Images, opt => opt.Ignore());
+        CreateMap<Image, TemplateImage>();
+        CreateMap<ModifyTemplateDto, Template>().ForMember(dest => dest.Image, opt => opt.Ignore());
+        CreateMap<ModifyWorkspaceDto, Workspace>().ForMember(dest => dest.Images, opt => opt.Ignore());
         CreateMap<BaseInfo, Workspace>().ReverseMap();
     }
 }

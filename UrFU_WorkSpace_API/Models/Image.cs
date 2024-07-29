@@ -7,12 +7,9 @@ public class WorkspaceImage : Image
 {
 }
 
-public class ObjectImage : Image
+public class TemplateImage : Image
 {
-}
-
-public class AmenityImage : Image
-{
+    
 }
 
 [Table("images")]
