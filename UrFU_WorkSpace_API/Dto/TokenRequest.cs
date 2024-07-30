@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using UrFU_WorkSpace_API.Enums;
 
 namespace UrFU_WorkSpace_API.Models;
 
@@ -19,7 +20,7 @@ public class TokenRequest
         Code = code;
     }
 
-    [Required] public string GrantType { get; set; }
+    [Required] public GrantType GrantType { get; set; }
 
     public string Login { get; set; }
     public string Password { get; set; }

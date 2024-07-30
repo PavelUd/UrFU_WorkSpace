@@ -29,12 +29,12 @@ public class AuthenticationService
     public Result<string> GetAccessToken(TokenRequest model)
     {
         Result<string> result;
-        switch (model.GrantType.ToLower())
+        switch (model.GrantType)
         {
-            case "code":
+            case GrantType.Code:
                 result = Authenticate(model.Code);
                 break;
-            case "password":
+            case GrantType.Password:
                 result = Authenticate(model.Login, model.Password);
                 break;
             default:

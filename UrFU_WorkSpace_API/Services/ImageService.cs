@@ -37,7 +37,7 @@ public class ImageService
             Save(imageFile, path);
             images.Add(new Image
             {
-                Url = _hostName + "/api/" + path,
+                Url = _hostName  + path,
                 IdOwner = idOwner
             });
         }

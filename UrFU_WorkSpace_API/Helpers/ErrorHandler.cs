@@ -26,7 +26,7 @@ public class ErrorHandler
 
             foreach (var error in errorList)
             {
-                _errors[error.Code] = error;
+                _errors[error.Type] = error;
             }
         }
         catch (Exception ex)
