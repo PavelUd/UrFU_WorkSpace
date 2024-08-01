@@ -94,7 +94,7 @@ function loadObjects(divName, objects, filterHandler) {
     let modelNodes = [];
     objects.forEach(obj => {
         let color = filterHandler ? filterHandler(obj) : '';
-        modelNodes.push({ "key": obj.id, "pos": `${obj.x} ${obj.y}`,"isReserve" : obj.isReserve,  "size": `${obj.height} ${obj.width}`,category: obj.template.category, image : obj.template.picture, color : color})
+        modelNodes.push({ "key": obj.id, "pos": `${obj.x} ${obj.y}`,"isReserve" : obj.isReserve,  "size": `${obj.height} ${obj.width}`,category: obj.template.name, image : obj.template.image.url, color : color})
     });
     diagram.model = new go.GraphLinksModel(modelNodes);
 }

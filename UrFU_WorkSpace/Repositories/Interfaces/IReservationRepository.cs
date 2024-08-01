@@ -1,11 +1,12 @@
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 
-namespace UrFU_WorkSpace.Services.Interfaces;
+namespace UrFU_WorkSpace.Repositories.Interfaces;
 
 public interface IReservationRepository
 {
-    public Task<List<Reservation>> GetUserReservations(int idUser);
-    public Task<List<Reservation>> GetReservations(int idWorkspace, DateOnly date);
-    public Task<Reservation> CreateReservations(Dictionary<string, object> dictionary);
-    public Task ConfirmReservation(int idReservation);
-};
+    public Task<Result<List<Reservation>>> GetReservations(int? idUser, int? idWorkspace, bool isFull,
+        string token = "");
+    public Task<Result<int>> CreateReservations(Dictionary<string, object> dictionary, string token);
+    public Task<Result<Reservation>> GetReservation(int id, string token);
+}

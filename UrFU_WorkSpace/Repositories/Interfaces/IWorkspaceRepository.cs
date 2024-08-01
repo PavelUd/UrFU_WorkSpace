@@ -1,14 +1,16 @@
+
+using UrFU_WorkSpace.enums;
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 
-namespace UrFU_WorkSpace.Services.Interfaces;
+namespace UrFU_WorkSpace.Repositories.Interfaces;
 
 public interface IWorkspaceRepository
 {
-
-    public int CreateWorkspaceAsync(Workspace baseInfo);
-    public Task<Workspace> GetWorkspaceAsync(int idWorkspace);
-
-    public Task<int> UpdateRating(double rating, int idWorkspace);
-
-    public Task<List<Workspace>> GetAllWorkspacesAsync();
+    public Task<Result<int>> CreateWorkspaceAsync(Workspace baseInfo, string token);
+    public Task<Result<Workspace>> GetWorkspaceAsync(int idWorkspace, bool isFull);
+    public Task<Result<List<TimeSlot>>> GetTimeSlots(int idWorkspace, DateOnly date, TimeType timeType, int? idObjectTemplate);
+    public Task<Result<List<WorkspaceObject>>> FetchWorkspaceObjectsByDateRange(int idWorkspace,
+        int? idTemplate, DateOnly? date, TimeOnly? timeStart, TimeOnly? timeEnd);
+    public Task<Result<List<Workspace>>> GetAllWorkspacesAsync();
 }

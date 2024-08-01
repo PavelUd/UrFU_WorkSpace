@@ -21,5 +21,6 @@ public enum ErrorType
     IncorrectReservationOwner = 16,
     InvalidReservationTime = 14,
     InvalidCancelReservation = 15,
-    ReservationConflict = 18
+    ReservationConflict = 18,
+    ReservationNotAvailable = 19
 }

@@ -3,20 +3,11 @@ import BaseClient from '../Clients/base-client.js';
 
 export default class AuthenticationClient extends BaseClient{
 
-    async login(authenticationInfo){
+    async getToken(authenticationInfo) {
         const response = await this._load({
-            url: 'Login',
-            method :'POST',
+            url: 'GetToken/',
+            method: 'POST',
             data: authenticationInfo
-        });
-        return response;
-    }
-    
-    async verifyUser(verifyInfo) {
-        const response = await this._load({
-            url: 'VerifyUser',
-            method : 'POST',
-            data: verifyInfo,
         });
         return response;
     }

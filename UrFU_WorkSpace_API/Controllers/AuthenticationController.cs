@@ -74,7 +74,7 @@ public class AuthenticationController : Controller
     /// <response code="500">Произошла ошибка сервера при аутентификации пользователя</response>
     [HttpPost("token")]
     [ProducesResponseType(200, Type = typeof(JWTToken))]
-    public IActionResult GetAuthenticationToken([FromForm] TokenRequest model)
+    public IActionResult GetAuthenticationToken([FromBody] TokenRequest model)
     {
         var result = _authenticationService.GetAccessToken(model);
 

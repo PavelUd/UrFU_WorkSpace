@@ -51,7 +51,7 @@
             @foreach (var amenity in Model.Amenities)
             {
               <li class="comfort__elem">
-                <img src="@amenity.Template?.Picture " alt="Wi-Fi" class="comfort__img">
+                <img src="@amenity.Template?.Image.Url" alt="Wi-Fi" class="comfort__img">
                 <span class="comfort__text">
                   @amenity.Template?.Name
                 </span>
@@ -163,13 +163,11 @@
                 <div class="modal-body modal-first-page" style="margin: auto">
               <div class="modal__params" style="display: flex; flex-direction: row; align-items: center;">
                
-                <input class="form-control-sm" type="date" style="margin-right: 10px" id="date" name="date" value="2024-05-18"/>
+                <input class="form-control-sm" type="date" style="margin-right: 10px" id="date" name="date" value="2024-08-05"/>
                 <select class="form-select form-select-sm" name="timeType"  style="margin-right: 10px" id="timeType">
-                  <option value="lel" selected="">1 час</option>
-                  <option value="lol">2 часа</option>
-                  <option value="lil">45 минут</option>
+                  <option value="60" selected="">1 час</option>
                 </select>
-                <select class="form-select form-select-sm" name="objectType" id="objectType" value="lel" style="margin-right: 10px">
+                <select class="form-select form-select-sm" name="objectType" id="objectType" value="0" style="margin-right: 10px">
                   <option value="0" selected>Все типы</option>
                   @foreach (var obj in Model.Objects.DistinctBy(x => x.Template.Category))
 
@@ -293,6 +291,7 @@ function click(e, node) {
 window.addEventListener('DOMContentLoaded',() => init("myDiagramDiv", click));
 window.addEventListener('DOMContentLoaded',() =>{ 
   init("showDiagram");
+  console.log(@Json.Serialize(Model.Objects));
   loadObjects("showDiagram", @Json.Serialize(Model.Objects));
 });
 </script>      

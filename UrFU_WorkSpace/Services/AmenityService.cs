@@ -1,20 +1,12 @@
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Repositories.Interfaces;
 using UrFU_WorkSpace.Services.Interfaces;
-using AmenityTemplate = UrFU_WorkSpace.Models.AmenityTemplate;
 
 namespace UrFU_WorkSpace.Services;
 
-public class AmenityService : IAmenityService
+public class AmenityService(IWorkspaceRepository repository) : IAmenityService
 {
-
-    private readonly IAmenityRepository Repository;
-
-    public AmenityService(IAmenityRepository repository)
-    {
-        Repository = repository;
-    }
-    
     public List<WorkspaceAmenity> ConstructWorkspaceAmenities(List<int> idTemplates)
     {
         var amenities = new List<WorkspaceAmenity>();
@@ -24,16 +16,6 @@ public class AmenityService : IAmenityService
         }
 
         return amenities;
-    }
-
-    public async Task<IEnumerable<AmenityTemplate>> GetAmenityTemplates()
-    {
-        return await Repository.GetAmenityTemplates();
-    }
-    
-    public async Task<List<WorkspaceAmenity>> GetWorkspaceAmenities(int idWorkspace)
-    {
-        return await Repository.GetWorkspaceAmenities(idWorkspace);
     }
 
     private static WorkspaceAmenity CreateAmenity(int idTemplate)

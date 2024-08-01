@@ -1,3 +1,4 @@
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Repositories;
 
@@ -11,21 +12,15 @@ public class ReviewService
     {
         Repository = repository;
     }
+    
 
-    public double RecalculateRating(int idWorkspace)
+    public async Task<Result<List<Review>>> GetReviews(int idWorkspace)
     {
-        var reviews = Repository.GetByIdWorkspace(idWorkspace);
-        var count = !reviews.Any() ? 1 : reviews.Count();
-        return double.Round(reviews.Select(x => x.Estimation).Sum() / count, 1);
+        return await Repository.GetAll(idWorkspace);
     }
 
-    public IEnumerable<Review> GetReviews(int idWorkspace)
+    public async Task<Result<int>> AddReview(Review review, string token)
     {
-        return Repository.GetByIdWorkspace(idWorkspace);
-    }
-
-    public async Task AddReview(Review review)
-    {
-       await Repository.AddReview(review);
+       return await Repository.AddReview(review, token);
     }
 }

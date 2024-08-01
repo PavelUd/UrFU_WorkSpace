@@ -15,6 +15,15 @@ public class WorkspaceRepository(UrfuWorkSpaceContext context) : BaseRepository<
             .Include(x => x.Amenities).AsNoTracking()
             .Include(x => x.Objects).AsNoTracking();
     }
+    
+    public void UpdateRating(int id, double newRating)
+    {
+      FindByCondition(u => u.Id == id)
+            .ExecuteUpdate(b =>
+                b.SetProperty(u => u.Rating, newRating)
+            );
+    }
+    
     public Workspace Replace(Workspace entity)
     {
         RemoveDiffWorkspaceComponents(entity.Id, entity.Objects);

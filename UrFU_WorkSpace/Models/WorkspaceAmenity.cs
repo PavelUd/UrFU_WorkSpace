@@ -8,5 +8,5 @@ public class WorkspaceAmenity
     
     public int IdWorkspace { get; set; }
     
-    public AmenityTemplate Template { get; set; }
+    public Template Template { get; set; }
 }

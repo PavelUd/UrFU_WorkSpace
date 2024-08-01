@@ -13,8 +13,8 @@ public class WorkspaceObject
     public double  Y { get; set; }
     
     public int Height { get; set; }
-    public bool IsReserve{ get; set; }
+    public bool isReserved { get; set; }
     public int Width { get; set; }
 
-    public ObjectTemplate Template { get; set; }
+    public Template? Template { get; set; }
 }

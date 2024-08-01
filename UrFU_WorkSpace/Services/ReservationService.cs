@@ -1,54 +1,44 @@
+
+using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
+using UrFU_WorkSpace.Repositories.Interfaces;
 using UrFU_WorkSpace.Services.Interfaces;
 
 namespace UrFU_WorkSpace.Services;
 
 public class ReservationService : IReservationService
 {
-    public IReservationRepository Repository;
-    private IVerificationCodeService _verificationCodeService;
+    private readonly IReservationRepository _repository;
     
-    public ReservationService(IReservationRepository repository, IVerificationCodeService verificationCodeService)
+    public ReservationService(IReservationRepository repository)
     {
-        _verificationCodeService = verificationCodeService;
-        Repository = repository;
+        _repository = repository;
     }
 
-    public async Task<List<Reservation>> GetReservations(int idWorkspace, DateOnly date)
+    public  Result<Reservation> GetReservation(int id, string token)
     {
-        return await Repository.GetReservations(idWorkspace, date);
+        return _repository.GetReservation(id, token).Result;
     }
     
-    public async Task<List<Reservation>> GetUserReservations(int idUser)
+    public async Task<Result<List<Reservation>>> GetReservations(int idWorkspace, string token)
     {
-        return await Repository.GetUserReservations(idUser);
+        return await _repository.GetReservations(null, idWorkspace,false, token);
     }
 
+    public async Task<Result<List<Reservation>>> GetReservations(string token, bool isFull = false)
+    {
+        var idUser = JwtTokenDecoder.GetUserId(token);
+        return await _repository.GetReservations(idUser, null, isFull, token);
+    }
+    
     public bool VerifyReservation(string code, int id, int idWorkspace)
     {
-        var isOk = _verificationCodeService.GetCodes().Result.Any(x =>x.Code == code.ToUpper() && x.IdWorkspace == idWorkspace);
-        if (isOk)
-        {
-            Repository.ConfirmReservation(id);
-        }
-
+        var isOk = true;
         return isOk;
     }
     
-    public List<WorkspaceObject> UpdateReservationStatus(TimeOnly start, TimeOnly end, List<Reservation> reservations, List<WorkspaceObject> objects)
-    {
-        var objs = new List<WorkspaceObject>();
-        foreach (var obj in objects)
-        {
-            var isReserved = reservations.Any(x => x.IdObject == obj.Id && !(x.TimeStart >= end || x.TimeEnd <= start));
-            obj.IsReserve = isReserved;
-            objs.Add(obj);
-        }
-
-        return objs;
-    }
     
-    public async Task<Reservation> Reserve(int idWorkspace, IFormCollection form)
+    public async Task<Result<int>> Reserve(int idWorkspace, IFormCollection form, string token)
     {
         var dictionary = new Dictionary<string, object>()
         {
@@ -60,7 +50,7 @@ public class ReservationService : IReservationService
             { "date", form["date"].ToString() }
         };
 
-        return await Repository.CreateReservations(dictionary);
+        return await _repository.CreateReservations(dictionary, token);
     }
     
     

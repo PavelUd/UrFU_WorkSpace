@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
@@ -8,63 +9,29 @@ namespace UrFU_WorkSpace.Controllers;
 
 public class UserController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private HttpContext _context;
-    private IWorkspaceService Service;
-    private IAmenityService AmenityService;
-    private IObjectService ObjectService;
-    private IVerificationCodeService VerificationCodeService;
-    private IWebHostEnvironment _appEnvironment;
     private IReservationService ReservationService;
     private IWorkspaceService WorkspaceService;
 
-    public UserController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment appEnvironment, IWorkspaceService service, IAmenityService amenityService, IObjectService objectService,
-        IVerificationCodeService verificationCodeService, IReservationService reservationService, IWorkspaceService workspaceService)
+    public UserController(IReservationService reservationService, IWorkspaceService workspaceService)
     {
-        _context = httpContextAccessor.HttpContext;
-        ObjectService = objectService;
-        AmenityService = amenityService;
-        VerificationCodeService = verificationCodeService;
-        _logger = logger;
-        _appEnvironment = appEnvironment;
-        Service = service;
         WorkspaceService = workspaceService;
         ReservationService = reservationService;
-    }
-    [Route("{idUser}/verification-codes")]
-    public IActionResult GetCodes(int idUser)
-    {
-        return Ok(VerificationCodeService.GetCodes(idUser).Result);
-    }
-    
-    [HttpPost]
-    [Route("update-code")]
-    public IActionResult UpdateCode(IFormCollection form)
-    {
-        var idWorkspace = int.Parse(form["idWorkspace"]);
-        var idCode = int.Parse(form["idCode"]);
-        return Ok(VerificationCodeService.UpdateCode(idWorkspace, idCode).Result);
     }
     
     [Route("constructor-templates")]
     public IActionResult GetWorkspace()
     {
-        var amenityTemplates = AmenityService.GetAmenityTemplates().Result;
-        var objectTemplates = ObjectService.GetObjectTemplates().Result;
-        ViewBag.Amenities = amenityTemplates;
-        ViewBag.Objects =objectTemplates;
         var templates = new Dictionary<string, object>()
         {
-            { "amenities", amenityTemplates },
-            { "objects", objectTemplates }
         };
         return Ok(JsonHelper.Serialize(templates)); 
     }
     
+    [Authorize(Roles =nameof(Role.User) + "," + nameof(Role.Admin))]
     [Route("{idUser}/reservations")]
     public IActionResult GetReservation(int idUser)
     {
-        return Ok(ReservationService.GetUserReservations(idUser).Result.Where(x => x.IsConfirmed == false));
+        return Ok(ReservationService.GetReservations(idUser,  HttpContext.Session.GetString("JwtToken")).Result.Value.Where(x => x.IsConfirmed == false));
     }
     
     [HttpPost]
@@ -74,8 +41,7 @@ public class UserController : Controller
         var code = form["code"].ToString();
         var id = int.Parse(form["id"]);
         var idWorkspace = int.Parse(form["idWorkspace"]);
-        var isConfirmed = ReservationService.VerifyReservation(code, id, idWorkspace);
-        return Ok(isConfirmed);
+        return Ok(true);
     }
     
     
@@ -83,7 +49,7 @@ public class UserController : Controller
     [Route("/workspace-create")]
     public IActionResult CreateWorkspace(IFormCollection form, IFormFileCollection uploads)
     {
-        var idUser =JwtTokenDecoder.GetUserId(_context.Session.GetString("JwtToken"));
+        var idUser =JwtTokenDecoder.GetUserId(HttpContext.Session.GetString("JwtToken"));
         
         var baseInfo = new Dictionary<string, object>()
         {
@@ -104,14 +70,15 @@ public class UserController : Controller
             (form["sundayStart"], form["sundayEnd"]),
         };
         var idTemplates = JsonHelper.Deserialize<List<int>>(form["idTemplate"].ToString());
-        var idWorkspace = Service.CreateWorkspace(idUser, baseInfo, operationModeJson,idTemplates, form["objects"],uploads, _appEnvironment);
-        if (idWorkspace != 0)
+ //       var idWorkspace = Service.CreateWorkspace(idUser, baseInfo, operationModeJson,idTemplates, form["objects"],uploads, _appEnvironment);
+//        if (idWorkspace != 0)
         {
-            VerificationCodeService.AddCode(idWorkspace);
+ //           VerificationCodeService.AddCode(idWorkspace);
         }
         return Redirect("/");
     }
     
+    [Authorize(Roles =nameof(Role.User) + "," + nameof(Role.Admin))]
     [Route("/users/{idUser}")]
     public IActionResult Profile(int idUser)
     {
@@ -120,32 +87,19 @@ public class UserController : Controller
         return View("Profile", user); 
     }
     
+    [Authorize(Roles = nameof(Role.Admin))]
     [Route("/users/{idUser}/workspaces")]
     public async Task<IActionResult> UserWorkspaces(int idUser)
     {
         var workspaces = await WorkspaceService.GetAllWorkspaces();
-        return View("UserWorkspaces", workspaces.Where(x => x.IdCreator == idUser)); 
+        return View("UserWorkspaces", workspaces.Value.Where(x => x.IdCreator == idUser)); 
     }
     
     [Route("/users/{idUser}/reservations")]
-    public async Task<IActionResult> UserReservations(int idUser)
+    public async Task<IActionResult> UserReservations()
     {
-        var views = new List<ReservationView>();
-        var reservations =await ReservationService.GetUserReservations(idUser);
-        var workspaces = await WorkspaceService.GetAllWorkspaces();
-        foreach (var reservation in reservations)
-        {
-            var workspace = workspaces.FirstOrDefault(x => x.Id == reservation.IdWorkspace);
-            var view = new ReservationView()
-            {
-                Reservation = reservation,
-                Name = workspace.Name,
-                Image = workspace.Images.FirstOrDefault(),
-                WorkspaceObject = workspace.Objects.FirstOrDefault(x => x.Id == reservation.IdObject)
-
-            };
-            views.Add(view);
-        }
-        return View("UserReservations", views); 
+        var views = new List<Reservation>();
+        var reservations =await ReservationService.GetReservations( HttpContext.Session.GetString("JwtToken"), true);
+        return View("UserReservations", reservations.Value); 
     }
 }

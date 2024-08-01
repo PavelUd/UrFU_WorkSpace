@@ -40,11 +40,12 @@ public class Startup
             return new ErrorHandler(Configuration["ErrorsPath"], logger);
         });
         
-        
         services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
         services.AddScoped<IWorkspaceProvider, WorkspaceRepository>();
-        services.AddScoped<IReviewRepository, ReviewRepository>();
-        services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>()
+            .AddScoped<IBaseProvider<Review>, ReviewRepository>();
+        services.AddScoped<IReservationRepository, ReservationRepository>()
+            .AddScoped<IReservationProvider, ReservationRepository>();
         services.AddScoped<IBaseRepository<Template>, BaseRepository<Template>>()
             .AddScoped<IBaseProvider<Template>, BaseRepository<Template>>();
         services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
@@ -64,13 +65,14 @@ public class Startup
         services.AddScoped<AuthenticationService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkspaceComponentService<WorkspaceAmenity>, WorkspaceAmenitiesService>();
-        services.AddScoped<IWorkspaceComponentService<WorkspaceObject>, WorkspaceObjectsService>();
+        services.AddScoped<IWorkspaceObjectService, WorkspaceObjectsService>();
         services.AddScoped<IWorkspaceComponentService<WorkspaceWeekday>, OperationModeService>();
         services.AddScoped<IWorkspaceComponentService<WorkspaceWeekday>, OperationModeService>();
         services.AddScoped<ITemplateService, TemplateService>();
         services.AddScoped<ReservationService>();
         services.AddScoped<ReviewService>();
         services.AddScoped<IWorkspaceService, WorkspaceService>();
+        services.AddScoped<TimeSlotsGenerator>();
         services.AddAuthentication(x =>
         {
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -141,7 +143,7 @@ public class Startup
         });
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceScopeFactory serviceScopeFactory)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseStaticFiles();
         if(!Directory.Exists("/api/images"))
@@ -151,7 +153,7 @@ public class Startup
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(
-                Path.Combine(env.ContentRootPath, "Images")),
+                Path.Combine(env.ContentRootPath, "images")),
             RequestPath = "/api/images"
         });
 
@@ -162,6 +164,7 @@ public class Startup
         app.UseMiddleware<JwtMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
+
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

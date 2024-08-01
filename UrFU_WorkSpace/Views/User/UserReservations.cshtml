@@ -1,6 +1,7 @@
- @model List<ReservationView>
+ @model List<Reservation>
  @{
    Layout = "UserLayout";
+ 
  }
  <section class="cabinet__section">
    <h3 class="section__title cabinet-section__title">
@@ -11,38 +12,39 @@
      <ul class="list-reset reservations__list">
        @foreach (var reservation in Model)
        {
+         var isDisabled = !reservation.IsAvailableToConfirm;
          <li class="reservation">
            <ul class="list-reset reservation__params">
              <li class="reservation__param">
                @{
-                  var image = @reservation.Image;
-                   if (image != null)
-                      <img class="cabinet__cowork-img" src="@image.Url" alt="Фото">
-                  }
+                 var image = @reservation.Image;
+                 if (image != null)
+                   <img class="cabinet__cowork-img" src="@image.Url" alt="Фото">
+               }
              </li>
              <li class="reservation__param">
                <span class="reservation__name">
-                 @reservation.Name
+                 @reservation.WorkspaceName
                </span>
              </li>
              <li class="reservation__param">
                <span class="reservation__time">
-                 @reservation.Reservation.TimeStart - @reservation.Reservation.TimeEnd
+                 @reservation.TimeStart - @reservation.TimeEnd
                </span>
              </li>
              <li class="reservation__param">
                <span class="reservation__type">
-                 @reservation.WorkspaceObject.Template.Category
+                 @reservation.WorkspaceObject.Template.Name
                </span>
              </li>
              <li class="reservation__param">
-               <button class="btn-reset btn btn__accept-reservation">
+               <button class="btn-reset btn btn__accept-reservation" data-bs-toggle="modal" href="#" data-bs-target="#userReservationsModal" disabled=@isDisabled>
                  Подтвердить
                </button>
              </li>
              <li class="reservation__param">
-               <button class="btn-reset btn btn__reset-reservation">
-                 <img src="~/img/reset.png" alt="Отменить">
+               <button class="btn-reset btn btn__reset-reservation" data-bs-toggle="modal" href="#" data-bs-target="#reservationsCancelModal">
+                 <img src="~/img/reset.png" alt="Отменить" >
                </button>
              </li>
            </ul>
@@ -51,3 +53,47 @@
      </ul>
    </div>
  </section>
+ <div class="modal fade" id="userReservationsModal" tabindex="-1" aria-labelledby="userReservationsModalLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h4 style="color: #1a1e21; margin: auto; font-weight: bold; font-size: 20px; text-align: center">Подтвердите бронирование</h4>
+       </div>
+       <div class="modal-body">
+         <div class="register-confirm__message-book">
+           Введите 6-ти значный код, выданный администратором
+         </div>
+         <button class="btn-reset btn register__btn btn__accept">
+           Подтвердить бронирование
+         </button>
+       </div>
+     </div>
+   </div>
+ </div>
+ <div class="modal fade" id="reservationsCancelModal" tabindex="-1" aria-labelledby="reservationsCancelModal" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
+     <div class="modal-content" style="background: transparent; border: transparent">
+       <div class="review-modal-book">
+         <div class="register__title-wrapper cancel__title">
+           <span class="review__title-book red">
+             Вы уверены?
+           </span>
+           <img class="close-img" src="~/img/close.png" alt="Закрыть">
+         </div>
+         <div class="register-cancel__message">
+           Вы хотите отменить своё бронирование?
+         </div>
+
+         <div class="cancel__wrapper">
+           <button id="accept" class="btn-reset btn register__btn btn__accept">
+             Да
+           </button>
+           <button class="btn-reset btn register__btn btn__accept">
+             Нет
+           </button>
+         </div>
+
+       </div>
+     </div>
+   </div>
+ </div>

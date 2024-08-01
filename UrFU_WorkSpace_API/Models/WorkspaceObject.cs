@@ -22,4 +22,7 @@ public class WorkspaceObject : IWorkspaceComponent
     [Key] [Column("object_id")] public int Id { get; set; }
 
     [Column("workspace_id")] public int IdWorkspace { get; set; }
+
+    [NotMapped]
+    public bool IsReserved  { get; set; }
 }

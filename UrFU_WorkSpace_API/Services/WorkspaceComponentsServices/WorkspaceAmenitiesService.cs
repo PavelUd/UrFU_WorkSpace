@@ -19,9 +19,9 @@ public class WorkspaceAmenitiesService : WorkspaceComponentService<WorkspaceAmen
         var result = Result.Ok();
         foreach (var component in components)
         {
-            var template = _templateProvider.FindByCondition(t => t.Id == component.Id && t.Category == TemplateCategory.Amenity).FirstOrDefault();
+            var template = _templateProvider.FindByCondition(t => t.Id == component.IdTemplate && t.Category == TemplateCategory.Amenity).FirstOrDefault();
             
-            result = ValidateParam(template != null, ErrorType.TemplateNotFound, component.Id);
+            result = ValidateParam(template != null, ErrorType.TemplateNotFound, component.IdTemplate);
             if (!result.IsSuccess)
                 break;
         }

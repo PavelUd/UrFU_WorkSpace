@@ -1,9 +1,5 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using UrFU_WorkSpace.Helpers;
-using UrFU_WorkSpace.Models;
-using UrFU_WorkSpace.Services.Interfaces;
+using UrFU_WorkSpace.Services;
 
 namespace UrFU_WorkSpace.Controllers;
 
@@ -12,62 +8,45 @@ namespace UrFU_WorkSpace.Controllers;
 public class AuthenticationController : Controller
 {
     private readonly ILogger<AuthenticationController> Logger;
-    private IConfiguration Configuration;
-    private IHttpContextAccessor HttpContextAccessor;
-    private IUserService UserService;
+    private AuthenticationService Service;
     
-   public AuthenticationController(ILogger<AuthenticationController> logger,IUserService userService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+   public AuthenticationController(ILogger<AuthenticationController> logger,AuthenticationService service, IConfiguration configuration)
    {
        Logger = logger;
-       UserService = userService;
-       HttpContextAccessor = httpContextAccessor;
-       Configuration = configuration;
+       Service = service;
    }
-
-    [HttpPost]
-    public async Task<IActionResult> VerifyUser(IFormCollection form)
-    {
-        var idUser = int.Parse(form["idUser"]);
-        var userCode = form["code"].ToString();
-        var correctCode = HttpContextAccessor.HttpContext.Session.GetString("Code");
-        
-        var response = UserService.VerifyUser(idUser, userCode, correctCode);
-        HttpContextAccessor.HttpContext.Session.Remove("Code");
-        return Ok(response);
-    }
 
     [HttpPost]
     public async Task<IActionResult> Register(IFormCollection form)
     {
-        var response = await UserService.Register(form);
-        if (response.StatusCode != HttpStatusCode.OK)
+        var result = await Service.Register(form);
+        if (!result.IsSuccess)
         {
-            return Ok(response);
+            var error = result.Error;
+            return StatusCode(error.Code, error);
         }
 
-        var code = await UserService.SendEmailAsync(form["email"].ToString(), "Администация Сайта");
-        HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
-        HttpContextAccessor.HttpContext.Session.SetString("Code", code);
-        return Ok(response.Token);
+        return Accepted();
     }
     
     
     
     [HttpPost]
-    public async Task<IActionResult> Login(IFormCollection form) 
+    public async Task<IActionResult> GetToken(IFormCollection form) 
     {
-        var response = await UserService.Login(form);
-        if (response.StatusCode != HttpStatusCode.OK)
+        var result = await Service.GetToken(form);
+        if (!result.IsSuccess)
         {
-            return Ok(response);
+            var error = result.Error;
+            return StatusCode(error.Code, error);
         }
-        HttpContextAccessor.HttpContext.Session.SetString("JwtToken", response.Token);
-        return Ok(response.Token);
+        HttpContext.Session.SetString("JwtToken", result.Value.AccessToken);
+        return Ok(result.Value);
     }
     
     [HttpPost]
     public void LogOut()
     {
-        HttpContextAccessor.HttpContext?.Session.Remove("JwtToken");
+        HttpContext.Session.Remove("JwtToken");
     } 
 }

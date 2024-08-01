@@ -2,48 +2,71 @@ using System.Globalization;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
-using UrFU_WorkSpace.Services.Interfaces;
+using UrFU_WorkSpace.Repositories.Interfaces;
 
 namespace UrFU_WorkSpace.Repositories;
 
-public class WorkspaceRepository : IWorkspaceRepository
+public class WorkspaceRepository(string baseApiAddress) : IWorkspaceRepository
 {
-    private Uri BaseAddress;
-    
-    public WorkspaceRepository(string baseApiAddress)
+    private readonly Uri _baseAddress = new(baseApiAddress + "/workspaces");
+    private readonly Dictionary<Type, string> _endpoints = new()
     {
-        BaseAddress = new Uri(baseApiAddress + "/workspaces");
+        { typeof(WorkspaceWeekday), "operation-mode" },
+        { typeof(WorkspaceObject), "objects" },
+        { typeof(WorkspaceAmenity), "amenities" }
+    };
+
+    public async Task<Result<int>> CreateWorkspaceAsync(Workspace baseInfo, string token)
+    {
+        return await HttpRequestSender.HandleJsonRequest<int, Workspace>(_baseAddress + "/create", HttpMethod.Post, baseInfo, token);
+    }
+    
+    public async Task<Result<Workspace>> GetWorkspaceAsync(int idWorkspace, bool isFull)
+    {
+        var route = _baseAddress + $"/{idWorkspace}?isFull={isFull}";
+        return await HttpRequestSender.HandleJsonRequest<Workspace>(route, HttpMethod.Get);
+    }
+    public async Task<Result<List<Workspace>>> GetAllWorkspacesAsync()
+    {
+        return await HttpRequestSender.HandleJsonRequest<List<Workspace>>(_baseAddress.ToString(), HttpMethod.Get);
     }
 
-    public int CreateWorkspaceAsync(Workspace baseInfo)
+    public async Task<Result<List<TimeSlot>>> GetTimeSlots(int idWorkspace, DateOnly date, TimeType timeType, int? idObjectTemplate)
     {
-        var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + "/create", RequestMethod.Post, baseInfo).Result;
-        return Convert.ToInt32(responseMessage.Content.ReadAsStringAsync().Result);
+        var route = _baseAddress + $"/{idWorkspace}/slots?idWorkspace={idWorkspace}&{GetStringDataTime(date, nameof(date))}&type={timeType.ToString().ToLower()}";
+        if (idObjectTemplate.HasValue && idObjectTemplate != 0)
+        {
+            route += $"idObjectTemplate={idObjectTemplate}";
+        }
+        return await HttpRequestSender.HandleJsonRequest<List<TimeSlot>>(route, HttpMethod.Get);
     }
-    
-    public async Task<int> UpdateRating(double rating, int idWorkspace)
+    public async Task<Result<List<WorkspaceObject>>> FetchWorkspaceObjectsByDateRange(int idWorkspace, int? idTemplate, DateOnly? date, TimeOnly? timeStart, TimeOnly? timeEnd)
     {
-        var t = rating.ToString(CultureInfo.InvariantCulture);
-        var  responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/{idWorkspace}/update-rating?rating={t}", RequestMethod.Patch).Result;
-        var content = await responseMessage.Content.ReadAsStringAsync();
-        return int.Parse(content);
-    }
-    
-    public async Task<Workspace> GetWorkspaceAsync(int idWorkspace)
-    {
-        var responseMessage = HttpRequestSender.SendRequest(BaseAddress + $"/{idWorkspace}", RequestMethod.Get).Result;
-        responseMessage.EnsureSuccessStatusCode();
-        var content = await responseMessage.Content.ReadAsStringAsync();
+        var route = _baseAddress +  $"/{idWorkspace}/objects";
+        var queryParams = new List<string>();
         
-        return JsonHelper.Deserialize<Workspace>(content);
+        if (idTemplate.HasValue && idTemplate != 0) 
+            queryParams.Add($"idTemplate={idTemplate}");
+
+        if (date.HasValue)
+            queryParams.Add(GetStringDataTime(date.Value, nameof(date)));
+                
+        foreach (var (value, name) in new[] {(timeStart, nameof(timeStart)), (timeEnd, nameof(timeEnd)) })
+        {
+            if (value.HasValue) 
+                queryParams.Add(GetStringDataTime(value.Value, name));
+        }
+        if (queryParams.Any())
+            route += "?" + string.Join("&", queryParams);
+
+        return await HttpRequestSender.HandleJsonRequest<List<WorkspaceObject>>(route, HttpMethod.Get);
+
+
     }
 
-    public async Task<List<Workspace>> GetAllWorkspacesAsync()
+    private static string GetStringDataTime<T>(T data, string name)
     {
-        var responseMessage = HttpRequestSender.SendRequest(BaseAddress.ToString(), RequestMethod.Get).Result;
-        responseMessage.EnsureSuccessStatusCode();
-        var content = await responseMessage.Content.ReadAsStringAsync();
-        
-        return JsonHelper.Deserialize<List<Workspace>>(content);
+        return $"{name}={JsonHelper.Serialize(data).Replace("\"", "")}";
     }
 }
+

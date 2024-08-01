@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -94,9 +95,9 @@ public class WorkspaceController : Controller
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceObject>))]
     [ProducesResponseType(404, Type = typeof(Error))]
     [ProducesResponseType(500, Type = typeof(Error))]
-    public IActionResult GetWorkspaceObjects(int idWorkspace)
+    public IActionResult GetWorkspaceObjects(int idWorkspace, int idTemplate, DateOnly date, TimeOnly timeStart, TimeOnly timeEnd)
     {
-        var result = _workspaceService.GetObjects(idWorkspace);
+        var result =_workspaceService.GetObjects(idWorkspace, date, timeStart, timeEnd, idTemplate);
         if (!result.IsSuccess)
         {
             var error = result.Error;
@@ -106,6 +107,18 @@ public class WorkspaceController : Controller
         return Ok(result.Value);
     }
 
+    [HttpGet("{idWorkspace}/slots")]
+    public IActionResult GetWorkspaceTimeSlots(int idWorkspace,[Required] DateOnly date, [Required]TimeType type)
+    {
+        var result =_workspaceService.GetTimeSlots(idWorkspace, date, type);
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+            return StatusCode((int)error.HttpStatusCode, error);
+        }
+
+        return Ok(result.Value);
+    }
     /// <summary>
     ///     Получить  удобства коворкинга
     /// </summary>
@@ -148,52 +161,6 @@ public class WorkspaceController : Controller
         }
 
         return Ok(result.Value);
-    }
-
-    /// <summary>
-    ///     Частичное обновление коворкинга.
-    /// </summary>
-    /// <remarks>
-    ///     Метод предназначен для частичного обновления модели коворкинга.&#xA;
-    ///     Поля, короторые можно обновить:
-    ///     -
-    ///     <term>
-    ///         <c>name</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>description</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>rating</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>address</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>idCreator</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>institute</c>
-    ///     </term>
-    /// </remarks>
-    [Authorize(Roles = nameof(Role.Admin))]
-    [HttpPatch("{idWorkspace}")]
-    public IActionResult PatchWorkspace([FromBody] JsonPatchDocument<BaseInfo> workspaceComponent,
-        [FromRoute] int idWorkspace)
-    {
-        var result = _workspaceService.PatchWorkspace(idWorkspace, workspaceComponent);
-        if (!result.IsSuccess)
-        {
-            var error = result.Error;
-            return StatusCode((int)error.HttpStatusCode, error);
-        }
-
-        return NoContent();
     }
 
     /// <summary>

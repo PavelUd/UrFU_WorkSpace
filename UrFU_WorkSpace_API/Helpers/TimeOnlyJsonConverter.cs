@@ -5,7 +5,7 @@ namespace UrFU_WorkSpace_API.Helpers;
 
 public class TimeOnlyJsonConverter : JsonConverter<TimeOnly>
 {
-    private readonly string[] Formats = { "hh:mm", "HH:mm", "h:mm tt", "HH:mm:ss" };
+    private readonly string[] Formats = {"HH:mm", "hh:mm", "h:mm tt", "HH:mm:ss" };
 
     public override void WriteJson(JsonWriter writer, TimeOnly value, JsonSerializer serializer)
     {
