@@ -1,20 +1,19 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
-using UrFU_WorkSpace.Models;
 using UrFU_WorkSpace.Services;
 using UrFU_WorkSpace.Services.Interfaces;
-using Review = UrFU_WorkSpace_API.Models.Review;
+using TimeType = UrFU_WorkSpace.enums.TimeType;
 
 namespace UrFU_WorkSpace.Controllers;
 
 public class WorkspacesController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private ReviewService _reviewService;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly IWorkspaceService WorkspaceService;
@@ -24,26 +23,41 @@ public class WorkspacesController : Controller
         this.httpContextAccessor = httpContextAccessor;
         WorkspaceService = workspaceService;
         ReservationService = reservationService;
-        _logger = logger;
         _reviewService = reviewService;
     }
+
     [Route("workspaces/{idWorkspace}")]
-    public IActionResult GetWorkspace(int idWorkspace)
+    public async Task<IActionResult> GetWorkspace(int idWorkspace)
     {
-        var workspace = WorkspaceService.GetWorkspace(idWorkspace);
-        workspace.Reviews = _reviewService.GetReviews(idWorkspace);
-        return View("Workspace", workspace); 
+        var workspace =await  WorkspaceService.GetWorkspace(idWorkspace);
+        var reviews = await _reviewService.GetReviews(idWorkspace);
+
+        var result = workspace.Then(w => reviews.Then(r =>
+        {
+            w.Reviews = r;
+            return w;
+        }));
+
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+            return StatusCode(error.Code, error);
+        }
+        
+        return View("Workspace", workspace.Value); 
     }
     [HttpPost]
     [Route("workspaces/{idWorkspace}/get-time-slots")]
     public async Task<IActionResult> GetTimeSlots([FromRoute] int idWorkspace, IFormCollection form)
     {
-        var d = form["date"];
-        var t ='\"' + d + '\"';
-        var date = JsonConvert.DeserializeObject<DateTime>(t , new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
-        var timeSlots = WorkspaceService.GetWorkspaceTimeSlots(idWorkspace, date,  Enum.Parse<TimeType>(form["timeType"].ToString()), int.Parse(form["objectType"]));
-        var str = JsonConvert.SerializeObject(timeSlots);
-        return Ok(str);
+        var date = JsonConvert.DeserializeObject<DateTime>('\"' + form["date"]+ '\"' , new JsonSerializerSettings { DateFormatString = "yyyy-MM-dd" });
+        var result = await WorkspaceService.GetWorkspaceTimeSlots(idWorkspace, date,  (TimeType)(int.Parse(form["timeType"])), int.Parse(form["objectType"]));
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+            return StatusCode(error.Code, error);
+        }
+        return Ok(JsonConvert.SerializeObject(result.Value));
     }
 
     [HttpPost]
@@ -64,10 +78,7 @@ public class WorkspacesController : Controller
             Estimation = int.Parse(stars),
             Date = date
             
-        });
-
-       var newRating = _reviewService.RecalculateRating(idWorkspace);
-       WorkspaceService.UpdateWorkspaceRating(idWorkspace, newRating);
+        }, httpContextAccessor.HttpContext.Session.GetString("JwtToken"));
        
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -88,8 +99,13 @@ public class WorkspacesController : Controller
         var timeEnd = JsonConvert.DeserializeObject<TimeOnly>(timeEndStr);
         var timeStart = JsonConvert.DeserializeObject<TimeOnly>(timeStartStr);
         
-        var objects = WorkspaceService.GetReservedObjects(timeStart, timeEnd, idWorkspace, date, idTemplate);
-        return Ok(JsonConvert.SerializeObject(objects, new JsonSerializerSettings
+        var result = await WorkspaceService.GetWorkspaceObjects(idWorkspace,idTemplate, new DateOnly(date.Year, date.Month, date.Day), timeStart, timeEnd);
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+            return StatusCode(error.Code, error);
+        }
+        return Ok(JsonConvert.SerializeObject(result.Value, new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver() 
         }));
@@ -99,13 +115,16 @@ public class WorkspacesController : Controller
     [Route("workspaces/{idWorkspace}/reserve")]
     public async Task<IActionResult> Reserve([FromRoute] int idWorkspace, IFormCollection form)
     {
-        var reservation = ReservationService.Reserve(idWorkspace, form).Result;
-        if (reservation == null)
+        var token = httpContextAccessor.HttpContext.Session.GetString("JwtToken");
+        var creationResult = await ReservationService.Reserve(idWorkspace, form, token);
+        var result = creationResult.Then(id => ReservationService.GetReservation(id, token));
+        
+        if (!result.IsSuccess)
         {
-            return BadRequest();
+            var error = result.Error;
+            return StatusCode(error.Code, error);
         }
-
-        return Ok(JsonConvert.SerializeObject(reservation, new JsonSerializerSettings
+        return Ok(JsonConvert.SerializeObject(result.Value, new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver() 
         }));

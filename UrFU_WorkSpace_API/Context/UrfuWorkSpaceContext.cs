@@ -18,14 +18,13 @@ public partial class UrfuWorkSpaceContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Template> Templates { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
-    public DbSet<AmenityTemplate> AmenityTemplates { get; set; }
     public DbSet<WorkspaceAmenity> WorkspaceAmenities { get; set; }
     public DbSet<WorkspaceObject> WorkspaceObjects { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<Workspace> Workspaces { get; set; }
     public DbSet<WorkspaceWeekday> OperationMode { get; set; }
-    public DbSet<ObjectTemplate> ObjectTemplates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,24 +32,18 @@ public partial class UrfuWorkSpaceContext : DbContext
             .HasDiscriminator(t => t.TypeOwner)
             .HasValue<Image>(-1)
             .HasValue<WorkspaceImage>((int)OwnerType.Workspace)
-            .HasValue<ObjectImage>((int)OwnerType.Object)
-            .HasValue<AmenityImage>((int)OwnerType.Amenity);
+            .HasValue<TemplateImage>((int)OwnerType.Template);
 
         modelBuilder.Entity<WorkspaceObject>()
             .HasOne(wo => wo.Template)
             .WithMany()
             .HasForeignKey(wo => wo.IdTemplate);
+        
 
-        modelBuilder.Entity<ObjectTemplate>()
+        modelBuilder.Entity<Template>()
             .HasOne(e => e.Image)
             .WithOne()
-            .HasForeignKey<ObjectImage>(e => e.IdOwner)
-            .IsRequired();
-
-        modelBuilder.Entity<AmenityTemplate>()
-            .HasOne(e => e.Image)
-            .WithOne()
-            .HasForeignKey<AmenityImage>(e => e.IdOwner)
+            .HasForeignKey<TemplateImage>(e => e.IdOwner)
             .IsRequired();
 
 
@@ -84,8 +77,7 @@ public partial class UrfuWorkSpaceContext : DbContext
             .IsRequired();
 
 
-        modelBuilder.Entity<AmenityTemplate>().Navigation(e => e.Image).AutoInclude();
-        modelBuilder.Entity<ObjectTemplate>().Navigation(e => e.Image).AutoInclude();
+        modelBuilder.Entity<Template>().Navigation(e => e.Image).AutoInclude();
         modelBuilder.Entity<WorkspaceAmenity>().Navigation(e => e.Template).AutoInclude();
         modelBuilder.Entity<WorkspaceObject>().Navigation(e => e.Template).AutoInclude();
         modelBuilder.Entity<Workspace>().Navigation(e => e.Images).AutoInclude();

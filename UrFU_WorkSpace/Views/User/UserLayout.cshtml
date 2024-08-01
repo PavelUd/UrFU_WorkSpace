@@ -1,17 +1,20 @@
 @using UrFU_WorkSpace.Helpers
 @using Microsoft.AspNetCore.Http;
+@using UrFU_WorkSpace.enums
 @{
   Layout = "~/Views/_Layout.cshtml";
-  var token = ViewContext.HttpContext.Session.GetString("JwtToken");
-  var idUser = JwtTokenDecoder.GetUserId(token);
-  var login = JwtTokenDecoder.GetUserName(token);
+  var idUser = User.Claims.SingleOrDefault(u => u.Type == "Id")?.Value;
+  var login = User.Claims.SingleOrDefault(u => u.Type == "Login")?.Value;
   var action = ViewContext.RouteData.Values["action"];
   var navItems = new Dictionary<string, Tuple<string, string>>()
   {
     { "Profile", new Tuple<string, string>("/users/" + idUser, "Профиль") },
     { "UserReservations", new Tuple<string, string>("/users/" + idUser + "/reservations", "Мои бронирования") },
-    { "UserWorkspaces", new Tuple<string, string>("/users/" + idUser + "/workspaces", "Мои коворкинги") },
   };
+  if (User.IsInRole(nameof(Role.Admin)))
+  {
+    navItems.Add( "UserWorkspaces", new Tuple<string, string>("/users/" + idUser + "/workspaces", "Мои коворкинги"));
+  }
 }
 <html lang="en">
 <main class="main">

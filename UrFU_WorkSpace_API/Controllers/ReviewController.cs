@@ -16,10 +16,12 @@ namespace UrFU_WorkSpace_API.Controllers;
 public class ReviewController : Controller
 {
     private readonly ReviewService _reviewService;
+    private readonly IWorkspaceService _workspaceService;
 
-    public ReviewController(ReviewService reviewService)
+    public ReviewController(ReviewService reviewService, IWorkspaceService workspaceService)
     {
         _reviewService = reviewService;
+        _workspaceService = workspaceService;
     }
 
     
@@ -37,10 +39,16 @@ public class ReviewController : Controller
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
-    [Authorize(Roles = nameof(Role.Admin) + "," + nameof(Role.User))]
+    [Authorize(Roles = nameof(Role.User) + "," + nameof(Role.Admin))]
     public IActionResult AddReview([FromBody] Review review)
     {
-        var result = _reviewService.AddReview(review);
+        var id  = int.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Id")!.Value);
+        review.IdUser = id;
+        var result = _reviewService.AddReview(review).Then(id =>
+        {
+            _workspaceService.UpdateRating(review.IdWorkspace);
+            return id;
+        });
         return !result.IsSuccess
             ? StatusCode((int)result.Error.HttpStatusCode, result.Error)
             : Ok(result.Value);

@@ -1,10 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @using UrFU_WorkSpace.Helpers
 
-@{
-  var token = ViewContext.HttpContext.Session.GetString("JwtToken");
-  var user = JwtTokenDecoder.Decode(token);
-}
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -28,11 +24,11 @@
         <a href="#" class="nav__link">Контакты</a>
       </span>
       @{
-        if (user != null)
+        if (@Context.User.Identity.IsAuthenticated)
         {
           <div id="lk">
-            <a style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn" href="/users/@user.Id">
-                        <img src="/img/account.svg" alt="Лк"> @user.Login
+            <a style=" margin-right: 5rem" class="btn-reset btn nav__btn select-btn" href="/users/@Context.User.Claims.SingleOrDefault(u => u.Type == "Id")?.Value">
+                        <img src="/img/account.svg" alt="Лк"> @Context.User.Claims.SingleOrDefault(u => u.Type == "Login")?.Value
                       </a>
           </div>
         }
@@ -98,13 +94,6 @@
           <div style="margin: 1rem">
             <input class="register__input form-control" name="password" placeholder="Введите пароль" required/>
           </div>
-          <div style="margin: 1rem">
-            <input class="register__input form-control" placeholder="Введите пароль повторно" required/>
-          </div>
-          
-          <div style="margin: 1rem">
-            <input class="register__input form-control" id="code" name="code" hidden="true"/>
-          </div>
           <div style="color: red;text-align: center; font-size: small" id="error-message"></div>
           <div style="margin:3rem 1rem 1rem 1rem">
             <button class="btn register__btn" type="submit">Продолжить</button>
@@ -128,6 +117,9 @@
           <div  style="padding: 7px">
             <input class="register__input form-control form-control-lg" name="password" placeholder="Пароль" required/>
           </div>
+          <div  style="padding: 7px">
+              <input class="register__input form-control form-control-lg" name="grantType" value = "password" hidden/>
+          </div>
           <div style="color: red;padding: 7px; font-size: medium" id="login-error-message"></div>
           <div style="margin:3rem 1rem 1rem 1rem"> 
             <button type="submit" style="padding: 5px;height: 75%; width: 100%" class="btn form-control-lg">Войти</button>
@@ -143,7 +135,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="verifyCodeModal" tabindex="-1" aria-labelledby="verifyCodeModalLabel" aria-hidden="true">
+<div class="modal fade" id="verifyCodeModal" tabindex="-1" aria-labelledby="verifyTypeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
     <div class="modal-content register">
       <div style="margin:2rem auto 0;">
@@ -157,6 +149,10 @@
           <div style="margin-top: 1rem;">
             <input class="form-control form-control-lg" name="code" style="padding: 10px" placeholder="Код подтверждения с Email"/>
           </div>
+          
+          <div style="margin-top: 1rem;">
+            <input class="form-control form-control-lg" hidden name="grantType" value="code"/>
+          </div>
           <div style="margin:2rem 10px 10px 0"> 
             <button type="submit" style="padding: 5px;height: 75%; width: 100%" class="btn form-control-lg" required>Подтвердить почту</button>
           </div>
@@ -165,7 +161,7 @@
     </div>
   </div>
 </div>
-<div class="modal fade" id="generateReservationGenerateCodeModal" tabindex="-1" aria-labelledby="generateReservationCodeModalLabel" aria-hidden="true">
+<div class="modal fade" id="generateReservationGenerateCodeModal" tabindex="-1" aria-labelledby="generateReservationTypeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 400px; border-radius: 10px;">
     <div class="modal-content">
       <div class="modal-header" style="border: none; text-align: center">
@@ -178,7 +174,7 @@
             <span style="font-weight: bold"></span>Выберете коворкинг
           </div>
           <div style="margin-top: 1rem;">
-            <select class="form-control" id="workspaceNames" name="code" style="padding: 10px">
+            <select class="form-control" id="workspaceNames" name="type" style="padding: 10px">
               <option hidden="">Выберете коворкинг</option>
             </select>
           </div>

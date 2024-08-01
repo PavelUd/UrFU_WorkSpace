@@ -1424,9 +1424,78 @@ input[type="file"] {
 
 .reservations__wrapper{
   padding: 20px;
-  margin: 0 160px;
+  margin: 0 150px;
   background-color: var(--color-grey-new);
-  max-width: 1120px;
+  max-width: 1320px;
+}
+
+.review-modal-book{
+  display: flex;
+  background-color:white;
+  flex-direction: column;
+  max-width: 360px;
+  flex-wrap: wrap;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
+  margin-top: 10px;
+  padding: 24px;
+}
+
+.cancel__title{
+  margin-bottom: 20px;
+}
+
+.register-cancel__message{
+  color: rgb(0, 0, 0);
+  font-weight: 400;
+}
+
+.cancel__wrapper{
+  display: flex;
+  gap: 30px;
+}
+
+.review__title-book{
+  color: rgb(29, 29, 29);
+  font-weight: 500;
+  margin-left: auto;
+  font-size: 16px;
+}
+
+.register-confirm__message-book{
+  color: rgb(29, 29, 29);
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 13px;
+}
+
+.btn__accept{
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+.success__confirm{
+  display: flex;
+  width: 100%;
+}
+
+.success__message{
+  color: rgb(0, 0, 0);
+  margin-left: 65px;
+  font-size: 16px;
+  font-weight: 500;
+  max-width: 180px;
+  text-align: center;
+}
+
+.cancel__message{
+  color: rgb(0, 0, 0);
+  margin-left: 55px;
+  font-size: 16px;
+  font-weight: 500;
+  max-width: 250px;
+  text-align: center;
 }
 
 .reservations__list{
@@ -1454,8 +1523,8 @@ input[type="file"] {
 }
 
 .reservation__param:nth-child(1){
-  width: 60px;
-  height: 60px;
+  width: 90px;
+  height: 50px;
   padding: 0;
 }
 
@@ -1592,7 +1661,8 @@ input[type="file"] {
 }
 
 .cabinet__cowork-img{
-  margin-bottom: auto;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 .institute__cowork{
@@ -1620,6 +1690,8 @@ input[type="file"] {
   content: "";
   width: 35px;
   height: 35px;
+  background: url('../img/cabinet__star.png') no-repeat center;
+  margin-right: 5px;
 }
 
 .cowork__edit-btns{

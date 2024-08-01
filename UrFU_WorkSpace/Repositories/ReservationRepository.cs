@@ -1,7 +1,6 @@
-using UrFU_WorkSpace.enums;
 using UrFU_WorkSpace.Helpers;
 using UrFU_WorkSpace.Models;
-using UrFU_WorkSpace.Services.Interfaces;
+using UrFU_WorkSpace.Repositories.Interfaces;
 
 namespace UrFU_WorkSpace.Repositories;
 
@@ -12,44 +11,47 @@ public class ReservationRepository : IReservationRepository
     public ReservationRepository(string baseApiAddress) 
     {
         BaseAddress = new Uri(baseApiAddress);
+        
     }
 
-    public async Task<List<Reservation>> GetUserReservations(int idUser)
+    public async Task<Result<Reservation>> GetReservation(int id, string token)
     {
-        var route = BaseAddress + "/reservations?idUser=" + idUser;
-        var responseMessage = HttpRequestSender.SendRequest(route, RequestMethod.Get).Result;
-        responseMessage.EnsureSuccessStatusCode();
-        
-        var data = await responseMessage.Content.ReadAsStringAsync();
-        return JsonHelper.Deserialize<List<Reservation>>(data);
+        var route = BaseAddress + $"/reservations/{id}";
+        return await HttpRequestSender.HandleJsonRequest<Reservation>(route, HttpMethod.Get, token);
     }
     
-    public async Task<List<Reservation>> GetReservations(int idWorkspace, DateOnly date)
+    
+    public async Task<Result<List<Reservation>>> GetReservations(int? idUser, int? idWorkspace,bool isFull, string token = "")
     {
-        
-        var jsonDate =  JsonHelper.Serialize(date).Replace("\"", "");
-        var route = BaseAddress + "/reservations?idWorkspace=" + idWorkspace + "&date=" + jsonDate;
-        var responseMessage = HttpRequestSender.SendRequest(route, RequestMethod.Get).Result;
-        responseMessage.EnsureSuccessStatusCode();
-        
-        var data = await responseMessage.Content.ReadAsStringAsync();
-            
+        var route = BaseAddress + $"/reservations";
+        var queryParams = new List<string>();
 
-        return JsonHelper.Deserialize<List<Reservation>>(data);
+        foreach (var (value, name) in new[] { (idWorkspace, "idWorkspace"), (idUser, "idUser") })
+        {
+            if (value.HasValue)
+            {
+                queryParams.Add($"{name}={value.Value.ToString()}");
+            }
+        }
+
+        if (isFull)
+        {
+            queryParams.Add($"{nameof(isFull)}={isFull.ToString().ToLower()}");
+        }
+
+        if (queryParams.Any())
+            route += "?" + string.Join("&", queryParams);
+
+        return await HttpRequestSender.HandleJsonRequest<List<Reservation>>(route, HttpMethod.Get, token);
     }
-
-    public async Task ConfirmReservation(int idReservation)
+    
+/*    public async Task ConfirmReservation(int idReservation)
     {
         await HttpRequestSender.SendRequest(BaseAddress + "/reservations/" + idReservation + "/confirm", RequestMethod.Patch);
     }
     
-    public async Task<Reservation> CreateReservations(Dictionary<string, object> dictionary)
+*/    public async Task<Result<int>> CreateReservations(Dictionary<string, object> dictionary, string token)
     {
-        var responseMessage = await HttpRequestSender.SendRequest(BaseAddress + "/reservations/reserve", RequestMethod.Post, dictionary);
-        responseMessage.EnsureSuccessStatusCode();
-
-        var content = JsonHelper.Deserialize<Reservation>(await responseMessage.Content.ReadAsStringAsync());
-        
-        return content;
-    }
-}
+        return await HttpRequestSender.HandleJsonRequest<int, Dictionary<string, object>>(BaseAddress + "/reservations", HttpMethod.Post, dictionary, token);
+   }
+ }

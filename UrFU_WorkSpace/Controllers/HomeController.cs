@@ -28,8 +28,13 @@ public class HomeController
 
     public IActionResult Index()
     {
-        var workspaces = _workspaceService.GetAllWorkspaces().Result;
-        return View(workspaces);
+        var result = _workspaceService.GetAllWorkspaces().Result;
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+            return StatusCode(error.Code, error);
+        }
+        return View(result.Value);
     }
 
     public IActionResult Privacy()

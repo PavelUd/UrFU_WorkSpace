@@ -21,8 +21,8 @@ const getWorkspaceObjects = (evt) => {
         .catch(error => console.log(error));
 }
 const getDiagram = (objects) =>{
-    
-    loadObjects("myDiagramDiv", objects,(obj) => obj.isReserve ? "invert(35%) opacity(50%)" : "opacity(60%)")
+    console.log(objects)
+    loadObjects("myDiagramDiv", objects,(obj) => obj.isReserved ? "invert(35%) opacity(50%)" : "opacity(60%)")
 }
 
 const onClickResBtnBack = () =>{

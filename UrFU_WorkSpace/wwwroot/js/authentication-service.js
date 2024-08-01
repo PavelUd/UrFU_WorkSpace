@@ -26,28 +26,28 @@ const login = async (evt) => {
     evt.preventDefault();
     let data = Object.fromEntries(new FormData(evt.target))
         try {
-            let token = await authenticationClient.login(data);
+            let tokenData = await authenticationClient.getToken(data);
+            let token = tokenData.accessToken;
             sessionStorage.setItem("token", token);
             const user = decodeJwtToken(token);
             loginBtn.innerHTML = getActiveLoginBtn(user.Login, user.Id);
             $(loginModal).modal('hide');
         }
         catch (e){
-            errorLoginContainer.textContent = e;
+            errorLoginContainer.textContent = e.responseJSON.message;
         }
 }
 
 const verifyUser = async (evt) => {
 
     evt.preventDefault();
-    const user = decodeJwtToken(sessionStorage.getItem("token"));
-    const codeForm = new FormData(evt.target);
+    const codeForm = Object.fromEntries(new FormData(evt.target));
     try {
-        await authenticationClient.verifyUser({
-            idUser: user.Id,
-            code: codeForm.get('code')
-        });
-        loginBtn.innerHTML = getActiveLoginBtn(user.Login);
+        let tokenData = await authenticationClient.getToken(codeForm);
+        let token = tokenData.accessToken;
+        sessionStorage.setItem("token", token);
+        const user = decodeJwtToken(token);
+        loginBtn.innerHTML = getActiveLoginBtn(user.Login, user.Id);
         
     }
     catch (e){
@@ -63,19 +63,16 @@ const register = async  (evt) => {
     const formData = new FormData(registerForm);
 
     let data = Object.fromEntries(formData);
-    data.correctCode = code;
     
     try {
-            let token = await authenticationClient.register(data);
-            sessionStorage.setItem("token", token);
-            const user = decodeJwtToken(token);
-            emailContainer.textContent = user.Email;
+            await authenticationClient.register(data); 
+            emailContainer.textContent = data.email;
             $(registerModal).modal('hide');
             $(verifyModal).modal('show');
         }
     
     catch(e){
-        registerErrorContainer.textContent = e;
+        registerErrorContainer.textContent = e.responseJSON.message;
     }
 }
 

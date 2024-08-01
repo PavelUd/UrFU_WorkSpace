@@ -7,7 +7,7 @@ namespace UrFU_WorkSpace_API.Models;
 [Table("workspace_objects")]
 public class WorkspaceObject : IWorkspaceComponent
 {
-    public ObjectTemplate? Template;
+    public Template? Template;
 
     [Column("template_id")] public int IdTemplate { get; set; }
 
@@ -22,4 +22,7 @@ public class WorkspaceObject : IWorkspaceComponent
     [Key] [Column("object_id")] public int Id { get; set; }
 
     [Column("workspace_id")] public int IdWorkspace { get; set; }
+
+    [NotMapped]
+    public bool IsReserved  { get; set; }
 }

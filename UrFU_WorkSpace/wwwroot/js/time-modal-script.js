@@ -34,7 +34,7 @@ const getLabel = (timeSlotInfo, num) =>{
     label.classList.add('checkbox__text');
     label.value = `${timeStart}-${timeEnd}`
     label.textContent = `${getShortTime(timeStart)}-${getShortTime(timeEnd)}`
-    label.style.color = timeSlotInfo['IsDisable'] ? "rgb(172, 172, 172)" : "";
+    label.style.color = !timeSlotInfo['IsEnabled'] ? "rgb(172, 172, 172)" : "";
     label.style.fontSize = "19px";
     
     return label;
@@ -48,7 +48,7 @@ const createSlotTimeElement = (timeSlotInfo, num) =>{
     timeSlot.appendChild(checkbox);
     timeSlot.appendChild(label);
 
-    if(!timeSlotInfo['IsDisable']){
+    if(timeSlotInfo['IsEnabled']){
         timeSlot.addEventListener('click', onClickTimeSlot)
     }
     

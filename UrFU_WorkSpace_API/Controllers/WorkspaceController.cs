@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -94,9 +95,9 @@ public class WorkspaceController : Controller
     [ProducesResponseType(200, Type = typeof(IEnumerable<WorkspaceObject>))]
     [ProducesResponseType(404, Type = typeof(Error))]
     [ProducesResponseType(500, Type = typeof(Error))]
-    public IActionResult GetWorkspaceObjects(int idWorkspace)
+    public IActionResult GetWorkspaceObjects(int idWorkspace, int idTemplate, DateOnly date, TimeOnly timeStart, TimeOnly timeEnd)
     {
-        var result = _workspaceService.GetObjects(idWorkspace);
+        var result =_workspaceService.GetObjects(idWorkspace, date, timeStart, timeEnd, idTemplate);
         if (!result.IsSuccess)
         {
             var error = result.Error;
@@ -106,6 +107,18 @@ public class WorkspaceController : Controller
         return Ok(result.Value);
     }
 
+    [HttpGet("{idWorkspace}/slots")]
+    public IActionResult GetWorkspaceTimeSlots(int idWorkspace,[Required] DateOnly date, [Required]TimeType type)
+    {
+        var result =_workspaceService.GetTimeSlots(idWorkspace, date, type);
+        if (!result.IsSuccess)
+        {
+            var error = result.Error;
+            return StatusCode((int)error.HttpStatusCode, error);
+        }
+
+        return Ok(result.Value);
+    }
     /// <summary>
     ///     Получить  удобства коворкинга
     /// </summary>
@@ -151,52 +164,6 @@ public class WorkspaceController : Controller
     }
 
     /// <summary>
-    ///     Частичное обновление коворкинга.
-    /// </summary>
-    /// <remarks>
-    ///     Метод предназначен для частичного обновления модели коворкинга.&#xA;
-    ///     Поля, короторые можно обновить:
-    ///     -
-    ///     <term>
-    ///         <c>name</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>description</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>rating</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>address</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>idCreator</c>
-    ///     </term>
-    ///     -
-    ///     <term>
-    ///         <c>institute</c>
-    ///     </term>
-    /// </remarks>
-    [Authorize(Roles = nameof(Role.Admin))]
-    [HttpPatch("{idWorkspace}")]
-    public IActionResult PatchWorkspace([FromBody] JsonPatchDocument<BaseInfo> workspaceComponent,
-        [FromRoute] int idWorkspace)
-    {
-        var result = _workspaceService.PatchWorkspace(idWorkspace, workspaceComponent);
-        if (!result.IsSuccess)
-        {
-            var error = result.Error;
-            return StatusCode((int)error.HttpStatusCode, error);
-        }
-
-        return NoContent();
-    }
-
-    /// <summary>
     ///     Создать коворкинг.
     /// </summary>
     /// <remarks>
@@ -238,6 +205,10 @@ public class WorkspaceController : Controller
         workspace.Amenities = form["Amenities"].Select(JsonConvert.DeserializeObject<WorkspaceAmenity>);
         workspace.OperationMode = form["OperationMode"]
             .Select(x => JsonConvert.DeserializeObject<WorkspaceWeekday>(x, JsonSettings));
+        
+        if (!ModelState.IsValid)
+            return BadRequest();
+        
         var result = _workspaceService.CreateWorkspace(workspace);
 
         if (!result.IsSuccess)
@@ -246,7 +217,7 @@ public class WorkspaceController : Controller
             return StatusCode((int)error.HttpStatusCode, error);
         }
 
-        return Ok(result.Value);
+        return Created();
     }
 
     /// <summary>
@@ -266,10 +237,13 @@ public class WorkspaceController : Controller
         var form = Request.Form;
         workspace.Objects = form["Objects"].Select(JsonConvert.DeserializeObject<WorkspaceObject>);
         workspace.Amenities = form["Amenities"].Select(JsonConvert.DeserializeObject<WorkspaceAmenity>);
-        workspace.OperationMode = form["OperationMode"]
-            .Select(x => JsonConvert.DeserializeObject<WorkspaceWeekday>(x, JsonSettings));
-        var t = _workspaceService.PutWorkspace(workspace, idWorkspace);
-        if (!t.IsSuccess) return StatusCode((int)t.Error.HttpStatusCode, t.Error);
+        workspace.OperationMode = form["OperationMode"] .Select(x => JsonConvert.DeserializeObject<WorkspaceWeekday>(x, JsonSettings));
+        
+        var result = _workspaceService.PutWorkspace(workspace, idWorkspace);
+        
+        if (!result.IsSuccess) 
+            return StatusCode((int)result.Error.HttpStatusCode, result.Error);
+        
         return NoContent();
     }
 

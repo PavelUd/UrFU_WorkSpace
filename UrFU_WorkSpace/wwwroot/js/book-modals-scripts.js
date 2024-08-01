@@ -7,20 +7,8 @@ const sucFunc = (jsonReservation) =>{
     document.getElementById("booked-time__value").textContent =`${getShortTime(reservation.timeStart)}-${getShortTime(reservation.timeEnd)}`;
     document.getElementById("booked-date__value").textContent =  parseDate(reservation.date);
     getBookDiagram(reservation.idObject);
-    disableButton(reservation)
 };
 
-function disableButton(reservation) {
-    const reservationSelector = document.querySelector('#reservations');
-    const bookBtn = document.querySelector('#book-btn');
-    let currentDate = new Date().setHours(0, 0, 0, 0);
-    if(new Date(reservation.date).setHours(0, 0, 0, 0) >= currentDate){
-        bookBtn.disabled = true;
-        if(new Date(reservation.date).setHours(0, 0, 0, 0) === currentDate){
-            reservationSelector.innerHTML += `<option value = ${reservation.idReservation} data-id-workspace =${reservation.idWorkspace}>Бронь ${reservation.date} ${reservation.timeStart} ${reservation.timeEnd}</option>`
-        }
-    }
-}
 
 function renderSuccessBookBody(){
     return `<div class="selected-time" style="color: black;">
@@ -92,7 +80,9 @@ function getBookDiagram(idObj) {
         height: obj.size.split(" ")[0],
         width: obj.size.split(" ")[0],
         template: {
-            picture: obj.image,
+            image: { 
+                url: obj.image
+            },
             category: obj.category
         }
     }));

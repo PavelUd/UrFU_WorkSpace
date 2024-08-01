@@ -23,7 +23,12 @@ public class ImageService
         imageFile.CopyTo(fileStream);
     }
 
-    public IEnumerable<Image> ConstructImages(IEnumerable<IFormFile> imageFiles, int idOwner = 0)
+    public Image ConstructImage(IFormFile imageFile, int idOwner)
+    {
+        return ConstructImages(new[] { imageFile }, idOwner).First();
+    }
+    
+    public IEnumerable<Image> ConstructImages(IEnumerable<IFormFile> imageFiles, int idOwner)
     {
         var images = new List<Image>();
         foreach (var imageFile in imageFiles)
@@ -32,7 +37,7 @@ public class ImageService
             Save(imageFile, path);
             images.Add(new Image
             {
-                Url = _hostName + "/api/" + path,
+                Url = _hostName  + path,
                 IdOwner = idOwner
             });
         }

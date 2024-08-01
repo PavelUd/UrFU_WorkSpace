@@ -14,31 +14,13 @@ public class ReviewRepository
         BaseAddress = new Uri(baseAddress);
     }
     
-    public List<Review> GetAll()
+    public async Task<Result<List<Review>>> GetAll(int idWorkspace)
     {
-        var message = HttpRequestSender.SendRequest(BaseAddress + "/reviews", RequestMethod.Get)
-            .Result.Content
-            .ReadAsStringAsync().Result;
-        return (JsonConvert.DeserializeObject<IEnumerable<Review>>(message) ?? Array.Empty<Review>()).ToList();
-    }
-
-    public Review? GetById(int id)
-    {
-        return GetAll().Find(r => r.Id == id);
+        return await HttpRequestSender.HandleJsonRequest<List<Review>>(BaseAddress + $"/reviews?idWorkspace={idWorkspace}", HttpMethod.Get);
     }
     
-    public IEnumerable<Review> GetByIdWorkspace(int id)
+    public async Task<Result<int>> AddReview(Review review, string token)
     {
-        return GetAll().Where(r => r.IdWorkspace == id);
-    }
-    
-    public IEnumerable<Review> GetByIdUser(int id)
-    {
-        return GetAll().Where(r => r.IdUser == id);
-    }
-    
-    public async Task AddReview(Review review)
-    {
-        await HttpRequestSender.SendRequest(BaseAddress + "/reviews/add-review", RequestMethod.Post, review);
+       return await HttpRequestSender.HandleJsonRequest<int, Review>(BaseAddress + "/reviews", HttpMethod.Post, review, token);
     }
 }

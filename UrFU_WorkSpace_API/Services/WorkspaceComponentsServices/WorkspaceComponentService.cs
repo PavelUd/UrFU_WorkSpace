@@ -17,13 +17,10 @@ public abstract class WorkspaceComponentService<T> : IWorkspaceComponentService<
 
     public abstract Result<None> ValidateComponents(IEnumerable<T> components);
 
-    public Result<IEnumerable<T>> GetComponents(int idWorkspace)
+    public IEnumerable<T> GetComponents(int idWorkspace)
     {
-        var message = _errorHandler.RenderError(ErrorType.WorkspaceComponentNotFound);
         var entities = _repository.FindByCondition(x => x.IdWorkspace == idWorkspace);
-        return !entities.Any()
-            ? Result.Fail<IEnumerable<T>>(message)
-            : Result.Ok(entities.AsEnumerable());
+        return entities.AsEnumerable();
     }
 
     protected Result<None> ValidateParam<TParam>(bool condition, ErrorType errorType, TParam value = default,

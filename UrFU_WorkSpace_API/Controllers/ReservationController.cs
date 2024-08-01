@@ -2,14 +2,16 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UrFU_WorkSpace_API.Enums;
+using UrFU_WorkSpace_API.Helpers;
 using UrFU_WorkSpace_API.Models;
 using UrFU_WorkSpace_API.Services;
 
 namespace UrFU_WorkSpace_API.Controllers;
 
 [Tags("Бронирование")]
+[Authorize(Roles = nameof(Role.User) + "," +  nameof(Role.Admin))]
 [Route("api/reservations")]
-[Authorize(Roles = nameof(Role.Admin) + "," + nameof(Role.User))]
+ 
 [ApiController]
 public class ReservationController : Controller
 {
@@ -39,16 +41,24 @@ public class ReservationController : Controller
         ;
     }
 
-    [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
-    public IActionResult GetReservations(int idUser, int idWorkspace, DateTime date)
+    [HttpGet("{id}")]
+    [ProducesResponseType(200, Type = typeof(Reservation))]
+    public IActionResult GetReservations(int id)
     {
-        var result = _reservationService.GetReservations(x => (x.IdWorkspace == idWorkspace || idWorkspace == 0) 
-                                                              && (x.IdUser == idUser || idUser == 0)
-                                                              && date == DateTime.MinValue || x.Date == new DateOnly(date.Year, date.Month, date.Day));
+        var result = _reservationService.GetReservationById(id);
         return !result.IsSuccess
             ? StatusCode((int)result.Error.HttpStatusCode, result.Error)
             : Ok(result.Value);
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<Reservation>))]
+    public IActionResult GetReservations(int idUser, int idWorkspace, bool isFull = false)
+    {
+        var result = _reservationService.GetReservations(x => (x.IdWorkspace == idWorkspace || idWorkspace == 0) 
+                                                              && (x.IdUser == idUser || idUser == 0));
+
+        return isFull ? Ok(_reservationService.CompleteReservations(result.Value.ToList()).Value) : Ok(result.Value);
     }
 
     [HttpPost]
@@ -57,6 +67,7 @@ public class ReservationController : Controller
     {
         var idUser = int.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Id")!.Value);
         var result = _reservationService.AddReservation(reservation, idUser);
+        
         return !result.IsSuccess
             ? StatusCode((int)result.Error.HttpStatusCode, result.Error)
             : Ok(result.Value);
@@ -64,8 +75,10 @@ public class ReservationController : Controller
 
     [HttpDelete("{id}")]
     public IActionResult DeleteReservation(int id)
-    { var idUser = int.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Id")!.Value);
+    { 
+        var idUser = int.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type == "Id")!.Value);
         var result = _reservationService.DeleteReservation(id, idUser);
+        
         return !result.IsSuccess
             ? StatusCode((int)result.Error.HttpStatusCode, result.Error)
             : NoContent();
