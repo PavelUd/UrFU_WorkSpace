@@ -153,7 +153,7 @@ public class Startup
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(
-                Path.Combine(env.ContentRootPath, "images")),
+                Path.Combine(env.ContentRootPath, Configuration["ImagePath"])),
             RequestPath = "/api/images"
         });
 
