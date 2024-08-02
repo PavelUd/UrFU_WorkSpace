@@ -59,7 +59,7 @@ public class Startup
         services.AddScoped<ImageService>(provider =>
         {
             var repository = provider.GetRequiredService<IBaseRepository<Image>>();
-            return new ImageService(repository, Configuration["HostName"]);
+            return new ImageService(repository, Configuration["HostName"], Configuration["ImagePath"]);
         });
         
         services.AddScoped<AuthenticationService>();
@@ -146,9 +146,9 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         app.UseStaticFiles();
-        if(!Directory.Exists("/api/images"))
+        if(!Directory.Exists(Configuration["ImagePath"]))
         {
-            Directory.CreateDirectory("/api/images");
+            Directory.CreateDirectory(Configuration["ImagePath"]);
         }
         app.UseStaticFiles(new StaticFileOptions
         {
