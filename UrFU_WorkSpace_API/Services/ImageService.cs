@@ -20,7 +20,7 @@ public class ImageService
 
     private static void Save(IFormFile imageFile, string path)
     {
-        using var fileStream = new FileStream(path.ToUpper(), FileMode.Create);
+        using var fileStream = new FileStream(path, FileMode.Create);
         imageFile.CopyTo(fileStream);
     }
 
