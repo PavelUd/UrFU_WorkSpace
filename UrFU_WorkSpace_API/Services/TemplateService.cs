@@ -53,9 +53,14 @@ public class TemplateService : ITemplateService
 
     private Result<Template> ConstructTemplate(ModifyTemplateDto modifyDto)
     {
-        var image = _imageService.ConstructImage(modifyDto.Image, (int)OwnerType.Template);
-        var template = _mapper.Map<Template>(modifyDto);
-        template.Image = _mapper.Map<TemplateImage>(image);
-        return template;
+        return Result.Ok(modifyDto)
+            .Then(_ => _imageService.ConstructImage(modifyDto.Image, (int)OwnerType.Template))
+            .Then(image =>_mapper.Map<TemplateImage>(image))
+            .Then(image =>
+            {
+                var template = _mapper.Map<Template>(modifyDto);
+                template.Image = _mapper.Map<TemplateImage>(image);
+                return template;
+            } );
     }
 }

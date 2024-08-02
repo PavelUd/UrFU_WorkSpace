@@ -5,13 +5,14 @@ namespace UrFU_WorkSpace_API.Services;
 
 public class ImageService
 {
-    private const string ImageDirectoryPath = "images/";
+    private readonly string imageDirectoryPath;
 
     private readonly IBaseRepository<Image> _repository;
     private readonly string _hostName;
 
-    public ImageService(IBaseRepository<Image> repository, string hostName)
+    public ImageService(IBaseRepository<Image> repository, string hostName, string path)
     {
+        imageDirectoryPath = path;
         _repository = repository;
         _hostName = hostName;
     }
@@ -33,7 +34,7 @@ public class ImageService
         var images = new List<Image>();
         foreach (var imageFile in imageFiles)
         {
-            var path = ImageDirectoryPath.ToLower() + imageFile.FileName;
+            var path = imageDirectoryPath.ToLower() + imageFile.FileName;
             Save(imageFile, path);
             images.Add(new Image
             {
